@@ -32,7 +32,7 @@ const Location = () => {
             className="lg:col-span-3 rounded-3xl overflow-hidden shadow-elevated h-[420px] ring-1 ring-border"
           >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3047.5!2d44.515!3d40.205!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDEyJzE4LjAiTiA0NMKwMzAnNTQuMCJF!5e0!3m2!1sen!2sam!4v1600000000000"
+              src="https://maps.google.com/maps?q=Komitas+Avenue,+Yerevan,+Armenia&output=embed"
               width="100%"
               height="100%"
               style={{ border: 0 }}

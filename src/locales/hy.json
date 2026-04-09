@@ -8,7 +8,7 @@
     "contact": "Կապ"
   },
   "hero": {
-    "title": "Նոր Կոմիտաս",
+    "title": "New Komitas",
     "subtitle": "Նոր կյանքի չափանիշ Երևանի սրտում",
     "viewApartments": "Դիտել բնակարանները",
     "contactUs": "Կապվել մեզ հետ",
@@ -33,6 +33,7 @@
     }
   },
   "video": {
+    "sectionTitle": "Տեսանյութ",
     "caption": "Կատարեք վիրտուալ շրջայց Նոր Կոմիտասում"
   },
   "gallery": {

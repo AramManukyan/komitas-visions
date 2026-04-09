@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Building2 } from 'lucide-react';
 
-const banks = ['Ameriabank', 'Ardshinbank', 'ACBA Bank', 'Evocabank', 'IDBank'];
+const banks = ['Ardshinbank', 'ACBA Bank', 'Ameriabank', 'IDBank', 'Evocabank'];
 
 const BankPartners = () => {
   const { t } = useTranslation();

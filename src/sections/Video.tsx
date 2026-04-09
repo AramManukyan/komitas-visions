@@ -27,6 +27,12 @@ const Video = () => {
           transition={{ duration: 0.8 }}
         >
           <div className="max-w-4xl mx-auto">
+            <div className="mb-10">
+              <div className="w-12 h-[2px] gradient-gold mx-auto mb-6" />
+              <h2 className="font-heading text-primary-foreground text-4xl md:text-5xl lg:text-6xl font-bold">
+                {t('video.sectionTitle')}
+              </h2>
+            </div>
             <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl ring-1 ring-accent/10">
               {!playing && (
                 <div

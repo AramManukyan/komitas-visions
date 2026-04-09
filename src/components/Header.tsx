@@ -31,7 +31,7 @@ const Header = () => {
           <img
             src={logo}
             alt="New Komitas"
-            className="h-11 w-auto drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+            className="h-14 w-auto drop-shadow-md transition-transform duration-300 group-hover:scale-105"
           />
           <div className="flex flex-col leading-tight">
             <span className="font-heading text-accent text-sm font-bold tracking-widest uppercase">
