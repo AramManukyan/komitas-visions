@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "about": "About",
+    "gallery": "Gallery",
+    "amenities": "Amenities",
+    "location": "Location",
+    "banks": "Banks",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "New Komitas",
+    "subtitle": "A new standard of living in the heart of Yerevan",
+    "viewApartments": "View Apartments",
+    "contactUs": "Contact Us",
+    "stats": {
+      "apartments": "Apartments",
+      "floors": "Floors",
+      "year": "Completion Year",
+      "price": "Starting Price (AMD)"
+    }
+  },
+  "about": {
+    "sectionTitle": "About the Project",
+    "p1": "New Komitas is an ambitious residential community located on Komitas Avenue — one of Yerevan's most prestigious neighborhoods. This landmark development combines modern architecture with the natural beauty of the surrounding area.",
+    "p2": "Designed for families and professionals who value comfort, security, and a vibrant community atmosphere, New Komitas offers spacious apartments with panoramic views of Mount Ararat and the city skyline.",
+    "p3": "Every detail has been thoughtfully planned — from energy-efficient building systems to lush green courtyards — creating a harmonious living environment that sets a new benchmark for residential development in Armenia.",
+    "points": {
+      "1": "Premium location on Komitas Avenue",
+      "2": "Earthquake-resistant construction",
+      "3": "Energy-efficient smart building systems",
+      "4": "Underground parking for every apartment",
+      "5": "Landscaped courtyards and recreational areas"
+    }
+  },
+  "video": {
+    "caption": "Take a virtual tour of New Komitas"
+  },
+  "gallery": {
+    "sectionTitle": "Gallery",
+    "exterior": "Exterior",
+    "interior": "Interior",
+    "floorPlans": "Floor Plans"
+  },
+  "amenities": {
+    "sectionTitle": "Amenities",
+    "items": {
+      "parking": { "title": "Parking", "desc": "Secure underground parking with assigned spaces" },
+      "playground": { "title": "Playground", "desc": "Safe and modern children's playground" },
+      "security": { "title": "24/7 Security", "desc": "Round-the-clock security and video surveillance" },
+      "gym": { "title": "Fitness Center", "desc": "Fully equipped modern gym for residents" },
+      "green": { "title": "Green Areas", "desc": "Landscaped gardens and walking paths" },
+      "storage": { "title": "Storage", "desc": "Individual underground storage units" },
+      "smart": { "title": "Smart Home", "desc": "Integrated smart home technology" },
+      "pool": { "title": "Children's Pool", "desc": "Supervised children's swimming pool" }
+    }
+  },
+  "location": {
+    "sectionTitle": "Location",
+    "pois": {
+      "metro": { "name": "Yeritasardakan Metro", "distance": "1.2 km" },
+      "school": { "name": "School No. 55", "distance": "0.4 km" },
+      "park": { "name": "Komitas Park", "distance": "0.3 km" },
+      "market": { "name": "Yerevan City Supermarket", "distance": "0.6 km" },
+      "hospital": { "name": "Arabkir Medical Center", "distance": "0.8 km" }
+    }
+  },
+  "banks": {
+    "sectionTitle": "Bank Partners",
+    "subtitle": "Flexible mortgage programs from leading Armenian banks",
+    "note": "Mortgage programs available — up to 30 years"
+  },
+  "contact": {
+    "sectionTitle": "Contact Us",
+    "name": "Full Name",
+    "phone": "Phone",
+    "email": "Email",
+    "size": "Preferred Apartment Size",
+    "message": "Message",
+    "submit": "Send Message",
+    "sending": "Sending...",
+    "success": "Message sent successfully!",
+    "sizeOptions": {
+      "1bed": "1 Bedroom",
+      "2bed": "2 Bedrooms",
+      "3bed": "3 Bedrooms",
+      "4bed": "4+ Bedrooms"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "phoneRequired": "Phone is required",
+      "emailInvalid": "Invalid email address",
+      "messageRequired": "Message is required"
+    }
+  },
+  "footer": {
+    "tagline": "Building the future of Yerevan",
+    "address": "Yerevan, Komitas Ave",
+    "copyright": "© 2025 METTA GROUP. All rights reserved."
+  }
+}

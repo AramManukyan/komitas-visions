@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Nunito+Sans:ital,opsz,wght@0,6..12,300;0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;1,6..12,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 214 52% 17%;
+
+    --card: 40 20% 97%;
+    --card-foreground: 214 52% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 214 52% 17%;
+
+    --primary: 214 52% 17%;
+    --primary-foreground: 50 95% 77%;
+
+    --secondary: 40 20% 97%;
+    --secondary-foreground: 214 52% 17%;
+
+    --muted: 40 20% 97%;
+    --muted-foreground: 214 20% 40%;
+
+    --accent: 50 95% 77%;
+    --accent-foreground: 214 52% 17%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 50 95% 77%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 214 52% 17%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 50 95% 77%;
+    --sidebar-primary-foreground: 214 52% 17%;
+    --sidebar-accent: 214 52% 22%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 214 52% 25%;
+    --sidebar-ring: 50 95% 77%;
+
+    --warm-bg: 40 20% 97%;
+    --navy: 214 52% 17%;
+    --navy-light: 214 40% 25%;
+    --gold: 50 95% 77%;
+    --gold-light: 50 95% 84%;
+    --glass: 0 0% 100%;
+  }
+
+  .dark {
+    --background: 214 52% 10%;
+    --foreground: 0 0% 95%;
+    --card: 214 52% 14%;
+    --card-foreground: 0 0% 95%;
+    --popover: 214 52% 14%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 50 95% 77%;
+    --primary-foreground: 214 52% 17%;
+    --secondary: 214 52% 20%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 214 52% 20%;
+    --muted-foreground: 214 20% 65%;
+    --accent: 50 95% 77%;
+    --accent-foreground: 214 52% 17%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 95%;
+    --border: 214 52% 25%;
+    --input: 214 52% 25%;
+    --ring: 50 95% 77%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Nunito Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: hsl(var(--glass) / 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--glass) / 0.12);
+  }
+
+  .glass-dark {
+    background: hsl(var(--navy) / 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid hsl(var(--glass) / 0.08);
+  }
+
+  .gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
+  }
+
+  .gradient-navy {
+    background: linear-gradient(180deg, hsl(var(--navy)), hsl(var(--navy-light)));
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(50 80% 90%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .section-divider {
+    position: relative;
+  }
+  .section-divider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, hsl(var(--gold)), hsl(var(--gold-light)));
+  }
+}
