@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '@/assets/logo.png';
 import LanguageSwitcher from './LanguageSwitcher';
+import { scrollToSection } from '@/lib/utils';
 
 const navKeys = ['about', 'gallery', 'amenities', 'location', 'banks', 'contact'] as const;
 
@@ -45,13 +46,13 @@ const Header = () => {
 
         <nav className="hidden lg:flex items-center gap-1">
           {navKeys.map((key) => (
-            <a
+            <button
               key={key}
-              href={`#${key}`}
+              onClick={() => scrollToSection(key)}
               className="relative px-4 py-2 text-primary-foreground/75 hover:text-accent font-body text-[13px] font-semibold uppercase tracking-wider transition-colors duration-300"
             >
               {t(`nav.${key}`)}
-            </a>
+            </button>
           ))}
         </nav>
 
@@ -79,17 +80,16 @@ const Header = () => {
           >
             <nav className="flex flex-col items-center gap-1 py-6">
               {navKeys.map((key, i) => (
-                <motion.a
+                <motion.button
                   key={key}
-                  href={`#${key}`}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={() => { scrollToSection(key); setMobileOpen(false); }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
                   className="text-primary-foreground/80 hover:text-accent font-body text-sm font-semibold uppercase tracking-wider py-2 transition-colors"
                 >
                   {t(`nav.${key}`)}
-                </motion.a>
+                </motion.button>
               ))}
               <div className="mt-3">
                 <LanguageSwitcher />

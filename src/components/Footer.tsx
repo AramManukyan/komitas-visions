@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Facebook, Instagram, Youtube, Phone, Mail, MapPin, ArrowUpRight } from 'lucide-react';
 import logo from '@/assets/logo.png';
+import { scrollToSection } from '@/lib/utils';
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -34,14 +35,14 @@ const Footer = () => {
             <p className="text-accent font-body text-xs uppercase tracking-widest font-bold mb-5">Navigation</p>
             <div className="flex flex-col gap-2.5">
               {navKeys.map((key) => (
-                <a
+                <button
                   key={key}
-                  href={`#${key}`}
+                  onClick={() => scrollToSection(key)}
                   className="group flex items-center gap-1 text-primary-foreground/50 hover:text-accent font-body text-sm transition-colors duration-300"
                 >
                   {t(`nav.${key}`)}
                   <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </a>
+                </button>
               ))}
             </div>
           </div>

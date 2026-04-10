@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 import heroBg from '@/assets/hero-bg.jpg';
+import { scrollToSection } from '@/lib/utils';
 
 const stats = [
   { key: 'apartments', value: 240 },
@@ -98,18 +99,18 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="flex flex-col sm:flex-row gap-3 justify-center mb-20"
         >
-          <a
-            href="#gallery"
+          <button
+            onClick={() => scrollToSection('gallery')}
             className="inline-flex items-center justify-center gradient-gold text-accent-foreground font-body font-bold px-8 py-3.5 rounded-full hover:shadow-glow-gold transition-all duration-300 text-sm tracking-wide"
           >
             {t('hero.viewApartments')}
-          </a>
-          <a
-            href="#contact"
+          </button>
+          <button
+            onClick={() => scrollToSection('contact')}
             className="inline-flex items-center justify-center glass text-primary-foreground font-body font-semibold px-8 py-3.5 rounded-full hover:bg-accent/15 transition-all duration-300 text-sm tracking-wide"
           >
             {t('hero.contactUs')}
-          </a>
+          </button>
         </motion.div>
 
         <motion.div
