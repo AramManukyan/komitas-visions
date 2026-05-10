@@ -5,8 +5,23 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import PromoTopBanner from "@/components/PromoTopBanner";
+import PromoPopup from "@/components/PromoPopup";
+import { usePromotions } from "@/hooks/usePromotions";
+import "./i18n";
 
 const queryClient = new QueryClient();
+
+const PromoLayer = () => {
+  const banners = usePromotions({ location: "global" }).filter(p => p.topBanner?.enabled);
+  const popups = usePromotions({ location: "global" }).filter(p => p.popup?.enabled);
+  return (
+    <>
+      {banners.slice(0, 1).map(p => <PromoTopBanner key={p.id} promotion={p} />)}
+      {popups.slice(0, 1).map(p => <PromoPopup key={p.id} promotion={p} />)}
+    </>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -14,6 +29,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <HashRouter>
+        <PromoLayer />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="*" element={<NotFound />} />
