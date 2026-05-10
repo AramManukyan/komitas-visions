@@ -45,24 +45,63 @@
   "amenities": {
     "sectionTitle": "Amenities",
     "items": {
-      "parking": { "title": "Parking", "desc": "Secure underground parking with assigned spaces" },
-      "playground": { "title": "Playground", "desc": "Safe and modern children's playground" },
-      "security": { "title": "24/7 Security", "desc": "Round-the-clock security and video surveillance" },
-      "gym": { "title": "Fitness Center", "desc": "Fully equipped modern gym for residents" },
-      "green": { "title": "Green Areas", "desc": "Landscaped gardens and walking paths" },
-      "storage": { "title": "Storage", "desc": "Individual underground storage units" },
-      "smart": { "title": "Smart Home", "desc": "Integrated smart home technology" },
-      "pool": { "title": "Children's Pool", "desc": "Supervised children's swimming pool" }
+      "parking": {
+        "title": "Parking",
+        "desc": "Secure underground parking with assigned spaces"
+      },
+      "playground": {
+        "title": "Playground",
+        "desc": "Safe and modern children's playground"
+      },
+      "security": {
+        "title": "24/7 Security",
+        "desc": "Round-the-clock security and video surveillance"
+      },
+      "gym": {
+        "title": "Fitness Center",
+        "desc": "Fully equipped modern gym for residents"
+      },
+      "green": {
+        "title": "Green Areas",
+        "desc": "Landscaped gardens and walking paths"
+      },
+      "storage": {
+        "title": "Storage",
+        "desc": "Individual underground storage units"
+      },
+      "smart": {
+        "title": "Smart Home",
+        "desc": "Integrated smart home technology"
+      },
+      "pool": {
+        "title": "Children's Pool",
+        "desc": "Supervised children's swimming pool"
+      }
     }
   },
   "location": {
     "sectionTitle": "Location",
     "pois": {
-      "metro": { "name": "Yeritasardakan Metro", "distance": "1.2 km" },
-      "school": { "name": "School No. 55", "distance": "0.4 km" },
-      "park": { "name": "Komitas Park", "distance": "0.3 km" },
-      "market": { "name": "Yerevan City Supermarket", "distance": "0.6 km" },
-      "hospital": { "name": "Arabkir Medical Center", "distance": "0.8 km" }
+      "metro": {
+        "name": "Yeritasardakan Metro",
+        "distance": "1.2 km"
+      },
+      "school": {
+        "name": "School No. 55",
+        "distance": "0.4 km"
+      },
+      "park": {
+        "name": "Komitas Park",
+        "distance": "0.3 km"
+      },
+      "market": {
+        "name": "Yerevan City Supermarket",
+        "distance": "0.6 km"
+      },
+      "hospital": {
+        "name": "Arabkir Medical Center",
+        "distance": "0.8 km"
+      }
     }
   },
   "banks": {
@@ -97,5 +136,35 @@
     "tagline": "Building the future of Yerevan",
     "address": "Yerevan, Komitas Ave",
     "copyright": "© 2025 METTA GROUP. All rights reserved."
+  },
+  "promotions": {
+    "sectionTitle": "Special Offers",
+    "sectionSubtitle": "Limited-time opportunities to make New Komitas your home",
+    "endsIn": "Ends in",
+    "empty": "No active promotions right now.",
+    "items": {
+      "launch": {
+        "title": "Special Launch Prices",
+        "subtitle": "Founders pricing for early reservations",
+        "description": "Reserve your apartment now and lock in our exclusive launch pricing — available for a limited time only.",
+        "badge": "New",
+        "banner": "Special launch prices — limited availability",
+        "cta": "Reserve now"
+      },
+      "mortgage": {
+        "title": "Mortgage Campaign",
+        "subtitle": "Partner banks, preferential rates",
+        "description": "Finance your home with our partner banks and benefit from preferential mortgage rates and flexible terms.",
+        "badge": "Mortgage",
+        "cta": "View partners"
+      },
+      "installment": {
+        "title": "0% Installment Plan",
+        "subtitle": "Pay in stages, interest-free",
+        "description": "Take advantage of our 0% installment plan and pay for your apartment in convenient interest-free stages.",
+        "badge": "Installment",
+        "cta": "Learn more"
+      }
+    }
   }
 }
