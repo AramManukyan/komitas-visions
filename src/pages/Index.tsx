@@ -1,6 +1,7 @@
 import '../i18n';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ChatWidget from '@/components/ChatWidget';
 import Hero from '@/sections/Hero';
 import About from '@/sections/About';
 import Video from '@/sections/Video';
@@ -23,6 +24,7 @@ const Index = () => {
       <BankPartners />
       <ContactForm />
       <Footer />
+      <ChatWidget />
     </div>
   );
 };
