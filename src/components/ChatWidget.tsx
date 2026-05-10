@@ -1,0 +1,225 @@
+import { useEffect, useRef, useState } from 'react';
+import { MessageCircle, X, Send } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+
+type Message = {
+  id: string;
+  text: string;
+  sender: 'user' | 'bot';
+};
+
+type LeadInfo = {
+  name: string;
+  phone: string;
+  message: string;
+};
+
+const ChatWidget = () => {
+  const [open, setOpen] = useState(false);
+  const [lead, setLead] = useState<LeadInfo | null>(null);
+  const [form, setForm] = useState<LeadInfo>({ name: '', phone: '', message: '' });
+  const [errors, setErrors] = useState<Partial<LeadInfo>>({});
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+  }, [messages, open, isTyping]);
+
+  const simulateBotReply = (userText: string) => {
+    setIsTyping(true);
+    // TODO: Replace with real API call
+    // const res = await fetch('/api/chat', { method: 'POST', body: JSON.stringify({ message: userText, lead }) });
+    // const data = await res.json();
+    setTimeout(() => {
+      setMessages((m) => [
+        ...m,
+        {
+          id: `${Date.now()}-b`,
+          text: 'Thanks for your message! Our team will get back to you shortly.',
+          sender: 'bot',
+        },
+      ]);
+      setIsTyping(false);
+    }, 1200);
+  };
+
+  const handleStart = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: Partial<LeadInfo> = {};
+    if (!form.name.trim()) newErrors.name = 'Required';
+    if (!form.phone.trim()) newErrors.phone = 'Required';
+    if (!form.message.trim()) newErrors.message = 'Required';
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length) return;
+
+    setLead(form);
+    const initial: Message[] = [
+      {
+        id: 'welcome',
+        text: `Hello ${form.name}! Thanks for reaching out. We received your message and will continue here.`,
+        sender: 'bot',
+      },
+      { id: 'user-initial', text: form.message, sender: 'user' },
+    ];
+    setMessages(initial);
+    simulateBotReply(form.message);
+  };
+
+  const handleSend = (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = input.trim();
+    if (!text) return;
+    setMessages((m) => [...m, { id: `${Date.now()}-u`, text, sender: 'user' }]);
+    setInput('');
+    simulateBotReply(text);
+  };
+
+  return (
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3">
+      {open && (
+        <div
+          role="dialog"
+          aria-label="Chat with us"
+          className={cn(
+            'glass-dark animate-fade-up flex flex-col overflow-hidden rounded-2xl shadow-elevated border border-white/10',
+            'w-[calc(100vw-2rem)] sm:w-[380px] h-[70vh] sm:h-[560px] max-h-[calc(100vh-7rem)]'
+          )}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between gap-3 px-4 py-3 bg-navy text-primary-foreground border-b border-white/10">
+            <div className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full gradient-gold">
+                <MessageCircle className="h-4 w-4 text-navy" />
+              </span>
+              <div>
+                <h3 className="font-heading text-lg leading-none">Chat with us</h3>
+                <p className="text-xs text-primary-foreground/70 mt-1">
+                  {lead ? 'METTA Group support' : 'Please introduce yourself'}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setOpen(false)}
+              aria-label="Close chat"
+              className="rounded-full p-1.5 text-primary-foreground/80 hover:text-primary-foreground hover:bg-white/10 transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          {!lead ? (
+            /* Pre-chat form */
+            <form onSubmit={handleStart} className="flex-1 overflow-y-auto bg-warm-bg p-4 space-y-4">
+              <p className="text-sm text-foreground/80">
+                Please share a few details so we can help you better.
+              </p>
+              <div className="space-y-2">
+                <Label htmlFor="cw-name">Full name</Label>
+                <Input
+                  id="cw-name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  placeholder="John Doe"
+                />
+                {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cw-phone">Phone number</Label>
+                <Input
+                  id="cw-phone"
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  placeholder="+374 ..."
+                />
+                {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cw-message">Message</Label>
+                <Textarea
+                  id="cw-message"
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  placeholder="How can we help you?"
+                  rows={3}
+                />
+                {errors.message && <p className="text-xs text-destructive">{errors.message}</p>}
+              </div>
+              <Button type="submit" className="w-full">Start chat</Button>
+            </form>
+          ) : (
+            <>
+              {/* Messages */}
+              <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-warm-bg">
+                {messages.map((m) => (
+                  <div
+                    key={m.id}
+                    className={cn('flex', m.sender === 'user' ? 'justify-end' : 'justify-start')}
+                  >
+                    <div
+                      className={cn(
+                        'max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-soft',
+                        m.sender === 'user'
+                          ? 'bg-navy text-primary-foreground rounded-br-sm'
+                          : 'bg-card text-card-foreground border border-border rounded-bl-sm'
+                      )}
+                    >
+                      {m.text}
+                    </div>
+                  </div>
+                ))}
+                {isTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-card text-card-foreground border border-border rounded-2xl rounded-bl-sm px-4 py-2 shadow-soft flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">METTA Group is typing</span>
+                      <span className="flex gap-1">
+                        <span className="h-1.5 w-1.5 rounded-full bg-gold animate-bounce [animation-delay:-0.3s]" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-gold animate-bounce [animation-delay:-0.15s]" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-gold animate-bounce" />
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Input */}
+              <form onSubmit={handleSend} className="flex items-center gap-2 border-t border-border bg-background p-3">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Type your message..."
+                  className="flex-1"
+                  autoComplete="off"
+                />
+                <Button type="submit" size="icon" disabled={!input.trim() || isTyping} aria-label="Send message">
+                  <Send className="h-4 w-4" />
+                </Button>
+              </form>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Floating button */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-label={open ? 'Close chat' : 'Open chat'}
+        className={cn(
+          'group relative flex h-14 w-14 items-center justify-center rounded-full gradient-gold text-navy',
+          'shadow-glow-gold transition-transform hover:scale-105 active:scale-95'
+        )}
+      >
+        {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+      </button>
+    </div>
+  );
+};
+
+export default ChatWidget;
