@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
+import Apartments from "./pages/Apartments.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import PromoTopBanner from "@/components/PromoTopBanner";
 import PromoPopup from "@/components/PromoPopup";
@@ -32,6 +33,7 @@ const App = () => (
         <PromoLayer />
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/apartments" element={<Apartments />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </HashRouter>
