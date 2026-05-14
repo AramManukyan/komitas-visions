@@ -5,7 +5,8 @@
     "amenities": "Amenities",
     "location": "Location",
     "banks": "Banks",
-    "contact": "Contact"
+    "contact": "Contact",
+    "apartments": "Apartments"
   },
   "hero": {
     "title": "New Komitas",
@@ -165,6 +166,52 @@
         "badge": "Installment",
         "cta": "Learn more"
       }
+    }
+  },
+  "apartments": {
+    "hero": {
+      "title": "Find Your Perfect Apartment",
+      "subtitle": "Discover spacious, modern apartments in our vibrant community. Use the filters below to find the perfect fit.",
+      "imageAlt": "Aerial view of New Komitas residential complex"
+    },
+    "filters": {
+      "block": "Block",
+      "building": "Building",
+      "entrance": "Entrance",
+      "floor": "Floor",
+      "rooms": "Rooms",
+      "selectBlock": "Select block",
+      "selectBuilding": "Select building",
+      "selectEntrance": "Select entrance",
+      "selectFloor": "Select floor",
+      "selectRooms": "Select rooms",
+      "reset": "Reset filters"
+    },
+    "results": {
+      "title": "Available apartments",
+      "count": "{{count}} apartments"
+    },
+    "empty": {
+      "title": "No apartments match your filters",
+      "subtitle": "Try adjusting or resetting the filters to see more options."
+    },
+    "status": {
+      "available": "Available",
+      "reserved": "Reserved",
+      "sold": "Sold"
+    },
+    "card": {
+      "unit": "Apt",
+      "rooms": "Rooms",
+      "floor": "Floor",
+      "area": "Area",
+      "location": "Block / Bld / Ent",
+      "price": "Price",
+      "details": "View details",
+      "reserve": "Reserve"
+    },
+    "modal": {
+      "close": "Close"
     }
   }
 }
