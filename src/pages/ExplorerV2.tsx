@@ -127,7 +127,7 @@ const ApartmentCard = ({
           </span>
         </div>
       </div>
-    </motion.button>
+    </motion.div>
   );
 };
 
