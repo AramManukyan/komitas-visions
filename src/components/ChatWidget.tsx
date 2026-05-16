@@ -24,7 +24,8 @@ type LeadInfo = {
 
 const ChatWidget = () => {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const { open, attachments } = useChatStore();
+  const setOpen = (o: boolean) => chatStore.setOpen(o);
   const [lead, setLead] = useState<LeadInfo | null>(null);
   const [form, setForm] = useState<LeadInfo>({ name: '', phone: '', message: '' });
   const [errors, setErrors] = useState<Partial<LeadInfo>>({});
