@@ -475,6 +475,13 @@ const ExplorerV2 = () => {
       {/* Mobile / tablet pane toggle */}
       <div className="lg:hidden flex items-center gap-2 px-3 py-2 border-b border-border bg-background/95 backdrop-blur sticky top-0 z-30">
         <button
+          onClick={() => setMenuOpen(true)}
+          className="h-10 w-10 shrink-0 grid place-items-center rounded-xl border border-border hover:bg-muted transition"
+          aria-label="Open menu"
+        >
+          <Menu className="h-4 w-4 text-primary" />
+        </button>
+        <button
           onClick={() => setMobilePane('map')}
           className={cn(
             'flex-1 flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-bold uppercase tracking-wider transition',
