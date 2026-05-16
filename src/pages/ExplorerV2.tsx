@@ -258,7 +258,8 @@ const MarkerMap = ({
       if (Math.abs(e.clientX - panStart.current.x) + Math.abs(e.clientY - panStart.current.y) > 4) {
         movedRef.current = true;
       }
-      setT((cur) => ({ scale: cur.scale, x: panStart.current!.tx + dx, y: panStart.current!.ty + dy }));
+      const { tx, ty } = panStart.current;
+      setT((cur) => ({ scale: cur.scale, x: tx + dx, y: ty + dy }));
     }
   };
 
