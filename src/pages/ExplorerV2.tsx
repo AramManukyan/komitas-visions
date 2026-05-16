@@ -667,16 +667,18 @@ const ExplorerV2 = () => {
           mobilePane === 'map' ? 'flex flex-1' : 'hidden',
         )}>
           {/* Top overlay row — stacks on mobile to avoid overlap */}
-          <div className="absolute top-4 left-4 right-4 z-20 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pointer-events-none">
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-sm font-semibold shadow-elevated pointer-events-auto self-start">
-              <MapPin className="h-4 w-4" />
-              {view === '3d'
-                ? selectedBuildingId
-                  ? `Building ${selectedBuildingId} selected`
-                  : 'Pick a block'
-                : 'Browse buildings'}
+          <div className="absolute top-4 left-4 right-4 z-20 flex flex-row items-center justify-between gap-2 sm:gap-3 pointer-events-none">
+            <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-xs sm:text-sm font-semibold shadow-elevated pointer-events-auto min-w-0">
+              <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="truncate">
+                {view === '3d'
+                  ? selectedBuildingId
+                    ? `Building ${selectedBuildingId} selected`
+                    : 'Pick a block'
+                  : 'Browse buildings'}
+              </span>
             </div>
-            <div className="pointer-events-auto self-start sm:self-auto">
+            <div className="pointer-events-auto shrink-0">
               <ViewSwitcher view={view} onChange={setView} />
             </div>
           </div>
