@@ -434,6 +434,7 @@ const ExplorerV2 = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showFavOnly, setShowFavOnly] = useState(false);
   const [listLoading, setListLoading] = useState(false);
+  const [mobilePane, setMobilePane] = useState<'map' | 'list'>('map');
 
   const selectedBuildingId = selection.buildingId;
   const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
