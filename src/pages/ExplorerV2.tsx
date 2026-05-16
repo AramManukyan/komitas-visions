@@ -440,6 +440,21 @@ const ExplorerV2 = () => {
   const selectedBuildingId = selection.buildingId;
   const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
 
+  const activeFilterCount =
+    (unitType !== 'all' ? 1 : 0) +
+    (areaBucket !== 'all' ? 1 : 0) +
+    (floorBucket !== 'all' ? 1 : 0) +
+    (selectedBuildingId ? 1 : 0) +
+    (showFavOnly ? 1 : 0);
+
+  const resetFilters = () => {
+    setUnitType('all');
+    setAreaBucket('all');
+    setFloorBucket('all');
+    setSelectedBuildingId(null);
+    setShowFavOnly(false);
+  };
+
   const matrixFilter = useMemo(
     () => ({ unitType, areaBucket, floorBucket }),
     [unitType, areaBucket, floorBucket],
