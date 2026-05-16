@@ -72,36 +72,46 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
           {t('explorer.apartmentNumber', { number: apartment.number })}
         </DialogTitle>
 
-        {/* Hero band */}
-        <div className="relative h-56 gradient-navy flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--gold))_0%,transparent_60%)]" />
+        {/* Floor plan hero */}
+        <div className="relative h-72 md:h-96 bg-muted flex items-center justify-center overflow-hidden">
+          <img
+            src={apartmentPlan}
+            alt={`Floor plan for apartment ${apartment.number}`}
+            loading="lazy"
+            width={1280}
+            height={896}
+            className="absolute inset-0 w-full h-full object-contain p-4"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/0 to-background/60 pointer-events-none" />
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 h-9 w-9 rounded-full glass-dark flex items-center justify-center text-primary-foreground hover:text-accent transition"
+            className="absolute top-4 right-4 z-10 h-9 w-9 rounded-full bg-background/80 backdrop-blur border border-border flex items-center justify-center text-primary hover:text-accent transition"
             aria-label={t('common.close')}
           >
             <X className="h-4 w-4" />
           </button>
           <button
             onClick={() => setFavorite((v) => !v)}
-            className="absolute top-4 right-16 z-10 h-9 w-9 rounded-full glass-dark flex items-center justify-center text-primary-foreground hover:text-accent transition"
+            className="absolute top-4 right-16 z-10 h-9 w-9 rounded-full bg-background/80 backdrop-blur border border-border flex items-center justify-center text-primary hover:text-accent transition"
             aria-label={t('common.save')}
           >
             <Heart className={cn('h-4 w-4', favorite && 'fill-accent text-accent')} />
           </button>
 
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-center relative"
+            initial={{ y: 12, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="absolute left-4 bottom-4 right-4 flex items-end justify-between gap-3 z-10"
           >
-            <p className="text-primary-foreground/60 text-[10px] uppercase tracking-[0.3em] font-semibold mb-2">
-              {t('explorer.apartment')}
-            </p>
-            <p className="font-heading text-gradient-gold text-6xl font-bold leading-none">
-              №{apartment.number}
-            </p>
-            <div className="flex items-center justify-center gap-2 mt-3">
+            <div>
+              <p className="text-muted-foreground text-[10px] uppercase tracking-[0.3em] font-semibold mb-1">
+                {t('explorer.apartment')}
+              </p>
+              <p className="font-heading text-primary text-4xl md:text-5xl font-bold leading-none">
+                №{apartment.number}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap justify-end">
               <Badge
                 variant="outline"
                 className={cn('border', STATUS_CLASSES[apartment.status], 'font-semibold')}
