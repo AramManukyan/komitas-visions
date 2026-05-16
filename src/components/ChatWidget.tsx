@@ -135,6 +135,32 @@ const ChatWidget = () => {
               <p className="text-sm text-foreground/80">
                 {t('chat.preFormHint')}
               </p>
+              {attachments.length > 0 && (
+                <div className="rounded-xl border border-accent/40 bg-accent/10 p-3 space-y-2">
+                  <p className="text-[11px] uppercase tracking-wider font-bold text-accent-foreground">
+                    {attachments.length} apartment{attachments.length > 1 ? 's' : ''} attached
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {attachments.map((a) => (
+                      <span
+                        key={a.id}
+                        className="inline-flex items-center gap-1 rounded-full bg-background border border-border px-2 py-0.5 text-[11px] font-medium"
+                      >
+                        <Home className="h-3 w-3 opacity-70" />
+                        №{a.number}
+                        <button
+                          type="button"
+                          onClick={() => chatStore.removeApartment(a.id)}
+                          className="text-muted-foreground hover:text-foreground"
+                          aria-label="Remove"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="cw-name">{t('contact.name')}</Label>
                 <Input
