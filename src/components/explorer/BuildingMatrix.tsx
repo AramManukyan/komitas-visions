@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Inbox, Layers, X, ParkingSquare } from 'lucide-react';
+import { Heart, Inbox, Layers, ParkingSquare, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   Tooltip,
@@ -53,25 +53,19 @@ const matchesFilter = (apt: ExplorerApartment, f: MatrixFilter) => {
   return true;
 };
 
-const BuildingMatrix = ({
-  selectedBuildingId,
-  filter,
-  onApartmentClick,
-  isFavorite,
-}: Props) => {
+const BuildingMatrix = ({ selectedBuildingId, filter, onApartmentClick, isFavorite }: Props) => {
   const { t } = useTranslation();
+
   const visibleBuildings = useMemo(
     () => (selectedBuildingId ? BUILDINGS.filter((b) => b.id === selectedBuildingId) : BUILDINGS),
     [selectedBuildingId],
   );
 
-  // Per-building active entrance ("all" or entrance id)
   const [activeEntrance, setActiveEntrance] = useState<Record<string, string>>({});
   const getActiveEntrance = (id: string) => activeEntrance[id] ?? 'all';
   const setEntrance = (id: string, e: string) =>
     setActiveEntrance((prev) => ({ ...prev, [id]: e }));
 
-  // Floor plan dialog state
   const [floorView, setFloorView] = useState<{ buildingId: string; floor: number } | null>(null);
 
   const maxFloors = useMemo(
@@ -129,20 +123,17 @@ const BuildingMatrix = ({
   const floorApartments = useMemo(() => {
     if (!floorView) return [];
     return EXPLORER_APARTMENTS.filter(
-      (a) =>
-        `${a.block}-${a.building}` === floorView.buildingId && a.floor === floorView.floor,
+      (a) => `${a.block}-${a.building}` === floorView.buildingId && a.floor === floorView.floor,
     ).sort((a, b) => a.number.localeCompare(b.number));
   }, [floorView]);
 
   return (
     <TooltipProvider delayDuration={120}>
+      {/* Legend + counts */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex flex-wrap items-center gap-4">
           {LEGEND.map((l) => (
-            <div
-              key={l.key}
-              className="flex items-center gap-2 text-xs font-medium text-foreground/80"
-            >
+            <div key={l.key} className="flex items-center gap-2 text-xs font-medium text-foreground/80">
               <span className={cn('h-3.5 w-3.5 rounded-sm', l.cls)} />
               {t(`apartments.status.${l.key}`)}
               <span className="text-muted-foreground tabular-nums">· {counts[l.key]}</span>
@@ -161,9 +152,7 @@ const BuildingMatrix = ({
             <Inbox className="h-7 w-7 text-muted-foreground" />
           </div>
           <p className="font-heading text-lg text-primary">{t('explorer.empty.title')}</p>
-          <p className="text-sm text-muted-foreground mt-1">
-            {t('explorer.empty.subtitle')}
-          </p>
+          <p className="text-sm text-muted-foreground mt-1">{t('explorer.empty.subtitle')}</p>
         </div>
       ) : (
         <div
@@ -194,9 +183,7 @@ const BuildingMatrix = ({
           {visibleBuildings.map((building) => {
             const ae = getActiveEntrance(building.id);
             const visibleEntrances =
-              ae === 'all'
-                ? building.entrances
-                : building.entrances.filter((e) => e.id === ae);
+              ae === 'all' ? building.entrances : building.entrances.filter((e) => e.id === ae);
 
             return (
               <div key={building.id} className="shrink-0">
@@ -208,7 +195,10 @@ const BuildingMatrix = ({
                   <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">
                     {building.status === 'ready'
                       ? t('explorer.building.ready')
-                      : `${building.status} · ${building.progress}%`}
+                      : t('explorer.building.progress', {
+                          status: building.status,
+                          progress: building.progress,
+                        })}
                   </div>
                   <div className="h-1 w-full max-w-[120px] mx-auto mt-1 rounded-full bg-muted overflow-hidden">
                     <motion.div
@@ -268,20 +258,20 @@ const BuildingMatrix = ({
                         arr.push(a);
                         aptsByFloor.set(a.floor, arr);
                       });
-                      const maxUnits = Math.max(
-                        1,
-                        ...Array.from(aptsByFloor.values()).map((arr) => arr.length),
-                      );
+                      const maxUnits = Math.max(1, ...Array.from(aptsByFloor.values()).map((arr) => arr.length));
+
                       return (
                         <div key={entrance.id} className="flex flex-col gap-1">
                           <div className="h-7 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground text-center">
                             {entrance.id}
                           </div>
+
                           {floorRows.map((floor) => {
                             const apts = (aptsByFloor.get(floor) ?? []).sort((a, b) =>
                               a.number.localeCompare(b.number),
                             );
                             const hasApts = apts.length > 0;
+
                             return (
                               <div key={floor} className="flex items-center gap-0.5 h-6 sm:h-7">
                                 {hasApts && (
@@ -294,13 +284,13 @@ const BuildingMatrix = ({
                                     <Layers className="h-3 w-3" />
                                   </button>
                                 )}
+
                                 {Array.from({ length: maxUnits }).map((_, idx) => {
                                   const apt = apts[idx];
-                                  if (!apt) {
-                                    return <div key={idx} className="w-6 sm:w-7 h-6 sm:h-7" />;
-                                  }
+                                  if (!apt) return <div key={idx} className="w-6 sm:w-7 h-6 sm:h-7" />;
                                   const dim = !matchesFilter(apt, filter);
                                   const fav = isFavorite(apt.id);
+
                                   return (
                                     <Tooltip key={apt.id}>
                                       <TooltipTrigger asChild>
@@ -320,15 +310,12 @@ const BuildingMatrix = ({
                                           )}
                                         </button>
                                       </TooltipTrigger>
-                                      <TooltipContent
-                                        side="top"
-                                        className="text-xs p-2 max-w-[200px]"
-                                      >
+                                      <TooltipContent side="top" className="text-xs p-2 max-w-[200px]">
                                         <div className="font-bold mb-1">
-                                          № {apt.number} · {apt.rooms} BR
+                                          {t('explorer.tooltip.title', { number: apt.number, rooms: apt.rooms })}
                                         </div>
                                         <div className="text-muted-foreground space-y-0.5">
-                                          <div>{apt.area} m² · floor {apt.floor}</div>
+                                          <div>{t('explorer.tooltip.meta', { area: apt.area, floor: apt.floor })}</div>
                                           <div className="capitalize">
                                             {t('explorer.labels.status')}: {t(`apartments.status.${apt.status}`)}
                                           </div>
@@ -381,7 +368,7 @@ const BuildingMatrix = ({
             <button
               onClick={() => setFloorView(null)}
               className="h-9 w-9 rounded-full bg-background border border-border grid place-items-center text-primary hover:text-accent transition"
-              aria-label="Close"
+              aria-label={t('common.close')}
             >
               <X className="h-4 w-4" />
             </button>

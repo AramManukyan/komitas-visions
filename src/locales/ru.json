@@ -176,6 +176,10 @@
       "balcony": "Балкон",
       "perSqm": "за м²"
     },
+    "tooltip": {
+      "title": "№ {{number}} · {{rooms}} BR",
+      "meta": "{{area}} m² · этаж {{floor}}"
+    },
     "tags": {
       "hot": "ХИТ",
       "discount": "СКИДКА",
@@ -192,10 +196,28 @@
     "actions": {
       "callback": "Заказать звонок"
     },
+    "menu": {
+      "open": "Открыть меню",
+      "close": "Закрыть меню"
+    },
+    "tabs": {
+      "map": "Карта"
+    },
     "filters": {
       "show": "Показать фильтры",
       "hide": "Скрыть фильтры",
       "unitType": "Тип квартиры",
+      "unitTypeOptions": {
+        "one": "1 BR",
+        "two": "2 BR",
+        "three": "3 BR",
+        "four": "4 BR"
+      },
+      "totalArea": "Общая площадь, м²",
+      "area": {
+        "upTo50": "До 50",
+        "over120": "120+"
+      },
       "more": "Дополнительные фильтры ({{count}})"
     },
     "filteredBy": "Фильтр",

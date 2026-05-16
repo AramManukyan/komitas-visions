@@ -439,7 +439,15 @@ const MarkerMap = ({
 /* ------------------------------------------------------------------ */
 const navKeys = ['about', 'gallery', 'amenities', 'location', 'banks', 'contact'] as const;
 
-const SideMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => (
+const SideMenu = ({
+  open,
+  onClose,
+  t,
+}: {
+  open: boolean;
+  onClose: () => void;
+  t: (key: string) => string;
+}) => (
   <AnimatePresence>
     {open && (
       <>
@@ -466,6 +474,7 @@ const SideMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
             </div>
             <button
               onClick={onClose}
+              aria-label={t('explorer.menu.close')}
               className="h-9 w-9 grid place-items-center rounded-full hover:bg-white/10 transition"
             >
               <X className="h-4 w-4" />
@@ -487,7 +496,7 @@ const SideMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
                 transition={{ delay: 0.05 + i * 0.03 }}
                 className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-primary-foreground/80 hover:text-accent hover:bg-white/5 transition"
               >
-                {key}
+                {t(`nav.${key}`)}
               </motion.a>
             ))}
             <div className="h-px bg-white/10 my-3" />
@@ -496,14 +505,14 @@ const SideMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
               onClick={onClose}
               className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-primary-foreground/80 hover:text-accent hover:bg-white/5 transition"
             >
-              Apartments
+              {t('nav.apartments')}
             </Link>
             <Link
               to="/explorer"
               onClick={onClose}
               className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-accent bg-accent/10"
             >
-              Explorer
+              {t('nav.explorer')}
             </Link>
           </nav>
 
@@ -614,14 +623,14 @@ const ExplorerV2 = () => {
 
   return (
     <div className="h-[100dvh] bg-warm-bg flex flex-col overflow-hidden">
-      <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} t={t} />
 
       {/* Mobile / tablet pane toggle */}
       <div className="lg:hidden flex items-center gap-2 px-3 py-2 border-b border-border bg-background/95 backdrop-blur sticky top-0 z-30">
         <button
           onClick={() => setMenuOpen(true)}
           className="h-10 w-10 shrink-0 grid place-items-center rounded-xl border border-border hover:bg-muted transition"
-          aria-label="Open menu"
+          aria-label={t('explorer.menu.open')}
         >
           <Menu className="h-4 w-4 text-primary" />
         </button>
@@ -634,7 +643,7 @@ const ExplorerV2 = () => {
               : 'bg-muted text-muted-foreground',
           )}
         >
-          <MapIcon className="h-3.5 w-3.5" /> Map
+          <MapIcon className="h-3.5 w-3.5" /> {t('explorer.tabs.map')}
         </button>
         <button
           onClick={() => setMobilePane('list')}
@@ -645,7 +654,7 @@ const ExplorerV2 = () => {
               : 'bg-muted text-muted-foreground',
           )}
         >
-          <List className="h-3.5 w-3.5" /> Apartments
+          <List className="h-3.5 w-3.5" /> {t('nav.apartments')}
           <span className="text-[10px] opacity-70">· {filtered.length}</span>
         </button>
       </div>
@@ -665,7 +674,7 @@ const ExplorerV2 = () => {
               <button
                 onClick={() => setMenuOpen(true)}
                 className="hidden lg:grid h-10 w-10 place-items-center rounded-xl border border-border hover:bg-muted transition"
-                aria-label="Open menu"
+                aria-label={t('explorer.menu.open')}
               >
                 <Menu className="h-4 w-4 text-primary" />
               </button>
@@ -676,7 +685,7 @@ const ExplorerV2 = () => {
                     KOMITAS<span className="text-accent">™</span>
                   </p>
                   <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-body">
-                    Explorer
+                    {t('nav.explorer')}
                   </p>
                 </div>
               </Link>
@@ -744,22 +753,22 @@ const ExplorerV2 = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">{t('explorer.filters.unitType')}</SelectItem>
-                          <SelectItem value="1">1 BR</SelectItem>
-                          <SelectItem value="2">2 BR</SelectItem>
-                          <SelectItem value="3">3 BR</SelectItem>
-                          <SelectItem value="4">4 BR</SelectItem>
+                          <SelectItem value="1">{t('explorer.filters.unitTypeOptions.one')}</SelectItem>
+                          <SelectItem value="2">{t('explorer.filters.unitTypeOptions.two')}</SelectItem>
+                          <SelectItem value="3">{t('explorer.filters.unitTypeOptions.three')}</SelectItem>
+                          <SelectItem value="4">{t('explorer.filters.unitTypeOptions.four')}</SelectItem>
                         </SelectContent>
                     </Select>
                     <Select value={areaBucket} onValueChange={setAreaBucket}>
                       <SelectTrigger className="rounded-xl h-11">
-                        <SelectValue placeholder="total area, m²" />
+                        <SelectValue placeholder={t('explorer.filters.totalArea')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">total area, m²</SelectItem>
-                        <SelectItem value="0-50">up to 50</SelectItem>
+                        <SelectItem value="all">{t('explorer.filters.totalArea')}</SelectItem>
+                        <SelectItem value="0-50">{t('explorer.filters.area.upTo50')}</SelectItem>
                         <SelectItem value="50-80">50 – 80</SelectItem>
                         <SelectItem value="80-120">80 – 120</SelectItem>
-                        <SelectItem value="120-500">120+</SelectItem>
+                        <SelectItem value="120-500">{t('explorer.filters.area.over120')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select value={floorBucket} onValueChange={setFloorBucket}>

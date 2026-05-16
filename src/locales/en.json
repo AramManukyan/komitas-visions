@@ -176,6 +176,10 @@
       "balcony": "Balcony",
       "perSqm": "Per m²"
     },
+    "tooltip": {
+      "title": "№ {{number}} · {{rooms}} BR",
+      "meta": "{{area}} m² · floor {{floor}}"
+    },
     "tags": {
       "hot": "HOT",
       "discount": "DISCOUNT",
@@ -192,10 +196,28 @@
     "actions": {
       "callback": "Callback"
     },
+    "menu": {
+      "open": "Open menu",
+      "close": "Close menu"
+    },
+    "tabs": {
+      "map": "Map"
+    },
     "filters": {
       "show": "Show filters",
       "hide": "Hide filters",
       "unitType": "Unit type",
+      "totalArea": "Total area, m²",
+      "area": {
+        "upTo50": "Up to 50",
+        "over120": "120+"
+      },
+      "unitTypeOptions": {
+        "one": "1 BR",
+        "two": "2 BR",
+        "three": "3 BR",
+        "four": "4 BR"
+      },
       "more": "More filters ({{count}})"
     },
     "filteredBy": "Filtered by",
@@ -212,8 +234,8 @@
     "labels": {
       "status": "Status"
     },
-    "shareMessage": "Hi! I'm interested in apartment â„–{{number}} ({{rooms}} rm, {{area}} mÂ²).",
-    "apartmentNumber": "Apartment â„–{{number}}",
+    "shareMessage": "Hi! I'm interested in apartment №{{number}} ({{rooms}} rm, {{area}} m²).",
+    "apartmentNumber": "Apartment №{{number}}",
     "building": {
       "ready": "Ready",
       "progress": "{{status}} · {{progress}}%"

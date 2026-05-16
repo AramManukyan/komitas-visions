@@ -2,20 +2,20 @@ import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import {
-  X,
-  Heart,
-  Phone,
-  MessageCircle,
-  Send,
-  Download,
   Calculator,
-  Maximize2,
-  Home,
-  Layers,
   DoorOpen,
-  Sun,
+  Download,
+  Heart,
+  Home,
   Info,
+  Layers,
   Map,
+  Maximize2,
+  MessageCircle,
+  Phone,
+  Send,
+  Sun,
+  X,
 } from 'lucide-react';
 import { chatStore } from '@/hooks/useChatAttachments';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -23,8 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { ExplorerApartment } from '@/data/explorer';
-import { EXPLORER_APARTMENTS } from '@/data/explorer';
+import { EXPLORER_APARTMENTS, type ExplorerApartment } from '@/data/explorer';
 import { cn } from '@/lib/utils';
 import apartmentPlan from '@/assets/apartment-plan.jpg';
 import masterplanImg from '@/assets/explorer-masterplan.jpg';
@@ -67,7 +66,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
   }, [apartment, downpayment, years]);
 
   const floorInfo = useMemo(() => {
-    if (!apartment) return { apts: [], totalArea: 0, avgPrice: 0, available: 0 };
+    if (!apartment) return { apts: [], totalArea: 0, available: 0 };
     const apts = EXPLORER_APARTMENTS.filter(
       (a) =>
         a.block === apartment.block &&
@@ -75,17 +74,18 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
         a.floor === apartment.floor,
     ).sort((a, b) => a.number.localeCompare(b.number));
     const totalArea = apts.reduce((s, a) => s + a.area, 0);
-    const avgPrice = apts.length
-      ? Math.round(apts.reduce((s, a) => s + a.price, 0) / apts.length)
-      : 0;
     const available = apts.filter((a) => a.status === 'available').length;
-    return { apts, totalArea, avgPrice, available };
+    return { apts, totalArea, available };
   }, [apartment]);
 
   if (!apartment) return null;
 
   const message = encodeURIComponent(
-    `Hi! I'm interested in apartment №${apartment.number} (${apartment.rooms} rm, ${apartment.area} m²).`,
+    t('explorer.shareMessage', {
+      number: apartment.number,
+      rooms: apartment.rooms,
+      area: apartment.area,
+    }),
   );
   const link = shareUrl ?? window.location.href;
 
@@ -99,12 +99,20 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
         {/* Header */}
         <div className="relative px-6 pt-6 pb-3 border-b border-border">
           <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 h-9 w-9 rounded-full bg-background/80 backdrop-blur border border-border flex items-center justify-center text-primary hover:text-accent transition"
+            aria-label={t('common.close')}
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <button
             onClick={() => setFavorite((v) => !v)}
             className="absolute top-4 right-14 z-10 h-9 w-9 rounded-full bg-background/80 backdrop-blur border border-border flex items-center justify-center text-primary hover:text-accent transition"
             aria-label={t('common.save')}
           >
             <Heart className={cn('h-4 w-4', favorite && 'fill-accent text-accent')} />
           </button>
+
           <div className="flex items-end justify-between gap-3 pr-24">
             <div>
               <p className="text-muted-foreground text-[10px] uppercase tracking-[0.3em] font-semibold mb-1">
@@ -144,7 +152,6 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
 
           <TabsContent value="info" className="m-0">
             <div className="p-6 md:p-8 space-y-6">
-              {/* Apartment plan image */}
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -155,15 +162,16 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                   alt={`Plan of apartment ${apartment.number}`}
                   className="absolute inset-0 w-full h-full object-contain p-4"
                 />
-                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-background/85 backdrop-blur border border-border text-[10px] uppercase tracking-wider font-bold text-primary">
-                  Apartment plan
-                </div>
               </motion.div>
 
               {/* Stats grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <Stat icon={<Home className="h-4 w-4" />} label={t('apartments.card.rooms')} value={apartment.rooms} />
-                <Stat icon={<Maximize2 className="h-4 w-4" />} label="Area" value={`${apartment.area} m²`} />
+                <Stat
+                  icon={<Maximize2 className="h-4 w-4" />}
+                  label={t('apartments.card.area')}
+                  value={`${apartment.area} m²`}
+                />
                 <Stat icon={<Layers className="h-4 w-4" />} label={t('apartments.card.floor')} value={apartment.floor} />
                 <Stat
                   icon={<DoorOpen className="h-4 w-4" />}
@@ -185,9 +193,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                   </p>
                   <p className="font-heading text-4xl font-bold text-primary leading-tight">
                     {fmt(apartment.price)}{' '}
-                    <span className="text-lg font-body text-muted-foreground font-medium">
-                      AMD
-                    </span>
+                    <span className="text-lg font-body text-muted-foreground font-medium">AMD</span>
                   </p>
                   {apartment.originalPrice && (
                     <p className="text-sm text-muted-foreground line-through">
@@ -197,7 +203,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                 </div>
                 <div className="text-right">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Per m²
+                    {t('explorer.details.perSqm')}
                   </p>
                   <p className="font-heading text-xl text-primary font-semibold">
                     {fmt(Math.round(apartment.price / apartment.area))} AMD
@@ -243,9 +249,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                 </div>
                 <div className="flex items-baseline justify-between pt-2 border-t border-border">
                   <span className="text-sm text-muted-foreground">{t('explorer.mortgage.estimatedMonthly')}</span>
-                  <span className="font-heading text-2xl font-bold text-primary">
-                    {fmt(monthly)} AMD
-                  </span>
+                  <span className="font-heading text-2xl font-bold text-primary">{fmt(monthly)} AMD</span>
                 </div>
               </div>
 
@@ -292,11 +296,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                     Telegram
                   </a>
                 </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-xl"
-                  onClick={() => window.print()}
-                >
+                <Button variant="outline" className="rounded-xl" onClick={() => window.print()}>
                   <Download className="h-4 w-4" />
                   PDF
                 </Button>
@@ -330,15 +330,13 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                 </div>
               </motion.div>
 
-              {/* Floor info stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <Stat icon={<Layers className="h-4 w-4" />} label="Floor" value={apartment.floor} />
+                <Stat icon={<Layers className="h-4 w-4" />} label={t('apartments.card.floor')} value={apartment.floor} />
                 <Stat icon={<Home className="h-4 w-4" />} label="Apartments" value={floorInfo.apts.length} />
-                <Stat icon={<Maximize2 className="h-4 w-4" />} label="Total area" value={`${floorInfo.totalArea} m²`} />
+                <Stat icon={<Maximize2 className="h-4 w-4" />} label={t('explorer.filters.totalArea')} value={`${floorInfo.totalArea} m²`} />
                 <Stat icon={<DoorOpen className="h-4 w-4" />} label="Available" value={`${floorInfo.available}/${floorInfo.apts.length}`} />
               </div>
 
-              {/* Apartments on this floor */}
               <div className="rounded-2xl border border-border p-4">
                 <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-3">
                   Apartments on this floor

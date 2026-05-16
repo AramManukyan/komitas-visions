@@ -176,6 +176,10 @@
       "balcony": "Պատշգամբ",
       "perSqm": "1 մ²-ի համար"
     },
+    "tooltip": {
+      "title": "№ {{number}} · {{rooms}} BR",
+      "meta": "{{area}} m² · հարկ {{floor}}"
+    },
     "tags": {
       "hot": "ԹՐԵՆԴԱՅԻՆ",
       "discount": "ԶԵՂՉ",
@@ -192,10 +196,28 @@
     "actions": {
       "callback": "Պատվիրել զանգ"
     },
+    "menu": {
+      "open": "Բացել մենյուն",
+      "close": "Փակել մենյուն"
+    },
+    "tabs": {
+      "map": "Քարտեզ"
+    },
     "filters": {
       "show": "Ցույց տալ ֆիլտրերը",
       "hide": "Թաքցնել ֆիլտրերը",
       "unitType": "Տեսակ",
+      "unitTypeOptions": {
+        "one": "1 BR",
+        "two": "2 BR",
+        "three": "3 BR",
+        "four": "4 BR"
+      },
+      "totalArea": "Ընդհանուր մակերեսը, m²",
+      "area": {
+        "upTo50": "Մինչև 50",
+        "over120": "120+"
+      },
       "more": "Լրացուցիչ ֆիլտրեր ({{count}})"
     },
     "filteredBy": "Ֆիլտրված է ըստ",
