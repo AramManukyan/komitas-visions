@@ -425,7 +425,7 @@ const MarkerMap = ({
           type="button"
           aria-label="Open chat"
           onClick={() => chatStore.setOpen(true)}
-          className="h-9 w-9 grid place-items-center rounded-lg gradient-gold text-navy hover:opacity-90 transition-opacity"
+          className="h-9 w-9 grid place-items-center rounded-lg hover:bg-muted text-primary"
         >
           <MessageCircle className="h-4 w-4" />
         </button>
