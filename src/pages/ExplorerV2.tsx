@@ -835,12 +835,6 @@ const ExplorerV2 = () => {
             )}
           </AnimatePresence>
 
-          <Link
-            to="/explorer"
-            className="absolute bottom-5 right-5 z-20 px-3 py-2 rounded-full bg-background/90 backdrop-blur border border-border text-xs font-semibold text-primary hover:bg-background transition shadow-soft"
-          >
-            ← Explorer v1
-          </Link>
         </main>
       </div>
 
