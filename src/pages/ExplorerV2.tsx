@@ -654,7 +654,11 @@ const ExplorerV2 = () => {
         </aside>
 
         {/* Right panel */}
-        <main className="flex-1 relative min-h-[70vh] lg:min-h-0 lg:h-full overflow-hidden bg-primary">
+        <main className={cn(
+          'flex-1 relative min-h-0 lg:h-full overflow-hidden bg-primary',
+          'lg:block',
+          mobilePane === 'map' ? 'flex flex-1' : 'hidden',
+        )}>
           {/* Top overlay row — stacks on mobile to avoid overlap */}
           <div className="absolute top-4 left-4 right-4 z-20 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pointer-events-none">
             <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-sm font-semibold shadow-elevated pointer-events-auto self-start">
