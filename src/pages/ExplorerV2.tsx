@@ -469,11 +469,42 @@ const ExplorerV2 = () => {
   }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly, isFavorite]);
 
   return (
-    <div className="h-screen bg-warm-bg flex flex-col overflow-hidden">
+    <div className="h-[100dvh] bg-warm-bg flex flex-col overflow-hidden">
       <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
+      {/* Mobile / tablet pane toggle */}
+      <div className="lg:hidden flex items-center gap-2 px-3 py-2 border-b border-border bg-background/95 backdrop-blur sticky top-0 z-30">
+        <button
+          onClick={() => setMobilePane('map')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-bold uppercase tracking-wider transition',
+            mobilePane === 'map'
+              ? 'bg-primary text-primary-foreground shadow-soft'
+              : 'bg-muted text-muted-foreground',
+          )}
+        >
+          <MapIcon className="h-3.5 w-3.5" /> Map
+        </button>
+        <button
+          onClick={() => setMobilePane('list')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-bold uppercase tracking-wider transition',
+            mobilePane === 'list'
+              ? 'bg-primary text-primary-foreground shadow-soft'
+              : 'bg-muted text-muted-foreground',
+          )}
+        >
+          <List className="h-3.5 w-3.5" /> Apartments
+          <span className="text-[10px] opacity-70">· {filtered.length}</span>
+        </button>
+      </div>
+
       <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
-        <aside className="w-full lg:w-[460px] xl:w-[500px] bg-background border-r border-border flex flex-col min-h-0 lg:h-full max-h-full">
+        <aside className={cn(
+          'w-full lg:w-[420px] xl:w-[500px] bg-background border-r border-border flex-col min-h-0 lg:h-full max-h-full',
+          'lg:flex',
+          mobilePane === 'list' ? 'flex flex-1' : 'hidden',
+        )}>
           {/* Logo strip with menu trigger */}
           <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
