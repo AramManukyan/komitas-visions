@@ -79,15 +79,8 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
         {/* Header */}
         <div className="relative px-6 pt-6 pb-3 border-b border-border">
           <button
-            onClick={onClose}
-            className="absolute top-4 right-4 z-10 h-9 w-9 rounded-full bg-background/80 backdrop-blur border border-border flex items-center justify-center text-primary hover:text-accent transition"
-            aria-label={t('common.close')}
-          >
-            <X className="h-4 w-4" />
-          </button>
-          <button
             onClick={() => setFavorite((v) => !v)}
-            className="absolute top-4 right-16 z-10 h-9 w-9 rounded-full bg-background/80 backdrop-blur border border-border flex items-center justify-center text-primary hover:text-accent transition"
+            className="absolute top-4 right-14 z-10 h-9 w-9 rounded-full bg-background/80 backdrop-blur border border-border flex items-center justify-center text-primary hover:text-accent transition"
             aria-label={t('common.save')}
           >
             <Heart className={cn('h-4 w-4', favorite && 'fill-accent text-accent')} />
