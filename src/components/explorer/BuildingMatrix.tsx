@@ -350,10 +350,10 @@ const BuildingMatrix = ({
                   {[-1, -2].map((p) => (
                     <div
                       key={p}
-                      className="mt-1 h-7 sm:h-8 w-full rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 flex items-center justify-center gap-2 text-[11px] font-semibold"
+                      className="mt-1 h-7 sm:h-8 w-full rounded-md border border-primary/20 bg-primary/5 text-primary/80 flex items-center justify-center gap-2 text-[11px] font-semibold tracking-wide"
                     >
-                      <ParkingSquare className="h-3.5 w-3.5" />
-                      Parking
+                      <ParkingSquare className="h-3.5 w-3.5 text-accent-foreground/70" />
+                      <span className="uppercase tracking-wider text-[10px]">Parking {p}</span>
                     </div>
                   ))}
                 </div>
