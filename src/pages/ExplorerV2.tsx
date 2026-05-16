@@ -949,7 +949,7 @@ const ExplorerV2 = () => {
         shareUrl={typeof window !== 'undefined' ? window.location.href : undefined}
       />
 
-      <ChatWidget />
+      <ChatWidget hideFloatingButton />
     </div>
   );
 };
