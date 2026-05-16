@@ -126,6 +126,22 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
 
           <TabsContent value="info" className="m-0">
             <div className="p-6 md:p-8 space-y-6">
+              {/* Apartment plan image */}
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative w-full aspect-[4/3] md:aspect-[16/10] bg-muted rounded-2xl overflow-hidden border border-border"
+              >
+                <img
+                  src={apartmentPlan}
+                  alt={`Plan of apartment ${apartment.number}`}
+                  className="absolute inset-0 w-full h-full object-contain p-4"
+                />
+                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-background/85 backdrop-blur border border-border text-[10px] uppercase tracking-wider font-bold text-primary">
+                  Apartment plan
+                </div>
+              </motion.div>
+
               {/* Stats grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <Stat icon={<Home className="h-4 w-4" />} label={t('apartments.card.rooms')} value={apartment.rooms} />
