@@ -573,7 +573,7 @@ const ExplorerV2 = () => {
                     KOMITAS<span className="text-accent">™</span>
                   </p>
                   <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-body">
-                    Explorer v2
+                    Explorer
                   </p>
                 </div>
               </Link>
