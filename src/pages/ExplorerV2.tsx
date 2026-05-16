@@ -420,6 +420,15 @@ const MarkerMap = ({
         >
           <RotateCcw className="h-3.5 w-3.5" />
         </button>
+        <div className="h-px bg-border mx-1" />
+        <button
+          type="button"
+          aria-label="Open chat"
+          onClick={() => chatStore.setOpen(true)}
+          className="h-9 w-9 grid place-items-center rounded-lg gradient-gold text-navy hover:opacity-90 transition-opacity"
+        >
+          <MessageCircle className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
