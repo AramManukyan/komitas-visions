@@ -47,9 +47,10 @@ interface Props {
   apartment: ExplorerApartment | null;
   onClose: () => void;
   shareUrl?: string;
+  onSelectApartment?: (apt: ExplorerApartment) => void;
 }
 
-const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
+const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment }: Props) => {
   const { t } = useTranslation();
   const [favorite, setFavorite] = useState(false);
   const [downpayment, setDownpayment] = useState(20);
