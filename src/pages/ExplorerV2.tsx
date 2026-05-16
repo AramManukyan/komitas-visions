@@ -12,6 +12,8 @@ import {
   Box,
   Menu,
   X,
+  List,
+  Map as MapIcon,
 } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useExplorerUrlState } from '@/hooks/useExplorerUrlState';
