@@ -14,7 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import ApartmentDetailsSheet from '@/components/explorer/ApartmentDetailsSheet';
-import BuildingsGrid from '@/components/explorer/BuildingsGrid';
+import BuildingMatrix from '@/components/explorer/BuildingMatrix';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import {
   Select,
@@ -529,18 +529,18 @@ const ExplorerV2 = () => {
                 <div className="p-6 lg:p-10">
                   <div className="mb-6 max-w-2xl">
                     <span className="text-[11px] uppercase tracking-[0.3em] text-accent-foreground/60 font-semibold">
-                      District
+                      Building layout
                     </span>
                     <h2 className="font-heading text-2xl md:text-4xl text-primary font-semibold mt-1">
-                      Buildings overview
+                      {selectedBuildingId ? `Building ${selectedBuildingId}` : 'All buildings'}
                     </h2>
                     <p className="text-muted-foreground mt-2 font-body text-sm">
-                      Pick a building to filter the apartments on the left.
+                      Click any apartment to view details. Numbers indicate bedrooms.
                     </p>
                   </div>
-                  <BuildingsGrid
-                    selectedId={selectedBuildingId}
-                    onSelect={(b) => setSelectedBuildingId(b.id)}
+                  <BuildingMatrix
+                    selectedBuildingId={selectedBuildingId}
+                    onApartmentClick={(apt) => setDetailsApt(apt)}
                   />
                 </div>
               </motion.div>
