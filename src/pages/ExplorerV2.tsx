@@ -517,7 +517,7 @@ const ExplorerV2 = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setMenuOpen(true)}
-                className="h-10 w-10 grid place-items-center rounded-xl border border-border hover:bg-muted transition"
+                className="hidden lg:grid h-10 w-10 place-items-center rounded-xl border border-border hover:bg-muted transition"
                 aria-label="Open menu"
               >
                 <Menu className="h-4 w-4 text-primary" />
