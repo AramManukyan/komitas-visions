@@ -34,7 +34,10 @@ export const APARTMENTS: Apartment[] = (() => {
     for (let bld = 1; bld <= BUILDINGS_PER_BLOCK; bld++) {
       for (let ent = 1; ent <= ENTRANCES_PER_BUILDING; ent++) {
         for (let floor = 1; floor <= FLOORS; floor++) {
-          for (let i = 0; i < APTS_PER_FLOOR; i++) {
+          // Variable apartments per floor: 2–6, deterministic per building+entrance+floor
+          const floorSeed = seed(floor * 31 + ent * 7 + bld * 13 + block.charCodeAt(0));
+          const aptsThisFloor = 2 + Math.floor(floorSeed * 5); // 2..6
+          for (let i = 0; i < aptsThisFloor; i++) {
             counter++;
             const r = seed(counter);
             const rooms = [1, 2, 2, 3, 3, 4][Math.floor(r * 6)];
