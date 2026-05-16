@@ -291,21 +291,67 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
           </TabsContent>
 
           <TabsContent value="plan" className="m-0">
-            <div className="p-6 md:p-8">
+            <div className="p-6 md:p-8 space-y-5">
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative w-full aspect-[4/3] bg-muted rounded-2xl overflow-hidden border border-border"
+                className="relative w-full aspect-[16/9] bg-muted rounded-2xl overflow-hidden border border-border"
               >
                 <img
-                  src={apartmentPlan}
-                  alt={`Floor plan for apartment ${apartment.number}`}
-                  className="absolute inset-0 w-full h-full object-contain p-4"
+                  src={masterplanImg}
+                  alt={`Whole floor plan — floor ${apartment.floor}`}
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/0 to-background/0" />
+                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-background/85 backdrop-blur border border-border text-[10px] uppercase tracking-wider font-bold text-primary">
+                  Floor {apartment.floor} · Building {apartment.block}/{apartment.building}
+                </div>
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 text-[11px] font-semibold text-primary">
+                  <span className="px-2.5 py-1 rounded-full bg-background/85 backdrop-blur border border-border">
+                    Entrance {apartment.entrance}
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full bg-accent text-accent-foreground">
+                    Selected: №{apartment.number}
+                  </span>
+                </div>
               </motion.div>
-              <p className="text-xs text-muted-foreground mt-3 text-center">
-                Apartment №{apartment.number} · {apartment.area} m² · {apartment.rooms} BR · Floor {apartment.floor}
-              </p>
+
+              {/* Floor info stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <Stat icon={<Layers className="h-4 w-4" />} label="Floor" value={apartment.floor} />
+                <Stat icon={<Home className="h-4 w-4" />} label="Apartments" value={floorInfo.apts.length} />
+                <Stat icon={<Maximize2 className="h-4 w-4" />} label="Total area" value={`${floorInfo.totalArea} m²`} />
+                <Stat icon={<DoorOpen className="h-4 w-4" />} label="Available" value={`${floorInfo.available}/${floorInfo.apts.length}`} />
+              </div>
+
+              {/* Apartments on this floor */}
+              <div className="rounded-2xl border border-border p-4">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-3">
+                  Apartments on this floor
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {floorInfo.apts.map((a) => {
+                    const isCurrent = a.id === apartment.id;
+                    return (
+                      <div
+                        key={a.id}
+                        className={cn(
+                          'px-3 py-2 rounded-xl border text-xs font-semibold flex items-center gap-2',
+                          isCurrent
+                            ? 'bg-accent text-accent-foreground border-accent shadow-sm'
+                            : 'bg-card border-border text-primary',
+                        )}
+                      >
+                        <span className="font-bold">№{a.number}</span>
+                        <span className="opacity-70">·</span>
+                        <span>{a.rooms} BR</span>
+                        <span className="opacity-70">·</span>
+                        <span>{a.area} m²</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
