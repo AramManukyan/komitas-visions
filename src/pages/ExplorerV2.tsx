@@ -555,11 +555,14 @@ const ExplorerV2 = () => {
       </div>
 
       <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
-        <aside className={cn(
-          'w-full lg:w-[420px] xl:w-[500px] bg-background border-r border-border flex-col min-h-0 lg:h-full max-h-full',
-          'lg:flex',
-          mobilePane === 'list' ? 'flex flex-1' : 'hidden',
-        )}>
+        <aside
+          style={isDesktop ? { width: asideWidth, flex: '0 0 auto' } : undefined}
+          className={cn(
+            'w-full lg:w-[420px] xl:w-[500px] bg-background border-r border-border flex-col min-h-0 lg:h-full max-h-full',
+            'lg:flex',
+            mobilePane === 'list' ? 'flex flex-1' : 'hidden',
+          )}
+        >
           {/* Logo strip with menu trigger */}
           <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
