@@ -81,10 +81,19 @@ const ChatWidget = () => {
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();
-    if (!text) return;
-    setMessages((m) => [...m, { id: `${Date.now()}-u`, text, sender: 'user' }]);
+    if (!text && attachments.length === 0) return;
+    const apts = attachments;
+    const summary = apts.length
+      ? apts.map((a) => `№${a.number} (${a.rooms} BR · ${a.area} m² · $${a.price.toLocaleString()})`).join(', ')
+      : '';
+    const fullText = text || (apts.length ? `I'm interested in: ${summary}` : '');
+    setMessages((m) => [
+      ...m,
+      { id: `${Date.now()}-u`, text: fullText, sender: 'user', apartments: apts },
+    ]);
     setInput('');
-    simulateBotReply(text);
+    chatStore.clearAttachments();
+    simulateBotReply(fullText);
   };
 
   return (
