@@ -474,42 +474,13 @@ const ExplorerV2 = () => {
 
       {/* Mobile / tablet pane toggle */}
       <div className="lg:hidden flex items-center gap-2 px-3 py-2 border-b border-border bg-background/95 backdrop-blur sticky top-0 z-30">
-        {mobilePane === 'map' ? (
-          <button
-            onClick={() => setMenuOpen(true)}
-            className="h-10 w-10 shrink-0 grid place-items-center rounded-xl border border-border hover:bg-muted transition"
-            aria-label="Open menu"
-          >
-            <Menu className="h-4 w-4 text-primary" />
-          </button>
-        ) : (
-          <>
-            <Link to="/" className="flex items-center gap-2 shrink-0 pr-1" aria-label="Home">
-              <img src={logo} alt="New Komitas" className="h-8 w-auto" />
-              <span className="font-heading text-sm font-bold tracking-tight text-primary">
-                KOMITAS<span className="text-accent">™</span>
-              </span>
-            </Link>
-            <button
-              onClick={() => setShowFavOnly((v) => !v)}
-              aria-pressed={showFavOnly}
-              className={cn(
-                'relative h-10 w-10 shrink-0 grid place-items-center rounded-xl border transition',
-                showFavOnly
-                  ? 'bg-destructive/10 border-destructive text-destructive'
-                  : 'border-border hover:bg-muted text-muted-foreground',
-              )}
-              aria-label="Show favorites only"
-            >
-              <Heart className={cn('h-4 w-4', showFavOnly && 'fill-destructive')} />
-              {favCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-accent text-accent-foreground text-[9px] font-bold grid place-items-center">
-                  {favCount}
-                </span>
-              )}
-            </button>
-          </>
-        )}
+        <button
+          onClick={() => setMenuOpen(true)}
+          className="h-10 w-10 shrink-0 grid place-items-center rounded-xl border border-border hover:bg-muted transition"
+          aria-label="Open menu"
+        >
+          <Menu className="h-4 w-4 text-primary" />
+        </button>
         <button
           onClick={() => setMobilePane('map')}
           className={cn(
@@ -542,7 +513,7 @@ const ExplorerV2 = () => {
           mobilePane === 'list' ? 'flex flex-1' : 'hidden',
         )}>
           {/* Logo strip with menu trigger */}
-          <div className="hidden lg:flex px-5 py-4 border-b border-border items-center justify-between gap-3">
+          <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setMenuOpen(true)}
