@@ -66,12 +66,6 @@ const Header = () => {
           >
             {t('nav.explorer', 'Explorer')}
           </a>
-          <a
-            href="#/explorer/v2"
-            className="relative px-4 py-2 text-accent font-body text-[13px] font-semibold uppercase tracking-wider transition-colors duration-300 hover:text-accent/80"
-          >
-            Explorer v2
-          </a>
         </nav>
 
         <div className="hidden lg:flex items-center">

@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import Apartments from "./pages/Apartments.tsx";
-import Explorer from "./pages/Explorer.tsx";
 import ExplorerV2 from "./pages/ExplorerV2.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import PromoTopBanner from "@/components/PromoTopBanner";
@@ -36,7 +35,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/apartments" element={<Apartments />} />
-          <Route path="/explorer" element={<Explorer />} />
+          <Route path="/explorer" element={<ExplorerV2 />} />
           <Route path="/explorer/v2" element={<ExplorerV2 />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -399,16 +399,9 @@ const SideMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
             <Link
               to="/explorer"
               onClick={onClose}
-              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-accent hover:bg-white/5 transition"
-            >
-              Explorer
-            </Link>
-            <Link
-              to="/explorer/v2"
-              onClick={onClose}
               className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-accent bg-accent/10"
             >
-              Explorer v2
+              Explorer
             </Link>
           </nav>
 
@@ -580,7 +573,7 @@ const ExplorerV2 = () => {
                     KOMITAS<span className="text-accent">™</span>
                   </p>
                   <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-body">
-                    Explorer v2
+                    Explorer
                   </p>
                 </div>
               </Link>
@@ -842,12 +835,6 @@ const ExplorerV2 = () => {
             )}
           </AnimatePresence>
 
-          <Link
-            to="/explorer"
-            className="absolute bottom-5 right-5 z-20 px-3 py-2 rounded-full bg-background/90 backdrop-blur border border-border text-xs font-semibold text-primary hover:bg-background transition shadow-soft"
-          >
-            ← Explorer v1
-          </Link>
         </main>
       </div>
 
