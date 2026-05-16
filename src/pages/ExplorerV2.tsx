@@ -748,6 +748,24 @@ const ExplorerV2 = () => {
           </div>
         </aside>
 
+        {/* Splitter (desktop only) */}
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
+          onDoubleClick={() => setAsideWidth(460)}
+          className={cn(
+            'hidden lg:flex group relative w-1.5 shrink-0 cursor-col-resize items-center justify-center bg-border hover:bg-accent transition-colors',
+            dragging && 'bg-accent',
+          )}
+          aria-label="Resize panels"
+        >
+          <div className="absolute top-1/2 -translate-y-1/2 h-10 w-1 rounded-full bg-foreground/20 group-hover:bg-accent-foreground/60 transition" />
+        </div>
+
         {/* Right panel */}
         <main className={cn(
           'flex-1 relative min-h-0 lg:h-full overflow-hidden bg-primary',
