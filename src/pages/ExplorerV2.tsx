@@ -143,79 +143,89 @@ const MarkerMap = ({
   onViewChange: (v: View) => void;
 }) => {
   const geometry = getMasterplanGeometry('komitas');
-  const markers = useMemo(
-    () =>
-      buildings.map((b, i) => {
-        const zone = geometry?.zones.find((z) => z.id === b.id);
-        const cx = zone?.bbox?.cx ?? 400;
-        const cy = zone?.bbox?.cy ?? 250;
-        return {
-          building: b,
-          n: i + 1,
-          xPct: (cx / 800) * 100,
-          yPct: (cy / 500) * 100,
-        };
-      }),
-    [buildings, geometry],
-  );
+  const vb = (geometry?.viewBox ?? '0 0 1600 900').split(' ').map(Number);
+  const VBW = vb[2];
+  const VBH = vb[3];
 
   return (
     <div className="relative w-full h-full overflow-hidden bg-primary">
-      <img
-        src={masterplanImg}
-        alt="District masterplan aerial view"
-        className={cn(
-          'absolute inset-0 w-full h-full object-cover transition-all duration-700',
-          view === '2d' ? 'grayscale brightness-110 contrast-110' : '',
-        )}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-primary/20" />
+      <svg
+        viewBox={geometry?.viewBox ?? '0 0 1600 900'}
+        preserveAspectRatio="xMidYMid meet"
+        className="absolute inset-0 w-full h-full"
+      >
+        <image
+          href={masterplanImg}
+          x={0}
+          y={0}
+          width={VBW}
+          height={VBH}
+          preserveAspectRatio="xMidYMid slice"
+          className={cn(
+            'transition-all duration-700',
+            view === '2d' ? '[filter:grayscale(1)_brightness(1.1)_contrast(1.1)]' : '',
+          )}
+        />
 
-      <AnimatePresence>
-        {selectedId && geometry && (
-          <motion.svg
-            key={selectedId}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            viewBox={geometry.viewBox}
-            preserveAspectRatio="xMidYMid slice"
-            className="absolute inset-0 w-full h-full pointer-events-none"
-          >
-            {geometry.zones
-              .filter((z) => z.id === selectedId)
-              .map((z) => (
-                <polygon
-                  key={z.id}
-                  points={z.points}
-                  fill="hsl(214 80% 55% / 0.55)"
-                  stroke="hsl(214 90% 70%)"
-                  strokeWidth={2}
-                />
-              ))}
-          </motion.svg>
-        )}
-      </AnimatePresence>
+        {/* Hover/click zones for all buildings */}
+        {geometry?.zones.map((z) => {
+          const active = selectedId === z.id;
+          const b = buildings.find((bb) => bb.id === z.id);
+          if (!b) return null;
+          return (
+            <polygon
+              key={`zone-${z.id}`}
+              points={z.points}
+              onClick={() => onSelect(b)}
+              className="cursor-pointer transition-all"
+              fill={active ? 'hsl(214 80% 55% / 0.45)' : 'hsl(214 80% 55% / 0)'}
+              stroke={active ? 'hsl(214 90% 70%)' : 'hsl(0 0% 100% / 0)'}
+              strokeWidth={4}
+              style={{
+                transition: 'fill .25s, stroke .25s',
+              }}
+              onMouseEnter={(e) => {
+                if (!active) (e.currentTarget as SVGPolygonElement).setAttribute('fill', 'hsl(214 80% 55% / 0.25)');
+              }}
+              onMouseLeave={(e) => {
+                if (!active) (e.currentTarget as SVGPolygonElement).setAttribute('fill', 'hsl(214 80% 55% / 0)');
+              }}
+            />
+          );
+        })}
 
-      {markers.map((m) => {
-        const active = selectedId === m.building.id;
-        return (
-          <button
-            key={m.building.id}
-            onClick={() => onSelect(m.building)}
-            style={{ left: `${m.xPct}%`, top: `${m.yPct}%` }}
-            className={cn(
-              'absolute -translate-x-1/2 -translate-y-1/2 h-10 w-10 rounded-full grid place-items-center font-heading font-bold text-base transition-all shadow-elevated',
-              active
-                ? 'bg-accent text-accent-foreground scale-110 ring-4 ring-accent/30'
-                : 'bg-foreground/85 text-background hover:bg-foreground hover:scale-105',
-            )}
-            aria-label={`Building ${m.building.name}`}
-          >
-            {m.n}
-          </button>
-        );
-      })}
+        {/* Numbered markers */}
+        {geometry?.zones.map((z, i) => {
+          const b = buildings.find((bb) => bb.id === z.id);
+          if (!b || !z.bbox) return null;
+          const active = selectedId === b.id;
+          return (
+            <g
+              key={`marker-${z.id}`}
+              transform={`translate(${z.bbox.cx}, ${z.bbox.cy})`}
+              onClick={() => onSelect(b)}
+              className="cursor-pointer"
+            >
+              <circle
+                r={active ? 28 : 24}
+                fill={active ? 'hsl(45 80% 55%)' : 'hsl(0 0% 10% / 0.85)'}
+                stroke={active ? 'hsl(45 80% 75%)' : 'hsl(0 0% 100% / 0.2)'}
+                strokeWidth={active ? 6 : 2}
+                style={{ transition: 'all .25s' }}
+              />
+              <text
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize={22}
+                fontWeight={700}
+                fill={active ? 'hsl(214 60% 12%)' : 'hsl(0 0% 100%)'}
+              >
+                {i + 1}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
 
       <div className="absolute top-4 left-4">
         <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-sm font-semibold shadow-elevated">
