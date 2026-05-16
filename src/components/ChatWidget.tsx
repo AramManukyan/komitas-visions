@@ -229,19 +229,46 @@ const ChatWidget = () => {
                 )}
               </div>
 
+              {/* Attachment chips */}
+              {attachments.length > 0 && (
+                <div className="border-t border-border bg-muted/40 px-3 py-2 flex flex-wrap gap-1.5">
+                  {attachments.map((a) => (
+                    <span
+                      key={a.id}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-background border border-border pl-2 pr-1 py-0.5 text-[11px] font-medium text-foreground"
+                    >
+                      <Home className="h-3 w-3 text-accent-foreground/70" />
+                      №{a.number} · {a.rooms}BR · {a.area}m²
+                      <button
+                        type="button"
+                        onClick={() => chatStore.removeApartment(a.id)}
+                        className="h-4 w-4 rounded-full grid place-items-center text-muted-foreground hover:bg-muted hover:text-foreground"
+                        aria-label="Remove attachment"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
               {/* Input */}
               <form onSubmit={handleSend} className="flex items-center gap-2 border-t border-border bg-background p-3">
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder={t('chat.placeholders.input')}
+                  placeholder={
+                    attachments.length > 0
+                      ? `Add a note for ${attachments.length} apartment${attachments.length > 1 ? 's' : ''}...`
+                      : t('chat.placeholders.input')
+                  }
                   className="flex-1"
                   autoComplete="off"
                 />
                 <Button
                   type="submit"
                   size="icon"
-                  disabled={!input.trim() || isTyping}
+                  disabled={(!input.trim() && attachments.length === 0) || isTyping}
                   aria-label={t('chat.aria.send')}
                 >
                   <Send className="h-4 w-4" />
