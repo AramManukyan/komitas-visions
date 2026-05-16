@@ -265,7 +265,7 @@ const MarkerMap = ({
         movedRef.current = true;
       }
       const { tx, ty } = panStart.current;
-      setT((cur) => ({ scale: cur.scale, x: tx + dx, y: ty + dy }));
+      setT((cur) => clamp(cur.scale, tx + dx, ty + dy));
     }
   };
 
