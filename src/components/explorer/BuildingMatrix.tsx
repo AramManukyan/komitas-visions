@@ -172,11 +172,11 @@ const BuildingMatrix = ({
           className="flex gap-8 md:gap-12 items-start overflow-x-auto pb-4"
         >
           {/* Floor numbers column */}
-          <div className="flex flex-col gap-1 pt-[88px] shrink-0 sticky left-0 bg-warm-bg z-10">
+          <div className="flex flex-col gap-1 pt-[120px] shrink-0 sticky left-0 bg-warm-bg z-10">
             {floorRows.map((f) => (
               <div
                 key={f}
-                className="h-6 sm:h-7 w-6 sm:w-8 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-muted-foreground bg-muted/50 rounded"
+                className="h-6 sm:h-7 w-6 sm:w-8 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-muted-foreground bg-muted/60 border border-border/60 rounded"
               >
                 {f}
               </div>
@@ -184,7 +184,7 @@ const BuildingMatrix = ({
             {[-1, -2].map((p) => (
               <div
                 key={p}
-                className="h-7 sm:h-8 w-6 sm:w-8 mt-1 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-emerald-700 bg-emerald-500/10 border border-emerald-500/30 rounded"
+                className="h-7 sm:h-8 w-6 sm:w-8 mt-1 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-primary/70 bg-primary/5 border border-primary/20 rounded"
               >
                 {p}
               </div>
@@ -225,9 +225,9 @@ const BuildingMatrix = ({
                   </div>
                 </div>
 
-                {/* Entrance switcher */}
-                {building.entrances.length > 1 && (
-                  <div className="mb-2 flex items-center justify-center gap-1 p-0.5 rounded-full bg-muted/60 border border-border">
+                {/* Entrance switcher (always rendered for alignment) */}
+                <div className="mb-2 h-7 flex items-center justify-center gap-1 p-0.5 rounded-full bg-muted/60 border border-border">
+                  {building.entrances.length > 1 && (
                     <button
                       onClick={() => setEntrance(building.id, 'all')}
                       className={cn(
@@ -239,23 +239,23 @@ const BuildingMatrix = ({
                     >
                       All
                     </button>
-                    {building.entrances.map((e) => (
-                      <button
-                        key={e.id}
-                        onClick={() => setEntrance(building.id, e.id)}
-                        className={cn(
-                          'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition',
-                          ae === e.id
-                            ? 'bg-primary text-primary-foreground shadow-sm'
-                            : 'text-muted-foreground hover:text-foreground',
-                        )}
-                        title={`Entrance ${e.id}`}
-                      >
-                        {e.id}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                  )}
+                  {building.entrances.map((e) => (
+                    <button
+                      key={e.id}
+                      onClick={() => setEntrance(building.id, e.id)}
+                      className={cn(
+                        'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition',
+                        ae === e.id || building.entrances.length === 1
+                          ? 'bg-primary text-primary-foreground shadow-sm'
+                          : 'text-muted-foreground hover:text-foreground',
+                      )}
+                      title={`Entrance ${e.id}`}
+                    >
+                      {e.id}
+                    </button>
+                  ))}
+                </div>
 
                 <div className="flex flex-col gap-1">
                   <div className="flex gap-2">
@@ -350,10 +350,10 @@ const BuildingMatrix = ({
                   {[-1, -2].map((p) => (
                     <div
                       key={p}
-                      className="mt-1 h-7 sm:h-8 w-full rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 flex items-center justify-center gap-2 text-[11px] font-semibold"
+                      className="mt-1 h-7 sm:h-8 w-full rounded-md border border-primary/20 bg-primary/5 text-primary/80 flex items-center justify-center gap-2 text-[11px] font-semibold tracking-wide"
                     >
-                      <ParkingSquare className="h-3.5 w-3.5" />
-                      Parking
+                      <ParkingSquare className="h-3.5 w-3.5 text-accent-foreground/70" />
+                      <span className="uppercase tracking-wider text-[10px]">Parking {p}</span>
                     </div>
                   ))}
                 </div>
