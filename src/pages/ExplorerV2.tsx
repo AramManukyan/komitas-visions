@@ -12,6 +12,8 @@ import {
   Box,
   Menu,
   X,
+  List,
+  Map as MapIcon,
 } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useExplorerUrlState } from '@/hooks/useExplorerUrlState';
@@ -432,6 +434,7 @@ const ExplorerV2 = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showFavOnly, setShowFavOnly] = useState(false);
   const [listLoading, setListLoading] = useState(false);
+  const [mobilePane, setMobilePane] = useState<'map' | 'list'>('map');
 
   const selectedBuildingId = selection.buildingId;
   const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
@@ -466,11 +469,42 @@ const ExplorerV2 = () => {
   }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly, isFavorite]);
 
   return (
-    <div className="h-screen bg-warm-bg flex flex-col overflow-hidden">
+    <div className="h-[100dvh] bg-warm-bg flex flex-col overflow-hidden">
       <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
+      {/* Mobile / tablet pane toggle */}
+      <div className="lg:hidden flex items-center gap-2 px-3 py-2 border-b border-border bg-background/95 backdrop-blur sticky top-0 z-30">
+        <button
+          onClick={() => setMobilePane('map')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-bold uppercase tracking-wider transition',
+            mobilePane === 'map'
+              ? 'bg-primary text-primary-foreground shadow-soft'
+              : 'bg-muted text-muted-foreground',
+          )}
+        >
+          <MapIcon className="h-3.5 w-3.5" /> Map
+        </button>
+        <button
+          onClick={() => setMobilePane('list')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-bold uppercase tracking-wider transition',
+            mobilePane === 'list'
+              ? 'bg-primary text-primary-foreground shadow-soft'
+              : 'bg-muted text-muted-foreground',
+          )}
+        >
+          <List className="h-3.5 w-3.5" /> Apartments
+          <span className="text-[10px] opacity-70">· {filtered.length}</span>
+        </button>
+      </div>
+
       <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
-        <aside className="w-full lg:w-[460px] xl:w-[500px] bg-background border-r border-border flex flex-col min-h-0 lg:h-full max-h-full">
+        <aside className={cn(
+          'w-full lg:w-[420px] xl:w-[500px] bg-background border-r border-border flex-col min-h-0 lg:h-full max-h-full',
+          'lg:flex',
+          mobilePane === 'list' ? 'flex flex-1' : 'hidden',
+        )}>
           {/* Logo strip with menu trigger */}
           <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -620,7 +654,11 @@ const ExplorerV2 = () => {
         </aside>
 
         {/* Right panel */}
-        <main className="flex-1 relative min-h-[70vh] lg:min-h-0 lg:h-full overflow-hidden bg-primary">
+        <main className={cn(
+          'flex-1 relative min-h-0 lg:h-full overflow-hidden bg-primary',
+          'lg:block',
+          mobilePane === 'map' ? 'flex flex-1' : 'hidden',
+        )}>
           {/* Top overlay row — stacks on mobile to avoid overlap */}
           <div className="absolute top-4 left-4 right-4 z-20 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pointer-events-none">
             <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-sm font-semibold shadow-elevated pointer-events-auto self-start">
@@ -666,7 +704,7 @@ const ExplorerV2 = () => {
                 transition={{ duration: 0.35 }}
                 className="absolute inset-0 overflow-y-auto bg-warm-bg pt-24 sm:pt-20"
               >
-                <div className="p-6 lg:p-10">
+                <div className="p-3 sm:p-6 lg:p-10">
                   <div className="mb-6 max-w-2xl">
                     <span className="text-[11px] uppercase tracking-[0.3em] text-accent-foreground/60 font-semibold">
                       Building layout

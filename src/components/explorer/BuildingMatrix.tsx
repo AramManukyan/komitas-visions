@@ -157,7 +157,7 @@ const BuildingMatrix = ({
             {floorRows.map((f) => (
               <div
                 key={f}
-                className="h-7 w-8 grid place-items-center text-[11px] font-semibold text-muted-foreground bg-muted/50 rounded"
+                className="h-6 sm:h-7 w-6 sm:w-8 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-muted-foreground bg-muted/50 rounded"
               >
                 {f}
               </div>
@@ -215,11 +215,11 @@ const BuildingMatrix = ({
                           a.number.localeCompare(b.number),
                         );
                         return (
-                          <div key={floor} className="flex gap-0.5 h-7">
+                          <div key={floor} className="flex gap-0.5 h-6 sm:h-7">
                             {Array.from({ length: maxUnits }).map((_, idx) => {
                               const apt = apts[idx];
                               if (!apt) {
-                                return <div key={idx} className="w-7 h-7" />;
+                                return <div key={idx} className="w-6 sm:w-7 h-6 sm:h-7" />;
                               }
                               const dim = !matchesFilter(apt, filter);
                               const fav = isFavorite(apt.id);
@@ -230,7 +230,7 @@ const BuildingMatrix = ({
                                       data-cell="1"
                                       onClick={() => onApartmentClick(apt)}
                                       className={cn(
-                                        'relative w-7 h-7 rounded text-[10px] font-bold grid place-items-center transition-all outline-none',
+                                        'relative w-6 sm:w-7 h-6 sm:h-7 rounded text-[9px] sm:text-[10px] font-bold grid place-items-center transition-all outline-none',
                                         'focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-warm-bg',
                                         STATUS_CELL[apt.status],
                                         dim && 'opacity-25 saturate-50',
