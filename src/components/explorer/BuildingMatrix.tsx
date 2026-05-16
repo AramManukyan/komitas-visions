@@ -181,6 +181,14 @@ const BuildingMatrix = ({
                 {f}
               </div>
             ))}
+            {[-1, -2].map((p) => (
+              <div
+                key={p}
+                className="h-7 sm:h-8 w-6 sm:w-8 mt-1 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-emerald-700 bg-emerald-500/10 border border-emerald-500/30 rounded"
+              >
+                {p}
+              </div>
+            ))}
           </div>
 
           {visibleBuildings.map((building) => {
