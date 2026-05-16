@@ -542,7 +542,7 @@ const ExplorerV2 = () => {
           mobilePane === 'list' ? 'flex flex-1' : 'hidden',
         )}>
           {/* Logo strip with menu trigger */}
-          <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
+          <div className="hidden lg:flex px-5 py-4 border-b border-border items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setMenuOpen(true)}
