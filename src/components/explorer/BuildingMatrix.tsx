@@ -225,9 +225,9 @@ const BuildingMatrix = ({
                   </div>
                 </div>
 
-                {/* Entrance switcher */}
-                {building.entrances.length > 1 && (
-                  <div className="mb-2 flex items-center justify-center gap-1 p-0.5 rounded-full bg-muted/60 border border-border">
+                {/* Entrance switcher (always rendered for alignment) */}
+                <div className="mb-2 h-7 flex items-center justify-center gap-1 p-0.5 rounded-full bg-muted/60 border border-border">
+                  {building.entrances.length > 1 && (
                     <button
                       onClick={() => setEntrance(building.id, 'all')}
                       className={cn(
@@ -239,23 +239,23 @@ const BuildingMatrix = ({
                     >
                       All
                     </button>
-                    {building.entrances.map((e) => (
-                      <button
-                        key={e.id}
-                        onClick={() => setEntrance(building.id, e.id)}
-                        className={cn(
-                          'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition',
-                          ae === e.id
-                            ? 'bg-primary text-primary-foreground shadow-sm'
-                            : 'text-muted-foreground hover:text-foreground',
-                        )}
-                        title={`Entrance ${e.id}`}
-                      >
-                        {e.id}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                  )}
+                  {building.entrances.map((e) => (
+                    <button
+                      key={e.id}
+                      onClick={() => setEntrance(building.id, e.id)}
+                      className={cn(
+                        'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition',
+                        ae === e.id || building.entrances.length === 1
+                          ? 'bg-primary text-primary-foreground shadow-sm'
+                          : 'text-muted-foreground hover:text-foreground',
+                      )}
+                      title={`Entrance ${e.id}`}
+                    >
+                      {e.id}
+                    </button>
+                  ))}
+                </div>
 
                 <div className="flex flex-col gap-1">
                   <div className="flex gap-2">
