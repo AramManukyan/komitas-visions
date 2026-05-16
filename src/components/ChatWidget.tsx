@@ -180,13 +180,38 @@ const ChatWidget = () => {
                   >
                     <div
                       className={cn(
-                        'max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-soft',
+                        'max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-soft space-y-2',
                         m.sender === 'user'
                           ? 'bg-navy text-primary-foreground rounded-br-sm'
                           : 'bg-card text-card-foreground border border-border rounded-bl-sm'
                       )}
                     >
-                      {m.text}
+                      {m.text && <div className="whitespace-pre-wrap">{m.text}</div>}
+                      {m.apartments && m.apartments.length > 0 && (
+                        <div className="space-y-1.5 pt-1">
+                          {m.apartments.map((a) => (
+                            <div
+                              key={a.id}
+                              className={cn(
+                                'flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs',
+                                m.sender === 'user'
+                                  ? 'bg-white/10 border border-white/15'
+                                  : 'bg-muted/60 border border-border'
+                              )}
+                            >
+                              <Home className="h-3.5 w-3.5 shrink-0 opacity-70" />
+                              <div className="flex-1 min-w-0">
+                                <div className="font-semibold truncate">
+                                  Apt №{a.number} · {a.rooms} BR
+                                </div>
+                                <div className="opacity-70 truncate">
+                                  {a.area} m² · floor {a.floor} · ${a.price.toLocaleString()}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
