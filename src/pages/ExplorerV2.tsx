@@ -933,6 +933,7 @@ const ExplorerV2 = () => {
       <ApartmentDetailsSheet
         apartment={detailsApt}
         onClose={() => setDetailsApt(null)}
+        onSelectApartment={(apt) => setDetailsApt(apt)}
         shareUrl={typeof window !== 'undefined' ? window.location.href : undefined}
       />
     </div>
