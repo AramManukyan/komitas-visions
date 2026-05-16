@@ -2,6 +2,7 @@ import '../i18n';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   Heart,
   Ruler,
@@ -416,6 +417,7 @@ const SideMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
 
 /* ------------------------------------------------------------------ */
 const ExplorerV2 = () => {
+  const { t } = useTranslation();
   const { selection, update } = useExplorerUrlState();
   const { isFavorite, toggle: toggleFav, count: favCount } = useFavorites();
 
@@ -587,7 +589,7 @@ const ExplorerV2 = () => {
                   ? 'bg-destructive/10 border-destructive text-destructive'
                   : 'border-border hover:bg-muted text-muted-foreground',
               )}
-              aria-label="Show favorites only"
+              aria-label={t('explorer.showFavoritesOnly')}
             >
               <Heart className={cn('h-4 w-4', showFavOnly && 'fill-destructive')} />
               {favCount > 0 && (
@@ -606,7 +608,7 @@ const ExplorerV2 = () => {
               className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary hover:text-accent-foreground transition"
             >
               <SlidersHorizontal className="h-4 w-4" />
-              {filtersOpen ? 'Hide filters' : 'Show filters'}
+              {filtersOpen ? t('explorer.filters.hide') : t('explorer.filters.show')}
               {activeFilterCount > 0 && (
                 <span className="ml-1 px-1.5 h-4 min-w-4 grid place-items-center rounded-full bg-accent text-accent-foreground text-[10px] font-bold">
                   {activeFilterCount}
@@ -618,7 +620,7 @@ const ExplorerV2 = () => {
                 onClick={resetFilters}
                 className="text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
               >
-                Reset
+                {t('apartments.filters.reset')}
               </button>
             )}
           </div>
@@ -635,17 +637,17 @@ const ExplorerV2 = () => {
               >
                 <div className="px-5 py-4 space-y-3">
                   <div className="grid grid-cols-2 gap-3">
-                    <Select value={unitType} onValueChange={setUnitType}>
-                      <SelectTrigger className="rounded-xl h-11">
-                        <SelectValue placeholder="unit type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">unit type</SelectItem>
-                        <SelectItem value="1">1 BR</SelectItem>
-                        <SelectItem value="2">2 BR</SelectItem>
-                        <SelectItem value="3">3 BR</SelectItem>
-                        <SelectItem value="4">4 BR</SelectItem>
-                      </SelectContent>
+                      <Select value={unitType} onValueChange={setUnitType}>
+                        <SelectTrigger className="rounded-xl h-11">
+                          <SelectValue placeholder={t('explorer.filters.unitType')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">{t('explorer.filters.unitType')}</SelectItem>
+                          <SelectItem value="1">1 BR</SelectItem>
+                          <SelectItem value="2">2 BR</SelectItem>
+                          <SelectItem value="3">3 BR</SelectItem>
+                          <SelectItem value="4">4 BR</SelectItem>
+                        </SelectContent>
                     </Select>
                     <Select value={areaBucket} onValueChange={setAreaBucket}>
                       <SelectTrigger className="rounded-xl h-11">
@@ -661,10 +663,10 @@ const ExplorerV2 = () => {
                     </Select>
                     <Select value={floorBucket} onValueChange={setFloorBucket}>
                       <SelectTrigger className="rounded-xl h-11">
-                        <SelectValue placeholder="floor" />
+                        <SelectValue placeholder={t('apartments.filters.floor')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">floor</SelectItem>
+                        <SelectItem value="all">{t('apartments.filters.floor')}</SelectItem>
                         <SelectItem value="1-4">1 – 4</SelectItem>
                         <SelectItem value="5-9">5 – 9</SelectItem>
                         <SelectItem value="10-16">10 – 16</SelectItem>
@@ -672,20 +674,21 @@ const ExplorerV2 = () => {
                     </Select>
                     <button className="h-11 rounded-xl border border-border bg-muted/40 hover:bg-muted transition flex items-center justify-center gap-2 text-sm font-semibold text-foreground">
                       <SlidersHorizontal className="h-4 w-4" />
-                      more filters (0)
+                      {t('explorer.filters.more', { count: 0 })}
                     </button>
                   </div>
 
                   {selectedBuildingId && (
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-muted-foreground">
-                        Filtered by <span className="font-semibold text-primary">{selectedBuildingId}</span>
+                        {t('explorer.filteredBy')}{' '}
+                        <span className="font-semibold text-primary">{selectedBuildingId}</span>
                       </span>
                       <button
                         onClick={() => setSelectedBuildingId(null)}
                         className="text-accent-foreground/80 hover:text-accent-foreground underline"
                       >
-                        clear
+                        {t('explorer.clear')}
                       </button>
                     </div>
                   )}
@@ -697,7 +700,7 @@ const ExplorerV2 = () => {
           <div className="flex-1 overflow-y-auto px-5 py-4">
             <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-3 font-semibold">
               {filtered.length} apartments
-              {showFavOnly && <span className="ml-2 text-destructive">· favorites</span>}
+              {showFavOnly && <span className="ml-2 text-destructive">· {t('explorer.favorites')}</span>}
             </p>
             {listLoading ? (
               <div className="grid grid-cols-2 gap-3">
@@ -720,9 +723,9 @@ const ExplorerV2 = () => {
                 <div className="h-14 w-14 mx-auto rounded-full bg-muted grid place-items-center mb-3">
                   <SlidersHorizontal className="h-6 w-6 text-muted-foreground" />
                 </div>
-                <p className="font-heading text-base text-primary">No apartments match</p>
+                <p className="font-heading text-base text-primary">{t('explorer.empty.title')}</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Try clearing a filter or picking a different building.
+                  {t('explorer.empty.subtitleList')}
                 </p>
               </div>
             ) : (
@@ -754,7 +757,7 @@ const ExplorerV2 = () => {
             'hidden lg:flex group relative w-1.5 shrink-0 cursor-col-resize items-center justify-center bg-border hover:bg-accent transition-colors',
             dragging && 'bg-accent',
           )}
-          aria-label="Resize panels"
+          aria-label={t('explorer.resizePanels')}
         >
           <div className="absolute top-1/2 -translate-y-1/2 h-10 w-1 rounded-full bg-foreground/20 group-hover:bg-accent-foreground/60 transition" />
         </div>

@@ -136,8 +136,92 @@
   },
   "footer": {
     "tagline": "Building the future of Yerevan",
+    "navigationTitle": "Navigation",
+    "contactTitle": "Contact",
     "address": "Yerevan, Komitas Ave",
     "copyright": "© 2025 METTA GROUP. All rights reserved."
+  },
+  "common": {
+    "required": "Required",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "save": "Save"
+  },
+  "chat": {
+    "title": "Chat with us",
+    "support": "METTA Group support",
+    "intro": "Please introduce yourself",
+    "preFormHint": "Please share a few details so we can help you better.",
+    "start": "Start chat",
+    "typing": "METTA Group is typing",
+    "welcome": "Hello {{name}}! Thanks for reaching out. We received your message and will continue here.",
+    "botReply": "Thanks for your message! Our team will get back to you shortly.",
+    "placeholders": {
+      "name": "John Doe",
+      "phone": "+374 ...",
+      "message": "How can we help you?",
+      "input": "Type your message..."
+    },
+    "aria": {
+      "dialog": "Chat with us",
+      "open": "Open chat",
+      "close": "Close chat",
+      "send": "Send message"
+    }
+  },
+  "explorer": {
+    "apartment": "Apartment",
+    "details": {
+      "balcony": "Balcony",
+      "perSqm": "Per m²"
+    },
+    "tags": {
+      "hot": "HOT",
+      "discount": "DISCOUNT",
+      "new": "NEW",
+      "premium": "PREMIUM"
+    },
+    "mortgage": {
+      "title": "Mortgage calculator",
+      "downPayment": "Down payment",
+      "term": "Term",
+      "years": "years",
+      "estimatedMonthly": "Estimated monthly"
+    },
+    "actions": {
+      "callback": "Callback"
+    },
+    "filters": {
+      "show": "Show filters",
+      "hide": "Hide filters",
+      "unitType": "Unit type",
+      "more": "More filters ({{count}})"
+    },
+    "filteredBy": "Filtered by",
+    "clear": "Clear",
+    "favorites": "favorites",
+    "showFavoritesOnly": "Show favorites only",
+    "matchingUnits": "matching units",
+    "resizePanels": "Resize panels",
+    "empty": {
+      "title": "No matching apartments",
+      "subtitle": "Try widening your filters or pick another building.",
+      "subtitleList": "Try clearing a filter or picking a different building."
+    },
+    "labels": {
+      "status": "Status"
+    },
+    "shareMessage": "Hi! I'm interested in apartment â„–{{number}} ({{rooms}} rm, {{area}} mÂ²).",
+    "apartmentNumber": "Apartment â„–{{number}}",
+    "building": {
+      "ready": "Ready",
+      "progress": "{{status}} · {{progress}}%"
+    }
+  },
+  "notFound": {
+    "title": "Oops! Page not found",
+    "backHome": "Return to Home"
   },
   "promotions": {
     "sectionTitle": "Special Offers",

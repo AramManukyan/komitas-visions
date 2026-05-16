@@ -32,7 +32,9 @@ const Footer = () => {
 
           {/* Nav links */}
           <div className="md:col-span-3">
-            <p className="text-accent font-body text-xs uppercase tracking-widest font-bold mb-5">Navigation</p>
+            <p className="text-accent font-body text-xs uppercase tracking-widest font-bold mb-5">
+              {t('footer.navigationTitle')}
+            </p>
             <div className="flex flex-col gap-2.5">
               {navKeys.map((key) => (
                 <button
@@ -49,7 +51,9 @@ const Footer = () => {
 
           {/* Contact info */}
           <div className="md:col-span-4">
-            <p className="text-accent font-body text-xs uppercase tracking-widest font-bold mb-5">Contact</p>
+            <p className="text-accent font-body text-xs uppercase tracking-widest font-bold mb-5">
+              {t('footer.contactTitle')}
+            </p>
             <div className="flex flex-col gap-4">
               {[
                 { icon: Phone, text: '+374 10 123 456' },

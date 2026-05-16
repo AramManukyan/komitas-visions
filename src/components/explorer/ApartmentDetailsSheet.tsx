@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   X,
   Heart,
@@ -28,10 +29,10 @@ const STATUS_CLASSES: Record<string, string> = {
 };
 
 const TAG_LABEL: Record<string, string> = {
-  hot: 'HOT',
-  discount: 'DISCOUNT',
-  new: 'NEW',
-  premium: 'PREMIUM',
+  hot: 'explorer.tags.hot',
+  discount: 'explorer.tags.discount',
+  new: 'explorer.tags.new',
+  premium: 'explorer.tags.premium',
 };
 
 const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n);
@@ -43,6 +44,7 @@ interface Props {
 }
 
 const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
+  const { t } = useTranslation();
   const [favorite, setFavorite] = useState(false);
   const [downpayment, setDownpayment] = useState(20);
   const [years, setYears] = useState(15);
@@ -65,7 +67,9 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
   return (
     <Dialog open={!!apartment} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-3xl p-0 overflow-hidden rounded-3xl max-h-[92vh] overflow-y-auto">
-        <DialogTitle className="sr-only">Apartment №{apartment.number}</DialogTitle>
+        <DialogTitle className="sr-only">
+          {t('explorer.apartmentNumber', { number: apartment.number })}
+        </DialogTitle>
 
         {/* Hero band */}
         <div className="relative h-56 gradient-navy flex items-center justify-center overflow-hidden">
@@ -73,14 +77,14 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
           <button
             onClick={onClose}
             className="absolute top-4 right-4 z-10 h-9 w-9 rounded-full glass-dark flex items-center justify-center text-primary-foreground hover:text-accent transition"
-            aria-label="Close"
+            aria-label={t('common.close')}
           >
             <X className="h-4 w-4" />
           </button>
           <button
             onClick={() => setFavorite((v) => !v)}
             className="absolute top-4 right-16 z-10 h-9 w-9 rounded-full glass-dark flex items-center justify-center text-primary-foreground hover:text-accent transition"
-            aria-label="Save"
+            aria-label={t('common.save')}
           >
             <Heart className={cn('h-4 w-4', favorite && 'fill-accent text-accent')} />
           </button>
@@ -91,7 +95,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
             className="text-center relative"
           >
             <p className="text-primary-foreground/60 text-[10px] uppercase tracking-[0.3em] font-semibold mb-2">
-              Apartment
+              {t('explorer.apartment')}
             </p>
             <p className="font-heading text-gradient-gold text-6xl font-bold leading-none">
               №{apartment.number}
@@ -101,11 +105,11 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
                 variant="outline"
                 className={cn('border', STATUS_CLASSES[apartment.status], 'font-semibold')}
               >
-                {apartment.status}
+                {t(`apartments.status.${apartment.status}`)}
               </Badge>
               {apartment.tag && (
                 <Badge className="bg-accent text-accent-foreground border-0 font-bold tracking-wider">
-                  {TAG_LABEL[apartment.tag]}
+                  {t(TAG_LABEL[apartment.tag])}
                 </Badge>
               )}
             </div>
@@ -115,18 +119,18 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
         <div className="p-6 md:p-8 space-y-6">
           {/* Stats grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Stat icon={<Home className="h-4 w-4" />} label="Rooms" value={apartment.rooms} />
+            <Stat icon={<Home className="h-4 w-4" />} label={t('apartments.card.rooms')} value={apartment.rooms} />
             <Stat icon={<Maximize2 className="h-4 w-4" />} label="Area" value={`${apartment.area} m²`} />
-            <Stat icon={<Layers className="h-4 w-4" />} label="Floor" value={apartment.floor} />
+            <Stat icon={<Layers className="h-4 w-4" />} label={t('apartments.card.floor')} value={apartment.floor} />
             <Stat
               icon={<DoorOpen className="h-4 w-4" />}
-              label="Location"
+              label={t('apartments.card.location')}
               value={`${apartment.block}/${apartment.building}/${apartment.entrance}`}
             />
             <Stat
               icon={<Sun className="h-4 w-4" />}
-              label="Balcony"
-              value={apartment.balcony ? 'Yes' : 'No'}
+              label={t('explorer.details.balcony')}
+              value={apartment.balcony ? t('common.yes') : t('common.no')}
             />
           </div>
 
@@ -134,7 +138,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
           <div className="rounded-2xl border border-border bg-muted/30 p-5 flex flex-wrap items-baseline justify-between gap-3">
             <div>
               <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                Price
+                {t('apartments.card.price')}
               </p>
               <p className="font-heading text-4xl font-bold text-primary leading-tight">
                 {fmt(apartment.price)}{' '}
@@ -162,12 +166,12 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
           <div className="rounded-2xl border border-border p-5 space-y-4">
             <div className="flex items-center gap-2">
               <Calculator className="h-4 w-4 text-accent-foreground/70" />
-              <p className="font-heading text-lg text-primary">Mortgage calculator</p>
+              <p className="font-heading text-lg text-primary">{t('explorer.mortgage.title')}</p>
             </div>
             <div className="grid md:grid-cols-2 gap-5">
               <div>
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">Down payment</span>
+                  <span className="text-muted-foreground">{t('explorer.mortgage.downPayment')}</span>
                   <span className="font-semibold text-primary">{downpayment}%</span>
                 </div>
                 <Slider
@@ -180,8 +184,10 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
               </div>
               <div>
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">Term</span>
-                  <span className="font-semibold text-primary">{years} years</span>
+                  <span className="text-muted-foreground">{t('explorer.mortgage.term')}</span>
+                  <span className="font-semibold text-primary">
+                    {years} {t('explorer.mortgage.years')}
+                  </span>
                 </div>
                 <Slider
                   min={5}
@@ -193,7 +199,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
               </div>
             </div>
             <div className="flex items-baseline justify-between pt-2 border-t border-border">
-              <span className="text-sm text-muted-foreground">Estimated monthly</span>
+              <span className="text-sm text-muted-foreground">{t('explorer.mortgage.estimatedMonthly')}</span>
               <span className="font-heading text-2xl font-bold text-primary">
                 {fmt(monthly)} AMD
               </span>
@@ -208,7 +214,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
             >
               <a href="#contact">
                 <Phone className="h-4 w-4" />
-                Callback
+                {t('explorer.actions.callback')}
               </a>
             </Button>
             <Button asChild variant="outline" className="rounded-xl">

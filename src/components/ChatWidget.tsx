@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,6 +20,7 @@ type LeadInfo = {
 };
 
 const ChatWidget = () => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [lead, setLead] = useState<LeadInfo | null>(null);
   const [form, setForm] = useState<LeadInfo>({ name: '', phone: '', message: '' });
@@ -42,7 +44,7 @@ const ChatWidget = () => {
         ...m,
         {
           id: `${Date.now()}-b`,
-          text: 'Thanks for your message! Our team will get back to you shortly.',
+          text: t('chat.botReply'),
           sender: 'bot',
         },
       ]);
@@ -53,9 +55,9 @@ const ChatWidget = () => {
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Partial<LeadInfo> = {};
-    if (!form.name.trim()) newErrors.name = 'Required';
-    if (!form.phone.trim()) newErrors.phone = 'Required';
-    if (!form.message.trim()) newErrors.message = 'Required';
+    if (!form.name.trim()) newErrors.name = t('common.required');
+    if (!form.phone.trim()) newErrors.phone = t('common.required');
+    if (!form.message.trim()) newErrors.message = t('common.required');
     setErrors(newErrors);
     if (Object.keys(newErrors).length) return;
 
@@ -63,7 +65,7 @@ const ChatWidget = () => {
     const initial: Message[] = [
       {
         id: 'welcome',
-        text: `Hello ${form.name}! Thanks for reaching out. We received your message and will continue here.`,
+        text: t('chat.welcome', { name: form.name }),
         sender: 'bot',
       },
       { id: 'user-initial', text: form.message, sender: 'user' },
@@ -86,7 +88,7 @@ const ChatWidget = () => {
       {open && (
         <div
           role="dialog"
-          aria-label="Chat with us"
+          aria-label={t('chat.aria.dialog')}
           className={cn(
             'glass-dark animate-fade-up flex flex-col overflow-hidden rounded-2xl shadow-elevated border border-white/10',
             'w-[calc(100vw-2rem)] sm:w-[380px] h-[70vh] sm:h-[560px] max-h-[calc(100vh-7rem)]'
@@ -99,15 +101,15 @@ const ChatWidget = () => {
                 <MessageCircle className="h-4 w-4 text-navy" />
               </span>
               <div>
-                <h3 className="font-heading text-lg leading-none">Chat with us</h3>
+                <h3 className="font-heading text-lg leading-none">{t('chat.title')}</h3>
                 <p className="text-xs text-primary-foreground/70 mt-1">
-                  {lead ? 'METTA Group support' : 'Please introduce yourself'}
+                  {lead ? t('chat.support') : t('chat.intro')}
                 </p>
               </div>
             </div>
             <button
               onClick={() => setOpen(false)}
-              aria-label="Close chat"
+              aria-label={t('chat.aria.close')}
               className="rounded-full p-1.5 text-primary-foreground/80 hover:text-primary-foreground hover:bg-white/10 transition-colors"
             >
               <X className="h-4 w-4" />
@@ -118,41 +120,41 @@ const ChatWidget = () => {
             /* Pre-chat form */
             <form onSubmit={handleStart} className="flex-1 overflow-y-auto bg-warm-bg p-4 space-y-4">
               <p className="text-sm text-foreground/80">
-                Please share a few details so we can help you better.
+                {t('chat.preFormHint')}
               </p>
               <div className="space-y-2">
-                <Label htmlFor="cw-name">Full name</Label>
+                <Label htmlFor="cw-name">{t('contact.name')}</Label>
                 <Input
                   id="cw-name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="John Doe"
+                  placeholder={t('chat.placeholders.name')}
                 />
                 {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cw-phone">Phone number</Label>
+                <Label htmlFor="cw-phone">{t('contact.phone')}</Label>
                 <Input
                   id="cw-phone"
                   type="tel"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  placeholder="+374 ..."
+                  placeholder={t('chat.placeholders.phone')}
                 />
                 {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cw-message">Message</Label>
+                <Label htmlFor="cw-message">{t('contact.message')}</Label>
                 <Textarea
                   id="cw-message"
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  placeholder="How can we help you?"
+                  placeholder={t('chat.placeholders.message')}
                   rows={3}
                 />
                 {errors.message && <p className="text-xs text-destructive">{errors.message}</p>}
               </div>
-              <Button type="submit" className="w-full">Start chat</Button>
+              <Button type="submit" className="w-full">{t('chat.start')}</Button>
             </form>
           ) : (
             <>
@@ -178,7 +180,7 @@ const ChatWidget = () => {
                 {isTyping && (
                   <div className="flex justify-start">
                     <div className="bg-card text-card-foreground border border-border rounded-2xl rounded-bl-sm px-4 py-2 shadow-soft flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">METTA Group is typing</span>
+                      <span className="text-xs text-muted-foreground">{t('chat.typing')}</span>
                       <span className="flex gap-1">
                         <span className="h-1.5 w-1.5 rounded-full bg-gold animate-bounce [animation-delay:-0.3s]" />
                         <span className="h-1.5 w-1.5 rounded-full bg-gold animate-bounce [animation-delay:-0.15s]" />
@@ -194,11 +196,16 @@ const ChatWidget = () => {
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Type your message..."
+                  placeholder={t('chat.placeholders.input')}
                   className="flex-1"
                   autoComplete="off"
                 />
-                <Button type="submit" size="icon" disabled={!input.trim() || isTyping} aria-label="Send message">
+                <Button
+                  type="submit"
+                  size="icon"
+                  disabled={!input.trim() || isTyping}
+                  aria-label={t('chat.aria.send')}
+                >
                   <Send className="h-4 w-4" />
                 </Button>
               </form>
@@ -210,7 +217,7 @@ const ChatWidget = () => {
       {/* Floating button */}
       <button
         onClick={() => setOpen((o) => !o)}
-        aria-label={open ? 'Close chat' : 'Open chat'}
+        aria-label={open ? t('chat.aria.close') : t('chat.aria.open')}
         className={cn(
           'group relative flex h-14 w-14 items-center justify-center rounded-full gradient-gold text-navy',
           'shadow-glow-gold transition-transform hover:scale-105 active:scale-95'

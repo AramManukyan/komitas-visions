@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Inbox } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Tooltip,
   TooltipContent,
@@ -32,9 +33,9 @@ const STATUS_CELL: Record<string, string> = {
 };
 
 const LEGEND = [
-  { key: 'available' as const, label: 'available', cls: 'bg-[hsl(var(--status-available))]' },
-  { key: 'reserved' as const, label: 'reserved', cls: 'bg-[hsl(var(--status-reserved))]' },
-  { key: 'sold' as const, label: 'sold', cls: 'bg-[hsl(var(--status-sold))]' },
+  { key: 'available' as const, cls: 'bg-[hsl(var(--status-available))]' },
+  { key: 'reserved' as const, cls: 'bg-[hsl(var(--status-reserved))]' },
+  { key: 'sold' as const, cls: 'bg-[hsl(var(--status-sold))]' },
 ];
 
 const matchesFilter = (apt: ExplorerApartment, f: MatrixFilter) => {
@@ -56,6 +57,7 @@ const BuildingMatrix = ({
   onApartmentClick,
   isFavorite,
 }: Props) => {
+  const { t } = useTranslation();
   const visibleBuildings = useMemo(
     () => (selectedBuildingId ? BUILDINGS.filter((b) => b.id === selectedBuildingId) : BUILDINGS),
     [selectedBuildingId],
@@ -126,13 +128,14 @@ const BuildingMatrix = ({
               className="flex items-center gap-2 text-xs font-medium text-foreground/80"
             >
               <span className={cn('h-3.5 w-3.5 rounded-sm', l.cls)} />
-              {l.label}
+              {t(`apartments.status.${l.key}`)}
               <span className="text-muted-foreground tabular-nums">· {counts[l.key]}</span>
             </div>
           ))}
         </div>
         <div className="text-xs text-muted-foreground">
-          <span className="font-semibold text-foreground tabular-nums">{totalMatching}</span> matching units
+          <span className="font-semibold text-foreground tabular-nums">{totalMatching}</span>{' '}
+          {t('explorer.matchingUnits')}
         </div>
       </div>
 
@@ -141,9 +144,9 @@ const BuildingMatrix = ({
           <div className="h-16 w-16 rounded-full bg-muted grid place-items-center mb-3">
             <Inbox className="h-7 w-7 text-muted-foreground" />
           </div>
-          <p className="font-heading text-lg text-primary">No matching apartments</p>
+          <p className="font-heading text-lg text-primary">{t('explorer.empty.title')}</p>
           <p className="text-sm text-muted-foreground mt-1">
-            Try widening your filters or pick another building.
+            {t('explorer.empty.subtitle')}
           </p>
         </div>
       ) : (
@@ -173,7 +176,7 @@ const BuildingMatrix = ({
                 </div>
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">
                   {building.status === 'ready'
-                    ? 'Ready'
+                    ? t('explorer.building.ready')
                     : `${building.status} · ${building.progress}%`}
                 </div>
                 <div className="h-1 w-full max-w-[120px] mx-auto mt-1 rounded-full bg-muted overflow-hidden">
@@ -251,7 +254,9 @@ const BuildingMatrix = ({
                                     </div>
                                     <div className="text-muted-foreground space-y-0.5">
                                       <div>{apt.area} m² · floor {apt.floor}</div>
-                                      <div className="capitalize">Status: {apt.status}</div>
+                                      <div className="capitalize">
+                                        {t('explorer.labels.status')}: {t(`apartments.status.${apt.status}`)}
+                                      </div>
                                       <div>
                                         $
                                         {apt.price.toLocaleString()}
