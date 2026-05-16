@@ -1,10 +1,8 @@
 import '../i18n';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ChevronLeft,
-  ChevronRight,
   Heart,
   Ruler,
   Hash,
@@ -12,10 +10,12 @@ import {
   MapPin,
   LayoutGrid,
   Box,
+  Menu,
+  X,
 } from 'lucide-react';
-import Header from '@/components/Header';
 import ApartmentDetailsSheet from '@/components/explorer/ApartmentDetailsSheet';
-import { Button } from '@/components/ui/button';
+import BuildingsGrid from '@/components/explorer/BuildingsGrid';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import {
   Select,
   SelectContent,
@@ -32,14 +32,13 @@ import {
 import { getMasterplanGeometry } from '@/data/geometry';
 import { cn } from '@/lib/utils';
 import masterplanImg from '@/assets/explorer-masterplan.jpg';
+import logo from '@/assets/logo.png';
 
 type View = '3d' | '2d';
 
 const fmtArea = (n: number) =>
   `${n.toString().replace('.', ',')} m²`;
 
-/* ------------------------------------------------------------------ */
-/* Mini floor plan thumb (procedural, mimics the reference)            */
 /* ------------------------------------------------------------------ */
 const PlanThumb = ({ apt }: { apt: ExplorerApartment }) => {
   const seed = parseInt(apt.number.slice(-2), 10) || 1;
@@ -61,7 +60,6 @@ const PlanThumb = ({ apt }: { apt: ExplorerApartment }) => {
   );
 };
 
-/* ------------------------------------------------------------------ */
 const ApartmentCard = ({
   apt,
   onClick,
@@ -132,20 +130,53 @@ const ApartmentCard = ({
 };
 
 /* ------------------------------------------------------------------ */
-/* Masterplan with numbered markers (right panel)                      */
+/* Premium View Switcher                                               */
+/* ------------------------------------------------------------------ */
+const ViewSwitcher = ({
+  view,
+  onChange,
+}: {
+  view: View;
+  onChange: (v: View) => void;
+}) => (
+  <div className="relative inline-flex items-center p-1 rounded-full bg-foreground/85 backdrop-blur-md border border-white/15 shadow-elevated">
+    <motion.div
+      layout
+      transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+      className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full bg-gradient-to-br from-accent to-accent/80 shadow-md"
+      style={{ left: view === '3d' ? 4 : 'calc(50% + 0px)' }}
+    />
+    {(['3d', '2d'] as const).map((v) => {
+      const Icon = v === '3d' ? Box : LayoutGrid;
+      const active = view === v;
+      return (
+        <button
+          key={v}
+          onClick={() => onChange(v)}
+          className={cn(
+            'relative z-10 flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors',
+            active ? 'text-accent-foreground' : 'text-background/70 hover:text-background',
+          )}
+        >
+          <Icon className="h-3.5 w-3.5" />
+          {v.toUpperCase()}
+        </button>
+      );
+    })}
+  </div>
+);
+
+/* ------------------------------------------------------------------ */
+/* 3D Masterplan with numbered markers                                 */
 /* ------------------------------------------------------------------ */
 const MarkerMap = ({
   buildings,
   selectedId,
   onSelect,
-  view,
-  onViewChange,
 }: {
   buildings: BuildingInfo[];
   selectedId: string | null;
   onSelect: (b: BuildingInfo) => void;
-  view: View;
-  onViewChange: (v: View) => void;
 }) => {
   const geometry = getMasterplanGeometry('komitas');
   const vb = (geometry?.viewBox ?? '0 0 1600 900').split(' ').map(Number);
@@ -153,117 +184,166 @@ const MarkerMap = ({
   const VBH = vb[3];
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-primary">
-      <svg
-        viewBox={geometry?.viewBox ?? '0 0 1600 900'}
-        preserveAspectRatio="xMidYMid meet"
-        className="absolute inset-0 w-full h-full"
-      >
-        <image
-          href={masterplanImg}
-          x={0}
-          y={0}
-          width={VBW}
-          height={VBH}
-          preserveAspectRatio="xMidYMid slice"
-          className={cn(
-            'transition-all duration-700',
-            view === '2d' ? '[filter:grayscale(1)_brightness(1.1)_contrast(1.1)]' : '',
-          )}
-        />
+    <svg
+      viewBox={geometry?.viewBox ?? '0 0 1600 900'}
+      preserveAspectRatio="xMidYMid meet"
+      className="absolute inset-0 w-full h-full"
+    >
+      <image
+        href={masterplanImg}
+        x={0}
+        y={0}
+        width={VBW}
+        height={VBH}
+        preserveAspectRatio="xMidYMid slice"
+      />
 
-        {/* Hover/click zones for all buildings */}
-        {geometry?.zones.map((z) => {
-          const active = selectedId === z.id;
-          const b = buildings.find((bb) => bb.id === z.id);
-          if (!b) return null;
-          return (
-            <polygon
-              key={`zone-${z.id}`}
-              points={z.points}
-              onClick={() => onSelect(b)}
-              className="cursor-pointer transition-all"
-              fill={active ? 'hsl(214 80% 55% / 0.45)' : 'hsl(214 80% 55% / 0)'}
-              stroke={active ? 'hsl(214 90% 70%)' : 'hsl(0 0% 100% / 0)'}
-              strokeWidth={4}
-              style={{
-                transition: 'fill .25s, stroke .25s',
-              }}
-              onMouseEnter={(e) => {
-                if (!active) (e.currentTarget as SVGPolygonElement).setAttribute('fill', 'hsl(214 80% 55% / 0.25)');
-              }}
-              onMouseLeave={(e) => {
-                if (!active) (e.currentTarget as SVGPolygonElement).setAttribute('fill', 'hsl(214 80% 55% / 0)');
-              }}
+      {geometry?.zones.map((z) => {
+        const active = selectedId === z.id;
+        const b = buildings.find((bb) => bb.id === z.id);
+        if (!b) return null;
+        return (
+          <polygon
+            key={`zone-${z.id}`}
+            points={z.points}
+            onClick={() => onSelect(b)}
+            className="cursor-pointer transition-all"
+            fill={active ? 'hsl(214 80% 55% / 0.45)' : 'hsl(214 80% 55% / 0)'}
+            stroke={active ? 'hsl(214 90% 70%)' : 'hsl(0 0% 100% / 0)'}
+            strokeWidth={4}
+            style={{ transition: 'fill .25s, stroke .25s' }}
+            onMouseEnter={(e) => {
+              if (!active) (e.currentTarget as SVGPolygonElement).setAttribute('fill', 'hsl(214 80% 55% / 0.25)');
+            }}
+            onMouseLeave={(e) => {
+              if (!active) (e.currentTarget as SVGPolygonElement).setAttribute('fill', 'hsl(214 80% 55% / 0)');
+            }}
+          />
+        );
+      })}
+
+      {geometry?.zones.map((z, i) => {
+        const b = buildings.find((bb) => bb.id === z.id);
+        if (!b || !z.bbox) return null;
+        const active = selectedId === b.id;
+        return (
+          <g
+            key={`marker-${z.id}`}
+            transform={`translate(${z.bbox.cx}, ${z.bbox.cy})`}
+            onClick={() => onSelect(b)}
+            className="cursor-pointer"
+          >
+            <circle
+              r={active ? 28 : 24}
+              fill={active ? 'hsl(45 80% 55%)' : 'hsl(0 0% 10% / 0.85)'}
+              stroke={active ? 'hsl(45 80% 75%)' : 'hsl(0 0% 100% / 0.2)'}
+              strokeWidth={active ? 6 : 2}
+              style={{ transition: 'all .25s' }}
             />
-          );
-        })}
-
-        {/* Numbered markers */}
-        {geometry?.zones.map((z, i) => {
-          const b = buildings.find((bb) => bb.id === z.id);
-          if (!b || !z.bbox) return null;
-          const active = selectedId === b.id;
-          return (
-            <g
-              key={`marker-${z.id}`}
-              transform={`translate(${z.bbox.cx}, ${z.bbox.cy})`}
-              onClick={() => onSelect(b)}
-              className="cursor-pointer"
+            <text
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={22}
+              fontWeight={700}
+              fill={active ? 'hsl(214 60% 12%)' : 'hsl(0 0% 100%)'}
             >
-              <circle
-                r={active ? 28 : 24}
-                fill={active ? 'hsl(45 80% 55%)' : 'hsl(0 0% 10% / 0.85)'}
-                stroke={active ? 'hsl(45 80% 75%)' : 'hsl(0 0% 100% / 0.2)'}
-                strokeWidth={active ? 6 : 2}
-                style={{ transition: 'all .25s' }}
-              />
-              <text
-                textAnchor="middle"
-                dominantBaseline="central"
-                fontSize={22}
-                fontWeight={700}
-                fill={active ? 'hsl(214 60% 12%)' : 'hsl(0 0% 100%)'}
-              >
-                {i + 1}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
-
-      <div className="absolute top-4 left-4">
-        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-sm font-semibold shadow-elevated">
-          <MapPin className="h-4 w-4" />
-          Pick a block
-        </div>
-      </div>
-
-      <div className="absolute top-4 right-4 flex rounded-xl overflow-hidden border border-white/20 bg-foreground/70 backdrop-blur shadow-elevated">
-        <button
-          onClick={() => onViewChange('3d')}
-          className={cn(
-            'flex items-center gap-1.5 px-3 py-2 text-xs font-semibold transition',
-            view === '3d' ? 'bg-background text-foreground' : 'text-background hover:bg-white/10',
-          )}
-        >
-          <Box className="h-3.5 w-3.5" />
-          3D view
-        </button>
-        <button
-          onClick={() => onViewChange('2d')}
-          className={cn(
-            'flex items-center gap-1.5 px-3 py-2 text-xs font-semibold transition',
-            view === '2d' ? 'bg-background text-foreground' : 'text-background hover:bg-white/10',
-          )}
-        >
-          <LayoutGrid className="h-3.5 w-3.5" />
-          2D view
-        </button>
-      </div>
-    </div>
+              {i + 1}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
   );
 };
+
+/* ------------------------------------------------------------------ */
+/* Sliding Sidebar Menu                                                */
+/* ------------------------------------------------------------------ */
+const navKeys = ['about', 'gallery', 'amenities', 'location', 'banks', 'contact'] as const;
+
+const SideMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => (
+  <AnimatePresence>
+    {open && (
+      <>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm"
+        />
+        <motion.aside
+          initial={{ x: '-100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '-100%' }}
+          transition={{ type: 'spring', stiffness: 300, damping: 32 }}
+          className="fixed top-0 left-0 bottom-0 z-[70] w-[320px] bg-primary text-primary-foreground flex flex-col shadow-elevated"
+        >
+          <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <img src={logo} alt="" className="h-10 w-auto" />
+              <span className="font-heading text-accent text-sm font-bold tracking-widest uppercase">
+                New Komitas
+              </span>
+            </div>
+            <button
+              onClick={onClose}
+              className="h-9 w-9 grid place-items-center rounded-full hover:bg-white/10 transition"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
+            {navKeys.map((key, i) => (
+              <motion.a
+                key={key}
+                href={`/#${key}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onClose();
+                  window.location.href = `/#${key}`;
+                }}
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.05 + i * 0.03 }}
+                className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-primary-foreground/80 hover:text-accent hover:bg-white/5 transition"
+              >
+                {key}
+              </motion.a>
+            ))}
+            <div className="h-px bg-white/10 my-3" />
+            <Link
+              to="/apartments"
+              onClick={onClose}
+              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-primary-foreground/80 hover:text-accent hover:bg-white/5 transition"
+            >
+              Apartments
+            </Link>
+            <Link
+              to="/explorer"
+              onClick={onClose}
+              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-accent hover:bg-white/5 transition"
+            >
+              Explorer
+            </Link>
+            <Link
+              to="/explorer/v2"
+              onClick={onClose}
+              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-accent bg-accent/10"
+            >
+              Explorer v2
+            </Link>
+          </nav>
+
+          <div className="px-6 py-4 border-t border-white/10">
+            <LanguageSwitcher />
+          </div>
+        </motion.aside>
+      </>
+    )}
+  </AnimatePresence>
+);
 
 /* ------------------------------------------------------------------ */
 const ExplorerV2 = () => {
@@ -273,6 +353,7 @@ const ExplorerV2 = () => {
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [view, setView] = useState<View>('3d');
   const [detailsApt, setDetailsApt] = useState<ExplorerApartment | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const filtered = useMemo(() => {
     return EXPLORER_APARTMENTS.filter((a) => {
@@ -290,32 +371,40 @@ const ExplorerV2 = () => {
     });
   }, [unitType, areaBucket, floorBucket, selectedBuildingId]);
 
-  const currentIdx = selectedBuildingId
-    ? BUILDINGS.findIndex((b) => b.id === selectedBuildingId)
-    : -1;
-  const cycle = (delta: number) => {
-    const next = ((currentIdx === -1 ? 0 : currentIdx) + delta + BUILDINGS.length) % BUILDINGS.length;
-    setSelectedBuildingId(BUILDINGS[next].id);
-  };
-
   return (
     <div className="h-screen bg-warm-bg flex flex-col overflow-hidden">
-      <Header />
+      <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
       <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
         <aside className="w-full lg:w-[460px] xl:w-[500px] bg-background border-r border-border flex flex-col min-h-0 lg:h-full max-h-full">
-          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-            <Link to="/" className="font-heading text-xl font-bold tracking-tight text-primary">
-              KOMITAS<span className="text-accent">™</span>
-              <span className="block text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-body font-normal">
-                Explorer v2
-              </span>
-            </Link>
+          {/* Logo strip with menu trigger */}
+          <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setMenuOpen(true)}
+                className="h-10 w-10 grid place-items-center rounded-xl border border-border hover:bg-muted transition"
+                aria-label="Open menu"
+              >
+                <Menu className="h-4 w-4 text-primary" />
+              </button>
+              <Link to="/" className="flex items-center gap-2.5">
+                <img src={logo} alt="New Komitas" className="h-9 w-auto" />
+                <div className="leading-tight">
+                  <p className="font-heading text-base font-bold tracking-tight text-primary">
+                    KOMITAS<span className="text-accent">™</span>
+                  </p>
+                  <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-body">
+                    Explorer v2
+                  </p>
+                </div>
+              </Link>
+            </div>
             <button className="h-9 w-9 grid place-items-center rounded-full border border-border hover:bg-muted transition">
               <Heart className="h-4 w-4 text-muted-foreground" />
             </button>
           </div>
 
+          {/* Filters */}
           <div className="px-5 py-4 border-b border-border space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <Select value={unitType} onValueChange={setUnitType}>
@@ -396,37 +485,71 @@ const ExplorerV2 = () => {
           </div>
         </aside>
 
-        <main className="flex-1 relative min-h-[70vh] lg:min-h-0 lg:h-full overflow-hidden">
-          <MarkerMap
-            buildings={BUILDINGS}
-            selectedId={selectedBuildingId}
-            onSelect={(b) => setSelectedBuildingId(b.id)}
-            view={view}
-            onViewChange={setView}
-          />
-
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
-            <Button
-              size="icon"
-              variant="secondary"
-              onClick={() => cycle(-1)}
-              className="h-11 w-11 rounded-full shadow-elevated bg-background/95 backdrop-blur hover:bg-background"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <Button
-              size="icon"
-              variant="secondary"
-              onClick={() => cycle(1)}
-              className="h-11 w-11 rounded-full shadow-elevated bg-background/95 backdrop-blur hover:bg-background"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
+        {/* Right panel */}
+        <main className="flex-1 relative min-h-[70vh] lg:min-h-0 lg:h-full overflow-hidden bg-primary">
+          {/* Pick-a-block label */}
+          <div className="absolute top-4 left-4 z-20">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-sm font-semibold shadow-elevated">
+              <MapPin className="h-4 w-4" />
+              {view === '3d' ? 'Pick a block' : 'Browse buildings'}
+            </div>
           </div>
+
+          {/* View Switcher */}
+          <div className="absolute top-4 right-4 z-20">
+            <ViewSwitcher view={view} onChange={setView} />
+          </div>
+
+          {/* Content swap */}
+          <AnimatePresence mode="wait">
+            {view === '3d' ? (
+              <motion.div
+                key="3d"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35 }}
+                className="absolute inset-0"
+              >
+                <MarkerMap
+                  buildings={BUILDINGS}
+                  selectedId={selectedBuildingId}
+                  onSelect={(b) => setSelectedBuildingId(b.id)}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="2d"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 12 }}
+                transition={{ duration: 0.35 }}
+                className="absolute inset-0 overflow-y-auto bg-warm-bg"
+              >
+                <div className="p-6 lg:p-10">
+                  <div className="mb-6 max-w-2xl">
+                    <span className="text-[11px] uppercase tracking-[0.3em] text-accent-foreground/60 font-semibold">
+                      District
+                    </span>
+                    <h2 className="font-heading text-2xl md:text-4xl text-primary font-semibold mt-1">
+                      Buildings overview
+                    </h2>
+                    <p className="text-muted-foreground mt-2 font-body text-sm">
+                      Pick a building to filter the apartments on the left.
+                    </p>
+                  </div>
+                  <BuildingsGrid
+                    selectedId={selectedBuildingId}
+                    onSelect={(b) => setSelectedBuildingId(b.id)}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <Link
             to="/explorer"
-            className="absolute bottom-5 right-5 px-3 py-2 rounded-full bg-background/90 backdrop-blur border border-border text-xs font-semibold text-primary hover:bg-background transition shadow-soft"
+            className="absolute bottom-5 right-5 z-20 px-3 py-2 rounded-full bg-background/90 backdrop-blur border border-border text-xs font-semibold text-primary hover:bg-background transition shadow-soft"
           >
             ← Explorer v1
           </Link>
