@@ -399,16 +399,9 @@ const SideMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
             <Link
               to="/explorer"
               onClick={onClose}
-              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-accent hover:bg-white/5 transition"
-            >
-              Explorer
-            </Link>
-            <Link
-              to="/explorer/v2"
-              onClick={onClose}
               className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wider text-accent bg-accent/10"
             >
-              Explorer v2
+              Explorer
             </Link>
           </nav>
 
