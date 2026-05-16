@@ -162,7 +162,7 @@ const MarkerMap = ({
   return (
     <div className="relative w-full h-full overflow-hidden bg-primary">
       <img
-        src={heroBg}
+        src={masterplanImg}
         alt="District masterplan aerial view"
         className={cn(
           'absolute inset-0 w-full h-full object-cover transition-all duration-700',
