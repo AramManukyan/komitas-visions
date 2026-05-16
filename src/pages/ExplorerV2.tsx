@@ -18,11 +18,13 @@ import {
   Plus,
   Minus,
   RotateCcw,
+  MessageCircle,
 } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useExplorerUrlState } from '@/hooks/useExplorerUrlState';
 import ApartmentDetailsSheet from '@/components/explorer/ApartmentDetailsSheet';
 import ChatWidget from '@/components/ChatWidget';
+import { chatStore } from '@/hooks/useChatAttachments';
 import BuildingMatrix from '@/components/explorer/BuildingMatrix';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import {
