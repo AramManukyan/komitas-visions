@@ -43,21 +43,67 @@ const fmtArea = (n: number) =>
 
 /* ------------------------------------------------------------------ */
 const PlanThumb = ({ apt }: { apt: ExplorerApartment }) => {
+  // Vary layout per room count: more rooms → more bedroom boxes
+  const rooms = Math.max(1, Math.min(apt.rooms, 4));
   const seed = parseInt(apt.number.slice(-2), 10) || 1;
-  const variant = seed % 3;
+  const v = seed % 4;
+  const bedrooms = Array.from({ length: rooms - 1 }, (_, i) => {
+    const w = 28 + ((seed + i * 7) % 12);
+    const h = 22 + ((seed + i * 5) % 10);
+    return { w, h };
+  });
   return (
     <svg viewBox="0 0 160 130" className="w-full h-full">
       <rect x="6" y="6" width="148" height="118" rx="4" fill="hsl(40 30% 96%)" stroke="hsl(214 20% 70%)" strokeWidth="1.5" />
-      <rect x="14" y="14" width="60" height="50" fill="none" stroke="hsl(214 25% 55%)" strokeWidth="1.2" />
-      <text x="44" y="42" textAnchor="middle" fontSize="8" fill="hsl(214 25% 40%)">{(12 + variant).toFixed(1)} m²</text>
-      <rect x="78" y="14" width="68" height="78" fill="none" stroke="hsl(214 25% 55%)" strokeWidth="1.2" />
-      <text x="112" y="56" textAnchor="middle" fontSize="8" fill="hsl(214 25% 40%)">{(18 + variant * 2).toFixed(1)} m²</text>
-      <rect x="14" y="68" width="28" height="24" fill="none" stroke="hsl(214 25% 55%)" strokeWidth="1.2" />
-      <text x="28" y="83" textAnchor="middle" fontSize="6" fill="hsl(214 25% 40%)">3.9</text>
-      <rect x="46" y="68" width="28" height="24" fill="none" stroke="hsl(214 25% 55%)" strokeWidth="1.2" />
-      <text x="60" y="83" textAnchor="middle" fontSize="6" fill="hsl(214 25% 40%)">5.3</text>
-      <rect x="14" y="96" width="132" height="22" fill="none" stroke="hsl(214 25% 55%)" strokeWidth="1.2" />
-      <text x="80" y="111" textAnchor="middle" fontSize="6" fill="hsl(214 25% 40%)">6.4 m²</text>
+      {/* Living/kitchen — size varies with total area */}
+      <rect
+        x="14"
+        y="14"
+        width={Math.min(132, 50 + apt.area * 0.45)}
+        height={Math.min(58, 36 + apt.area * 0.18)}
+        fill="none"
+        stroke="hsl(214 25% 55%)"
+        strokeWidth="1.2"
+      />
+      <text x="22" y="28" fontSize="7" fill="hsl(214 25% 40%)">
+        Living · {Math.round(apt.area * 0.3)} m²
+      </text>
+      {/* Bedrooms row */}
+      {bedrooms.map((b, i) => (
+        <g key={i}>
+          <rect
+            x={14 + i * 36 + (i > 1 ? 4 : 0)}
+            y={78}
+            width={b.w}
+            height={b.h}
+            fill="none"
+            stroke="hsl(214 25% 55%)"
+            strokeWidth="1.2"
+          />
+          <text
+            x={14 + i * 36 + b.w / 2 + (i > 1 ? 4 : 0)}
+            y={78 + b.h / 2 + 2}
+            textAnchor="middle"
+            fontSize="6"
+            fill="hsl(214 25% 40%)"
+          >
+            BR{i + 1}
+          </text>
+        </g>
+      ))}
+      {/* Balcony hint */}
+      {apt.rooms >= 2 && (
+        <rect
+          x={14 + v * 8}
+          y={108}
+          width={40}
+          height={12}
+          fill="none"
+          stroke="hsl(214 25% 65%)"
+          strokeWidth="1"
+          strokeDasharray="2 2"
+        />
+      )}
     </svg>
   );
 };
@@ -65,11 +111,14 @@ const PlanThumb = ({ apt }: { apt: ExplorerApartment }) => {
 const ApartmentCard = ({
   apt,
   onClick,
+  isFav,
+  onToggleFav,
 }: {
   apt: ExplorerApartment;
   onClick: () => void;
+  isFav: boolean;
+  onToggleFav: () => void;
 }) => {
-  const [fav, setFav] = useState(false);
   return (
     <motion.div
       whileHover={{ y: -2 }}
@@ -86,14 +135,14 @@ const ApartmentCard = ({
         <button
           onClick={(e) => {
             e.stopPropagation();
-            setFav((v) => !v);
+            onToggleFav();
           }}
           className="absolute top-2 right-2 h-7 w-7 grid place-items-center rounded-full bg-background/80 backdrop-blur border border-border hover:bg-background"
         >
           <Heart
             className={cn(
               'h-3.5 w-3.5 transition',
-              fav ? 'fill-destructive text-destructive' : 'text-muted-foreground',
+              isFav ? 'fill-destructive text-destructive' : 'text-muted-foreground',
             )}
           />
         </button>
@@ -106,9 +155,12 @@ const ApartmentCard = ({
           <span
             className={cn(
               'px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider',
-              apt.status === 'available' && 'bg-emerald-500/15 text-emerald-700',
-              apt.status === 'reserved' && 'bg-amber-500/15 text-amber-700',
-              apt.status === 'sold' && 'bg-rose-500/15 text-rose-700',
+              apt.status === 'available' &&
+                'bg-[hsl(var(--status-available))]/15 text-[hsl(var(--status-available))]',
+              apt.status === 'reserved' &&
+                'bg-[hsl(var(--status-reserved))]/20 text-[hsl(var(--status-reserved-fg))]',
+              apt.status === 'sold' &&
+                'bg-[hsl(var(--status-sold))]/40 text-[hsl(var(--status-sold-fg))]',
             )}
           >
             {apt.status}
