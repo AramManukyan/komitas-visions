@@ -621,17 +621,19 @@ const ExplorerV2 = () => {
 
         {/* Right panel */}
         <main className="flex-1 relative min-h-[70vh] lg:min-h-0 lg:h-full overflow-hidden bg-primary">
-          {/* Pick-a-block label */}
-          <div className="absolute top-4 left-4 z-20">
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-sm font-semibold shadow-elevated">
+          {/* Top overlay row — stacks on mobile to avoid overlap */}
+          <div className="absolute top-4 left-4 right-4 z-20 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pointer-events-none">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-sm font-semibold shadow-elevated pointer-events-auto self-start">
               <MapPin className="h-4 w-4" />
-              {view === '3d' ? 'Pick a block' : 'Browse buildings'}
+              {view === '3d'
+                ? selectedBuildingId
+                  ? `Building ${selectedBuildingId} selected`
+                  : 'Pick a block'
+                : 'Browse buildings'}
             </div>
-          </div>
-
-          {/* View Switcher */}
-          <div className="absolute top-4 right-4 z-20">
-            <ViewSwitcher view={view} onChange={setView} />
+            <div className="pointer-events-auto self-start sm:self-auto">
+              <ViewSwitcher view={view} onChange={setView} />
+            </div>
           </div>
 
           {/* Content swap */}
@@ -648,7 +650,11 @@ const ExplorerV2 = () => {
                 <MarkerMap
                   buildings={BUILDINGS}
                   selectedId={selectedBuildingId}
-                  onSelect={(b) => setSelectedBuildingId(b.id)}
+                  onSelect={(b) => {
+                    setSelectedBuildingId(b.id);
+                    // Auto-switch to 2D so the user sees the building layout
+                    setView('2d');
+                  }}
                 />
               </motion.div>
             ) : (
@@ -658,7 +664,7 @@ const ExplorerV2 = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 12 }}
                 transition={{ duration: 0.35 }}
-                className="absolute inset-0 overflow-y-auto bg-warm-bg"
+                className="absolute inset-0 overflow-y-auto bg-warm-bg pt-24 sm:pt-20"
               >
                 <div className="p-6 lg:p-10">
                   <div className="mb-6 max-w-2xl">
@@ -669,11 +675,13 @@ const ExplorerV2 = () => {
                       {selectedBuildingId ? `Building ${selectedBuildingId}` : 'All buildings'}
                     </h2>
                     <p className="text-muted-foreground mt-2 font-body text-sm">
-                      Click any apartment to view details. Numbers indicate bedrooms.
+                      Click any apartment to view details. Use arrow keys to navigate the grid.
                     </p>
                   </div>
                   <BuildingMatrix
                     selectedBuildingId={selectedBuildingId}
+                    filter={matrixFilter}
+                    isFavorite={isFavorite}
                     onApartmentClick={(apt) => setDetailsApt(apt)}
                   />
                 </div>
