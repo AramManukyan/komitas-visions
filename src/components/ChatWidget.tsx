@@ -220,7 +220,7 @@ const ChatWidget = () => {
 
       {/* Floating button */}
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen(!open)}
         aria-label={open ? t('chat.aria.close') : t('chat.aria.open')}
         className={cn(
           'group relative flex h-14 w-14 items-center justify-center rounded-full gradient-gold text-navy',
