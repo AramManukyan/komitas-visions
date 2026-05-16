@@ -6,7 +6,8 @@
     "location": "Location",
     "banks": "Banks",
     "contact": "Contact",
-    "apartments": "Apartments"
+    "apartments": "Apartments",
+    "explorer": "Explorer"
   },
   "hero": {
     "title": "New Komitas",
