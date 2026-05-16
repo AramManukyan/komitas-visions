@@ -31,7 +31,7 @@ import {
 } from '@/data/explorer';
 import { getMasterplanGeometry } from '@/data/geometry';
 import { cn } from '@/lib/utils';
-import heroBg from '@/assets/hero-bg.jpg';
+import masterplanImg from '@/assets/explorer-masterplan.jpg';
 
 type View = '3d' | '2d';
 
