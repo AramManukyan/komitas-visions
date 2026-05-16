@@ -76,9 +76,12 @@ const bboxOfPoints = (points: string) => {
   };
 };
 
+import masterplanImg from '@/assets/explorer-masterplan.jpg';
+
 export const MASTERPLAN_GEOMETRY: Record<string, SvgGeometry> = {
   komitas: {
-    viewBox: '0 0 800 500',
+    viewBox: '0 0 1600 900',
+    backgroundSrc: masterplanImg,
     backgroundMarkup: masterplanBackground,
     zones: BUILDINGS.map((b) => ({
       id: b.id,

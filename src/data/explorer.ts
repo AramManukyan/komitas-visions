@@ -17,7 +17,7 @@ export interface BuildingInfo {
   floors: number;
   status: BuildingStatus;
   progress: number; // 0-100
-  /** SVG polygon points relative to viewBox 0 0 800 500 */
+  /** SVG polygon points relative to viewBox 0 0 1600 900 (matches masterplan image). */
   polygon: string;
   entrances: EntranceInfo[];
 }
@@ -61,13 +61,16 @@ export const EXPLORER_APARTMENTS: ExplorerApartment[] = APARTMENTS.map((a) => {
 
 /* ---------- Derived districts/buildings ---------- */
 
+// Polygons traced onto the real aerial render (viewBox 0 0 1600 900).
+// Front complex (large U) → A-1 / A-2 / B-1.
+// Back complex (smaller U) → B-2 / C-1 / C-2.
 const buildingPolygons: Record<string, string> = {
-  'A-1': '90,200 230,150 230,330 90,360',
-  'A-2': '260,160 380,130 380,310 260,335',
-  'B-1': '420,140 540,115 540,300 420,320',
-  'B-2': '570,125 680,110 680,295 570,310',
-  'C-1': '120,380 280,360 280,460 120,470',
-  'C-2': '320,360 500,345 500,455 320,465',
+  'A-1': '470,430 640,360 700,640 540,720',
+  'A-2': '540,720 700,640 1010,690 940,790',
+  'B-1': '700,640 880,420 1050,500 1010,690',
+  'B-2': '780,160 920,100 990,260 850,330',
+  'C-1': '850,330 990,260 1230,330 1170,420',
+  'C-2': '990,260 1180,180 1260,290 1230,330',
 };
 
 const statusFor = (id: string): BuildingStatus => {
