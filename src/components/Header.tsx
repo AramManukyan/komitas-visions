@@ -60,6 +60,12 @@ const Header = () => {
           >
             {t('nav.apartments')}
           </a>
+          <a
+            href="#/explorer"
+            className="relative px-4 py-2 text-accent font-body text-[13px] font-semibold uppercase tracking-wider transition-colors duration-300 hover:text-accent/80"
+          >
+            {t('nav.explorer', 'Explorer')}
+          </a>
         </nav>
 
         <div className="hidden lg:flex items-center">
@@ -106,6 +112,16 @@ const Header = () => {
                 className="text-primary-foreground/80 hover:text-accent font-body text-sm font-semibold uppercase tracking-wider py-2 transition-colors"
               >
                 {t('nav.apartments')}
+              </motion.a>
+              <motion.a
+                href="#/explorer"
+                onClick={() => setMobileOpen(false)}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: (navKeys.length + 1) * 0.05 }}
+                className="text-accent font-body text-sm font-semibold uppercase tracking-wider py-2 transition-colors"
+              >
+                {t('nav.explorer', 'Explorer')}
               </motion.a>
               <div className="mt-3">
                 <LanguageSwitcher />
