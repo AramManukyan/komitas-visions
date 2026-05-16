@@ -157,7 +157,7 @@ const BuildingMatrix = ({
             {floorRows.map((f) => (
               <div
                 key={f}
-                className="h-7 w-8 grid place-items-center text-[11px] font-semibold text-muted-foreground bg-muted/50 rounded"
+                className="h-6 sm:h-7 w-6 sm:w-8 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-muted-foreground bg-muted/50 rounded"
               >
                 {f}
               </div>
