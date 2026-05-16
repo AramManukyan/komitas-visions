@@ -1,5 +1,5 @@
 import '../i18n';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -13,6 +13,8 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useExplorerUrlState } from '@/hooks/useExplorerUrlState';
 import ApartmentDetailsSheet from '@/components/explorer/ApartmentDetailsSheet';
 import BuildingMatrix from '@/components/explorer/BuildingMatrix';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
