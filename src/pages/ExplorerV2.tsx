@@ -71,10 +71,15 @@ const ApartmentCard = ({
 }) => {
   const [fav, setFav] = useState(false);
   return (
-    <motion.button
+    <motion.div
       whileHover={{ y: -2 }}
       onClick={onClick}
-      className="group relative w-full text-left bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elevated transition-shadow"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') onClick();
+      }}
+      className="group relative w-full text-left bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elevated transition-shadow cursor-pointer"
     >
       <div className="relative aspect-[4/3] bg-muted">
         <PlanThumb apt={apt} />
@@ -122,7 +127,7 @@ const ApartmentCard = ({
           </span>
         </div>
       </div>
-    </motion.button>
+    </motion.div>
   );
 };
 
