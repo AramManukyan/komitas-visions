@@ -287,7 +287,7 @@ const ExplorerV2 = () => {
     <div className="h-screen bg-warm-bg flex flex-col overflow-hidden">
       <Header />
 
-      <div className="flex-1 flex flex-col lg:flex-row min-h-[calc(100vh-80px)]">
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
         <aside className="w-full lg:w-[460px] xl:w-[500px] bg-background border-r border-border flex flex-col">
           <div className="px-5 py-4 border-b border-border flex items-center justify-between">
             <Link to="/" className="font-heading text-xl font-bold tracking-tight text-primary">
