@@ -52,12 +52,12 @@
     --gold-light: 50 95% 84%;
     --glass: 0 0% 100%;
 
-    --status-available: 152 58% 32%;
-    --status-available-fg: 0 0% 100%;
-    --status-reserved: 42 92% 56%;
-    --status-reserved-fg: 38 80% 18%;
-    --status-sold: 214 12% 78%;
-    --status-sold-fg: 214 18% 38%;
+    --status-available: 50 95% 77%;
+    --status-available-fg: 214 52% 17%;
+    --status-reserved: 214 40% 45%;
+    --status-reserved-fg: 50 95% 90%;
+    --status-sold: 214 15% 82%;
+    --status-sold-fg: 214 30% 30%;
   }
 
   .dark {
