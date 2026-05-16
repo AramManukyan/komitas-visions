@@ -242,7 +242,7 @@ const MarkerMap = ({
   return (
     <svg
       viewBox={geometry?.viewBox ?? '0 0 1600 900'}
-      preserveAspectRatio="xMidYMid meet"
+      preserveAspectRatio="xMidYMid slice"
       className="absolute inset-0 w-full h-full"
     >
       <image
