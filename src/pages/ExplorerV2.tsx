@@ -704,7 +704,7 @@ const ExplorerV2 = () => {
                 transition={{ duration: 0.35 }}
                 className="absolute inset-0 overflow-y-auto bg-warm-bg pt-24 sm:pt-20"
               >
-                <div className="p-6 lg:p-10">
+                <div className="p-3 sm:p-6 lg:p-10">
                   <div className="mb-6 max-w-2xl">
                     <span className="text-[11px] uppercase tracking-[0.3em] text-accent-foreground/60 font-semibold">
                       Building layout
