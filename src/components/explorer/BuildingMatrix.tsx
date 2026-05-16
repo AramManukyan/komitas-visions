@@ -257,92 +257,105 @@ const BuildingMatrix = ({
                   </div>
                 )}
 
-                <div className="flex gap-2">
-                  {visibleEntrances.map((entrance) => {
-                    const aptsByFloor = new Map<number, ExplorerApartment[]>();
-                    EXPLORER_APARTMENTS.forEach((a) => {
-                      if (`${a.block}-${a.building}` !== building.id) return;
-                      if (a.entrance !== entrance.id) return;
-                      const arr = aptsByFloor.get(a.floor) ?? [];
-                      arr.push(a);
-                      aptsByFloor.set(a.floor, arr);
-                    });
-                    const maxUnits = Math.max(
-                      1,
-                      ...Array.from(aptsByFloor.values()).map((arr) => arr.length),
-                    );
-                    return (
-                      <div key={entrance.id} className="flex flex-col gap-1">
-                        <div className="h-7 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground text-center">
-                          {entrance.id}
-                        </div>
-                        {floorRows.map((floor) => {
-                          const apts = (aptsByFloor.get(floor) ?? []).sort((a, b) =>
-                            a.number.localeCompare(b.number),
-                          );
-                          const hasApts = apts.length > 0;
-                          return (
-                            <div key={floor} className="flex items-center gap-0.5 h-6 sm:h-7">
-                              {hasApts && (
-                                <button
-                                  onClick={() => setFloorView({ buildingId: building.id, floor })}
-                                  className="h-6 sm:h-7 w-5 grid place-items-center rounded text-[9px] text-muted-foreground hover:text-accent-foreground hover:bg-accent/20 transition shrink-0"
-                                  title={`View floor ${floor} plan`}
-                                  aria-label={`View floor ${floor} plan`}
-                                >
-                                  <Layers className="h-3 w-3" />
-                                </button>
-                              )}
-                              {Array.from({ length: maxUnits }).map((_, idx) => {
-                                const apt = apts[idx];
-                                if (!apt) {
-                                  return <div key={idx} className="w-6 sm:w-7 h-6 sm:h-7" />;
-                                }
-                                const dim = !matchesFilter(apt, filter);
-                                const fav = isFavorite(apt.id);
-                                return (
-                                  <Tooltip key={apt.id}>
-                                    <TooltipTrigger asChild>
-                                      <button
-                                        data-cell="1"
-                                        onClick={() => onApartmentClick(apt)}
-                                        className={cn(
-                                          'relative w-6 sm:w-7 h-6 sm:h-7 rounded text-[9px] sm:text-[10px] font-bold grid place-items-center transition-all outline-none',
-                                          'focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-warm-bg',
-                                          STATUS_CELL[apt.status],
-                                          dim && 'opacity-25 saturate-50',
-                                        )}
+                <div className="flex flex-col gap-1">
+                  <div className="flex gap-2">
+                    {visibleEntrances.map((entrance) => {
+                      const aptsByFloor = new Map<number, ExplorerApartment[]>();
+                      EXPLORER_APARTMENTS.forEach((a) => {
+                        if (`${a.block}-${a.building}` !== building.id) return;
+                        if (a.entrance !== entrance.id) return;
+                        const arr = aptsByFloor.get(a.floor) ?? [];
+                        arr.push(a);
+                        aptsByFloor.set(a.floor, arr);
+                      });
+                      const maxUnits = Math.max(
+                        1,
+                        ...Array.from(aptsByFloor.values()).map((arr) => arr.length),
+                      );
+                      return (
+                        <div key={entrance.id} className="flex flex-col gap-1">
+                          <div className="h-7 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground text-center">
+                            {entrance.id}
+                          </div>
+                          {floorRows.map((floor) => {
+                            const apts = (aptsByFloor.get(floor) ?? []).sort((a, b) =>
+                              a.number.localeCompare(b.number),
+                            );
+                            const hasApts = apts.length > 0;
+                            return (
+                              <div key={floor} className="flex items-center gap-0.5 h-6 sm:h-7">
+                                {hasApts && (
+                                  <button
+                                    onClick={() => setFloorView({ buildingId: building.id, floor })}
+                                    className="h-6 sm:h-7 w-5 grid place-items-center rounded text-[9px] text-muted-foreground hover:text-accent-foreground hover:bg-accent/20 transition shrink-0"
+                                    title={`View floor ${floor} plan`}
+                                    aria-label={`View floor ${floor} plan`}
+                                  >
+                                    <Layers className="h-3 w-3" />
+                                  </button>
+                                )}
+                                {Array.from({ length: maxUnits }).map((_, idx) => {
+                                  const apt = apts[idx];
+                                  if (!apt) {
+                                    return <div key={idx} className="w-6 sm:w-7 h-6 sm:h-7" />;
+                                  }
+                                  const dim = !matchesFilter(apt, filter);
+                                  const fav = isFavorite(apt.id);
+                                  return (
+                                    <Tooltip key={apt.id}>
+                                      <TooltipTrigger asChild>
+                                        <button
+                                          data-cell="1"
+                                          onClick={() => onApartmentClick(apt)}
+                                          className={cn(
+                                            'relative w-6 sm:w-7 h-6 sm:h-7 rounded text-[9px] sm:text-[10px] font-bold grid place-items-center transition-all outline-none',
+                                            'focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-warm-bg',
+                                            STATUS_CELL[apt.status],
+                                            dim && 'opacity-25 saturate-50',
+                                          )}
+                                        >
+                                          {apt.rooms}
+                                          {fav && (
+                                            <Heart className="absolute -top-1 -right-1 h-2.5 w-2.5 fill-destructive text-destructive" />
+                                          )}
+                                        </button>
+                                      </TooltipTrigger>
+                                      <TooltipContent
+                                        side="top"
+                                        className="text-xs p-2 max-w-[200px]"
                                       >
-                                        {apt.rooms}
-                                        {fav && (
-                                          <Heart className="absolute -top-1 -right-1 h-2.5 w-2.5 fill-destructive text-destructive" />
-                                        )}
-                                      </button>
-                                    </TooltipTrigger>
-                                    <TooltipContent
-                                      side="top"
-                                      className="text-xs p-2 max-w-[200px]"
-                                    >
-                                      <div className="font-bold mb-1">
-                                        № {apt.number} · {apt.rooms} BR
-                                      </div>
-                                      <div className="text-muted-foreground space-y-0.5">
-                                        <div>{apt.area} m² · floor {apt.floor}</div>
-                                        <div className="capitalize">
-                                          {t('explorer.labels.status')}: {t(`apartments.status.${apt.status}`)}
+                                        <div className="font-bold mb-1">
+                                          № {apt.number} · {apt.rooms} BR
                                         </div>
-                                        <div>${apt.price.toLocaleString()}</div>
-                                      </div>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                );
-                              })}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    );
-                  })}
+                                        <div className="text-muted-foreground space-y-0.5">
+                                          <div>{apt.area} m² · floor {apt.floor}</div>
+                                          <div className="capitalize">
+                                            {t('explorer.labels.status')}: {t(`apartments.status.${apt.status}`)}
+                                          </div>
+                                          <div>${apt.price.toLocaleString()}</div>
+                                        </div>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  );
+                                })}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Parking levels */}
+                  {[-1, -2].map((p) => (
+                    <div
+                      key={p}
+                      className="mt-1 h-7 sm:h-8 w-full rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 flex items-center justify-center gap-2 text-[11px] font-semibold"
+                    >
+                      <ParkingSquare className="h-3.5 w-3.5" />
+                      Parking
+                    </div>
+                  ))}
                 </div>
               </div>
             );
