@@ -421,13 +421,32 @@ const SideMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
 
 /* ------------------------------------------------------------------ */
 const ExplorerV2 = () => {
+  const { selection, update } = useExplorerUrlState();
+  const { isFavorite, toggle: toggleFav, count: favCount } = useFavorites();
+
   const [unitType, setUnitType] = useState<string>('all');
   const [areaBucket, setAreaBucket] = useState<string>('all');
   const [floorBucket, setFloorBucket] = useState<string>('all');
-  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [view, setView] = useState<View>('3d');
   const [detailsApt, setDetailsApt] = useState<ExplorerApartment | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showFavOnly, setShowFavOnly] = useState(false);
+  const [listLoading, setListLoading] = useState(false);
+
+  const selectedBuildingId = selection.buildingId;
+  const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
+
+  const matrixFilter = useMemo(
+    () => ({ unitType, areaBucket, floorBucket }),
+    [unitType, areaBucket, floorBucket],
+  );
+
+  // Skeleton hint when filters change
+  useEffect(() => {
+    setListLoading(true);
+    const t = setTimeout(() => setListLoading(false), 220);
+    return () => clearTimeout(t);
+  }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly]);
 
   const filtered = useMemo(() => {
     return EXPLORER_APARTMENTS.filter((a) => {
@@ -441,9 +460,10 @@ const ExplorerV2 = () => {
         if (a.floor < min || a.floor > max) return false;
       }
       if (selectedBuildingId && `${a.block}-${a.building}` !== selectedBuildingId) return false;
+      if (showFavOnly && !isFavorite(a.id)) return false;
       return a.status === 'available';
     });
-  }, [unitType, areaBucket, floorBucket, selectedBuildingId]);
+  }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly, isFavorite]);
 
   return (
     <div className="h-screen bg-warm-bg flex flex-col overflow-hidden">
