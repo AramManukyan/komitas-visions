@@ -381,7 +381,7 @@ const ExplorerV2 = () => {
           </div>
         </aside>
 
-        <main className="flex-1 relative min-h-[70vh] lg:min-h-0">
+        <main className="flex-1 relative min-h-[70vh] lg:min-h-0 lg:h-full overflow-hidden">
           <MarkerMap
             buildings={BUILDINGS}
             selectedId={selectedBuildingId}
