@@ -172,11 +172,11 @@ const BuildingMatrix = ({
           className="flex gap-8 md:gap-12 items-start overflow-x-auto pb-4"
         >
           {/* Floor numbers column */}
-          <div className="flex flex-col gap-1 pt-[88px] shrink-0 sticky left-0 bg-warm-bg z-10">
+          <div className="flex flex-col gap-1 pt-[120px] shrink-0 sticky left-0 bg-warm-bg z-10">
             {floorRows.map((f) => (
               <div
                 key={f}
-                className="h-6 sm:h-7 w-6 sm:w-8 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-muted-foreground bg-muted/50 rounded"
+                className="h-6 sm:h-7 w-6 sm:w-8 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-muted-foreground bg-muted/60 border border-border/60 rounded"
               >
                 {f}
               </div>
@@ -184,7 +184,7 @@ const BuildingMatrix = ({
             {[-1, -2].map((p) => (
               <div
                 key={p}
-                className="h-7 sm:h-8 w-6 sm:w-8 mt-1 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-emerald-700 bg-emerald-500/10 border border-emerald-500/30 rounded"
+                className="h-7 sm:h-8 w-6 sm:w-8 mt-1 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-primary/70 bg-primary/5 border border-primary/20 rounded"
               >
                 {p}
               </div>
