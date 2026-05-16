@@ -435,6 +435,22 @@ const ExplorerV2 = () => {
   const [showFavOnly, setShowFavOnly] = useState(false);
   const [listLoading, setListLoading] = useState(false);
   const [mobilePane, setMobilePane] = useState<'map' | 'list'>('map');
+  const [filtersOpen, setFiltersOpen] = useState(true);
+
+  const activeFilterCount =
+    (unitType !== 'all' ? 1 : 0) +
+    (areaBucket !== 'all' ? 1 : 0) +
+    (floorBucket !== 'all' ? 1 : 0) +
+    (selectedBuildingId ? 1 : 0) +
+    (showFavOnly ? 1 : 0);
+
+  const resetFilters = () => {
+    setUnitType('all');
+    setAreaBucket('all');
+    setFloorBucket('all');
+    setSelectedBuildingId(null);
+    setShowFavOnly(false);
+  };
 
   const selectedBuildingId = selection.buildingId;
   const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
