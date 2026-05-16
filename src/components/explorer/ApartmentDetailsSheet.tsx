@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import type { ExplorerApartment } from '@/data/explorer';
 import { cn } from '@/lib/utils';
+import apartmentPlan from '@/assets/apartment-plan.jpg';
 
 const STATUS_CLASSES: Record<string, string> = {
   available: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30',
