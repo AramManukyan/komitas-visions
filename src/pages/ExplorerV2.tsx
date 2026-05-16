@@ -187,96 +187,231 @@ const MarkerMap = ({
   const VBW = vb[2];
   const VBH = vb[3];
 
+  const MIN = 1;
+  const MAX = 6;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [t, setT] = useState({ scale: 1, x: 0, y: 0 });
+  const pointers = useRef(new Map<number, { x: number; y: number }>());
+  const panStart = useRef<{ x: number; y: number; tx: number; ty: number } | null>(null);
+  const pinchStart = useRef<{ dist: number; scale: number; cx: number; cy: number } | null>(null);
+  const movedRef = useRef(false);
+
+  const toSvg = (clientX: number, clientY: number) => {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect) return { x: 0, y: 0 };
+    // svg uses xMidYMid slice — compute the actual rendered scale
+    const renderScale = Math.max(rect.width / VBW, rect.height / VBH);
+    const offsetX = (rect.width - VBW * renderScale) / 2;
+    const offsetY = (rect.height - VBH * renderScale) / 2;
+    return {
+      x: (clientX - rect.left - offsetX) / renderScale,
+      y: (clientY - rect.top - offsetY) / renderScale,
+    };
+  };
+
+  const zoomAt = (clientX: number, clientY: number, nextScale: number) => {
+    const s = Math.min(MAX, Math.max(MIN, nextScale));
+    const p = toSvg(clientX, clientY);
+    const k = s / t.scale;
+    setT({ scale: s, x: p.x - (p.x - t.x) * k, y: p.y - (p.y - t.y) * k });
+  };
+
+  const onWheel = (e: RWheelEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    zoomAt(e.clientX, e.clientY, t.scale * (1 + -e.deltaY * 0.0015));
+  };
+
+  const onPointerDown = (e: RPointerEvent<HTMLDivElement>) => {
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    movedRef.current = false;
+    if (pointers.current.size === 1) {
+      panStart.current = { x: e.clientX, y: e.clientY, tx: t.x, ty: t.y };
+    } else if (pointers.current.size === 2) {
+      const [a, b] = Array.from(pointers.current.values());
+      pinchStart.current = {
+        dist: Math.hypot(a.x - b.x, a.y - b.y),
+        scale: t.scale,
+        cx: (a.x + b.x) / 2,
+        cy: (a.y + b.y) / 2,
+      };
+      panStart.current = null;
+    }
+  };
+
+  const onPointerMove = (e: RPointerEvent<HTMLDivElement>) => {
+    if (!pointers.current.has(e.pointerId)) return;
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.current.size === 2 && pinchStart.current) {
+      const [a, b] = Array.from(pointers.current.values());
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      const next = pinchStart.current.scale * (d / pinchStart.current.dist);
+      zoomAt(pinchStart.current.cx, pinchStart.current.cy, next);
+      movedRef.current = true;
+    } else if (pointers.current.size === 1 && panStart.current) {
+      const rect = svgRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const renderScale = Math.max(rect.width / VBW, rect.height / VBH);
+      const dx = (e.clientX - panStart.current.x) / renderScale;
+      const dy = (e.clientY - panStart.current.y) / renderScale;
+      if (Math.abs(e.clientX - panStart.current.x) + Math.abs(e.clientY - panStart.current.y) > 4) {
+        movedRef.current = true;
+      }
+      setT((cur) => ({ scale: cur.scale, x: panStart.current!.tx + dx, y: panStart.current!.ty + dy }));
+    }
+  };
+
+  const endPointer = (e: RPointerEvent<HTMLDivElement>) => {
+    pointers.current.delete(e.pointerId);
+    if (pointers.current.size < 2) pinchStart.current = null;
+    if (pointers.current.size === 0) panStart.current = null;
+  };
+
+  const step = (factor: number) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, t.scale * factor);
+  };
+
+  const handleZoneClick = (b: BuildingInfo) => {
+    if (movedRef.current) return;
+    onSelect(b);
+  };
+
   return (
-    <svg
-      viewBox={geometry?.viewBox ?? '0 0 1600 900'}
-      preserveAspectRatio="xMidYMid slice"
-      className="absolute inset-0 w-full h-full"
+    <div
+      ref={containerRef}
+      className="absolute inset-0 w-full h-full touch-none select-none cursor-grab active:cursor-grabbing"
+      onWheel={onWheel}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endPointer}
+      onPointerCancel={endPointer}
+      onPointerLeave={endPointer}
     >
-      <image
-        href={masterplanImg}
-        x={0}
-        y={0}
-        width={VBW}
-        height={VBH}
+      <svg
+        ref={svgRef}
+        viewBox={geometry?.viewBox ?? '0 0 1600 900'}
         preserveAspectRatio="xMidYMid slice"
-      />
-
-      {geometry?.zones.map((z) => {
-        const active = selectedId === z.id;
-        const b = buildings.find((bb) => bb.id === z.id);
-        if (!b) return null;
-        return (
-          <polygon
-            key={`zone-${z.id}`}
-            points={z.points}
-            onClick={() => onSelect(b)}
-            className="cursor-pointer transition-all"
-            fill={active ? 'hsl(214 80% 55% / 0.45)' : 'hsl(214 80% 55% / 0)'}
-            stroke={active ? 'hsl(214 90% 70%)' : 'hsl(0 0% 100% / 0)'}
-            strokeWidth={4}
-            style={{ transition: 'fill .25s, stroke .25s' }}
-            onMouseEnter={(e) => {
-              if (!active) (e.currentTarget as SVGPolygonElement).setAttribute('fill', 'hsl(214 80% 55% / 0.25)');
-            }}
-            onMouseLeave={(e) => {
-              if (!active) (e.currentTarget as SVGPolygonElement).setAttribute('fill', 'hsl(214 80% 55% / 0)');
-            }}
+        className="absolute inset-0 w-full h-full"
+      >
+        <g transform={`translate(${t.x} ${t.y}) scale(${t.scale})`}>
+          <image
+            href={masterplanImg}
+            x={0}
+            y={0}
+            width={VBW}
+            height={VBH}
+            preserveAspectRatio="xMidYMid slice"
           />
-        );
-      })}
 
-      {geometry?.zones.map((z, i) => {
-        const b = buildings.find((bb) => bb.id === z.id);
-        if (!b || !z.bbox) return null;
-        const active = selectedId === b.id;
-        return (
-          <g
-            key={`marker-${z.id}`}
-            transform={`translate(${z.bbox.cx}, ${z.bbox.cy})`}
-            onClick={() => onSelect(b)}
-            className="cursor-pointer"
-          >
-            <circle
-              r={active ? 28 : 24}
-              fill={active ? 'hsl(45 80% 55%)' : 'hsl(0 0% 10% / 0.85)'}
-              stroke={active ? 'hsl(45 80% 75%)' : 'hsl(0 0% 100% / 0.2)'}
-              strokeWidth={active ? 6 : 2}
-              style={{ transition: 'all .25s' }}
-            />
-            <text
-              textAnchor="middle"
-              dominantBaseline="central"
-              fontSize={22}
-              fontWeight={700}
-              fill={active ? 'hsl(214 60% 12%)' : 'hsl(0 0% 100%)'}
-            >
-              {i + 1}
-            </text>
-            <g transform={`translate(0, ${active ? 50 : 44})`}>
-              <rect
-                x={-32}
-                y={-12}
-                width={64}
-                height={22}
-                rx={11}
-                fill="hsl(0 0% 10% / 0.85)"
-                stroke="hsl(0 0% 100% / 0.15)"
+          {geometry?.zones.map((z) => {
+            const active = selectedId === z.id;
+            const b = buildings.find((bb) => bb.id === z.id);
+            if (!b) return null;
+            return (
+              <polygon
+                key={`zone-${z.id}`}
+                points={z.points}
+                onClick={() => handleZoneClick(b)}
+                className="cursor-pointer transition-all"
+                fill={active ? 'hsl(214 80% 55% / 0.45)' : 'hsl(214 80% 55% / 0)'}
+                stroke={active ? 'hsl(214 90% 70%)' : 'hsl(0 0% 100% / 0)'}
+                strokeWidth={4}
+                style={{ transition: 'fill .25s, stroke .25s' }}
+                onMouseEnter={(e) => {
+                  if (!active) (e.currentTarget as SVGPolygonElement).setAttribute('fill', 'hsl(214 80% 55% / 0.25)');
+                }}
+                onMouseLeave={(e) => {
+                  if (!active) (e.currentTarget as SVGPolygonElement).setAttribute('fill', 'hsl(214 80% 55% / 0)');
+                }}
               />
-              <text
-                textAnchor="middle"
-                dominantBaseline="central"
-                fontSize={13}
-                fontWeight={700}
-                fill="hsl(0 0% 100%)"
+            );
+          })}
+
+          {geometry?.zones.map((z, i) => {
+            const b = buildings.find((bb) => bb.id === z.id);
+            if (!b || !z.bbox) return null;
+            const active = selectedId === b.id;
+            const inv = 1 / t.scale;
+            return (
+              <g
+                key={`marker-${z.id}`}
+                transform={`translate(${z.bbox.cx}, ${z.bbox.cy}) scale(${inv})`}
+                onClick={() => handleZoneClick(b)}
+                className="cursor-pointer"
               >
-                {b.id}
-              </text>
-            </g>
-          </g>
-        );
-      })}
-    </svg>
+                <circle
+                  r={active ? 28 : 24}
+                  fill={active ? 'hsl(45 80% 55%)' : 'hsl(0 0% 10% / 0.85)'}
+                  stroke={active ? 'hsl(45 80% 75%)' : 'hsl(0 0% 100% / 0.2)'}
+                  strokeWidth={active ? 6 : 2}
+                  style={{ transition: 'all .25s' }}
+                />
+                <text
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={22}
+                  fontWeight={700}
+                  fill={active ? 'hsl(214 60% 12%)' : 'hsl(0 0% 100%)'}
+                >
+                  {i + 1}
+                </text>
+                <g transform={`translate(0, ${active ? 50 : 44})`}>
+                  <rect
+                    x={-32}
+                    y={-12}
+                    width={64}
+                    height={22}
+                    rx={11}
+                    fill="hsl(0 0% 10% / 0.85)"
+                    stroke="hsl(0 0% 100% / 0.15)"
+                  />
+                  <text
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fontSize={13}
+                    fontWeight={700}
+                    fill="hsl(0 0% 100%)"
+                  >
+                    {b.id}
+                  </text>
+                </g>
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+
+      {/* Zoom controls */}
+      <div className="absolute bottom-4 right-4 flex flex-col gap-1.5 rounded-xl bg-background/85 backdrop-blur border border-border shadow-soft p-1 z-10">
+        <button
+          type="button"
+          aria-label="Zoom in"
+          onClick={() => step(1.4)}
+          className="h-9 w-9 grid place-items-center rounded-lg hover:bg-muted text-primary"
+        >
+          <Plus className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          aria-label="Zoom out"
+          onClick={() => step(1 / 1.4)}
+          className="h-9 w-9 grid place-items-center rounded-lg hover:bg-muted text-primary"
+        >
+          <Minus className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          aria-label="Reset view"
+          onClick={() => setT({ scale: 1, x: 0, y: 0 })}
+          className="h-9 w-9 grid place-items-center rounded-lg hover:bg-muted text-primary"
+        >
+          <RotateCcw className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
   );
 };
 
