@@ -38,6 +38,7 @@ import { getMasterplanGeometry } from '@/data/geometry';
 import { cn } from '@/lib/utils';
 import masterplanImg from '@/assets/explorer-masterplan.jpg';
 import logo from '@/assets/logo.png';
+import apartmentPlan from '@/assets/apartment-plan.jpg';
 
 type View = '3d' | '2d';
 
