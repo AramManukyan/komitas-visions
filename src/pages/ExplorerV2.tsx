@@ -38,6 +38,7 @@ import { getMasterplanGeometry } from '@/data/geometry';
 import { cn } from '@/lib/utils';
 import masterplanImg from '@/assets/explorer-masterplan.jpg';
 import logo from '@/assets/logo.png';
+import apartmentPlan from '@/assets/apartment-plan.jpg';
 
 type View = '3d' | '2d';
 
@@ -45,71 +46,14 @@ const fmtArea = (n: number) =>
   `${n.toString().replace('.', ',')} m²`;
 
 /* ------------------------------------------------------------------ */
-const PlanThumb = ({ apt }: { apt: ExplorerApartment }) => {
-  // Vary layout per room count: more rooms → more bedroom boxes
-  const rooms = Math.max(1, Math.min(apt.rooms, 4));
-  const seed = parseInt(apt.number.slice(-2), 10) || 1;
-  const v = seed % 4;
-  const bedrooms = Array.from({ length: rooms - 1 }, (_, i) => {
-    const w = 28 + ((seed + i * 7) % 12);
-    const h = 22 + ((seed + i * 5) % 10);
-    return { w, h };
-  });
-  return (
-    <svg viewBox="0 0 160 130" className="w-full h-full">
-      <rect x="6" y="6" width="148" height="118" rx="4" fill="hsl(40 30% 96%)" stroke="hsl(214 20% 70%)" strokeWidth="1.5" />
-      {/* Living/kitchen — size varies with total area */}
-      <rect
-        x="14"
-        y="14"
-        width={Math.min(132, 50 + apt.area * 0.45)}
-        height={Math.min(58, 36 + apt.area * 0.18)}
-        fill="none"
-        stroke="hsl(214 25% 55%)"
-        strokeWidth="1.2"
-      />
-      <text x="22" y="28" fontSize="7" fill="hsl(214 25% 40%)">
-        Living · {Math.round(apt.area * 0.3)} m²
-      </text>
-      {/* Bedrooms row */}
-      {bedrooms.map((b, i) => (
-        <g key={i}>
-          <rect
-            x={14 + i * 36 + (i > 1 ? 4 : 0)}
-            y={78}
-            width={b.w}
-            height={b.h}
-            fill="none"
-            stroke="hsl(214 25% 55%)"
-            strokeWidth="1.2"
-          />
-          <text
-            x={14 + i * 36 + b.w / 2 + (i > 1 ? 4 : 0)}
-            y={78 + b.h / 2 + 2}
-            textAnchor="middle"
-            fontSize="6"
-            fill="hsl(214 25% 40%)"
-          >
-            BR{i + 1}
-          </text>
-        </g>
-      ))}
-      {/* Balcony hint */}
-      {apt.rooms >= 2 && (
-        <rect
-          x={14 + v * 8}
-          y={108}
-          width={40}
-          height={12}
-          fill="none"
-          stroke="hsl(214 25% 65%)"
-          strokeWidth="1"
-          strokeDasharray="2 2"
-        />
-      )}
-    </svg>
-  );
-};
+const PlanThumb = ({ apt }: { apt: ExplorerApartment }) => (
+  <img
+    src={apartmentPlan}
+    alt={`Floor plan ${apt.number}`}
+    loading="lazy"
+    className="w-full h-full object-contain p-2"
+  />
+);
 
 const ApartmentCard = ({
   apt,
