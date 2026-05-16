@@ -64,6 +64,22 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
     return Math.round((loan * rate) / (1 - Math.pow(1 + rate, -n)));
   }, [apartment, downpayment, years]);
 
+  const floorInfo = useMemo(() => {
+    if (!apartment) return { apts: [], totalArea: 0, avgPrice: 0, available: 0 };
+    const apts = EXPLORER_APARTMENTS.filter(
+      (a) =>
+        a.block === apartment.block &&
+        a.building === apartment.building &&
+        a.floor === apartment.floor,
+    ).sort((a, b) => a.number.localeCompare(b.number));
+    const totalArea = apts.reduce((s, a) => s + a.area, 0);
+    const avgPrice = apts.length
+      ? Math.round(apts.reduce((s, a) => s + a.price, 0) / apts.length)
+      : 0;
+    const available = apts.filter((a) => a.status === 'available').length;
+    return { apts, totalArea, avgPrice, available };
+  }, [apartment]);
+
   if (!apartment) return null;
 
   const message = encodeURIComponent(
