@@ -303,6 +303,26 @@ const MarkerMap = ({
             >
               {i + 1}
             </text>
+            <g transform={`translate(0, ${active ? 50 : 44})`}>
+              <rect
+                x={-32}
+                y={-12}
+                width={64}
+                height={22}
+                rx={11}
+                fill="hsl(0 0% 10% / 0.85)"
+                stroke="hsl(0 0% 100% / 0.15)"
+              />
+              <text
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize={13}
+                fontWeight={700}
+                fill="hsl(0 0% 100%)"
+              >
+                {b.id}
+              </text>
+            </g>
           </g>
         );
       })}
