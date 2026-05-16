@@ -937,6 +937,8 @@ const ExplorerV2 = () => {
         onSelectApartment={(apt) => setDetailsApt(apt)}
         shareUrl={typeof window !== 'undefined' ? window.location.href : undefined}
       />
+
+      <ChatWidget />
     </div>
   );
 };
