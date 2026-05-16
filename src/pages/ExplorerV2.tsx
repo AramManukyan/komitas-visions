@@ -15,6 +15,9 @@ import {
   X,
   List,
   Map as MapIcon,
+  Plus,
+  Minus,
+  RotateCcw,
 } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useExplorerUrlState } from '@/hooks/useExplorerUrlState';
