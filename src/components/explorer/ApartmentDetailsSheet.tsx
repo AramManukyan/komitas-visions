@@ -16,7 +16,9 @@ import {
   Sun,
   Info,
   Map,
+  MessageCircle,
 } from 'lucide-react';
+import { chatStore } from '@/hooks/useChatAttachments';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
