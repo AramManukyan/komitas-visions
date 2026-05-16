@@ -6,10 +6,10 @@ import { ChevronRight, Building2, Layers, Home, CalendarCheck } from 'lucide-rea
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ChatWidget from '@/components/ChatWidget';
-import Masterplan from '@/components/explorer/Masterplan';
+import InteractiveMasterplan from '@/components/explorer/InteractiveMasterplan';
 import BuildingsGrid from '@/components/explorer/BuildingsGrid';
 import BuildingFacade from '@/components/explorer/BuildingFacade';
-import FloorPlanViewer from '@/components/explorer/FloorPlanViewer';
+import InteractiveFloorPlan from '@/components/explorer/InteractiveFloorPlan';
 import ApartmentFilters, {
   defaultFilters,
   type FilterState,
@@ -194,7 +194,8 @@ const Explorer = () => {
 
         <div className="grid lg:grid-cols-5 gap-6 mt-10">
           <div className="lg:col-span-3">
-            <Masterplan
+            <InteractiveMasterplan
+              districtId={district.id}
               selectedId={selection.buildingId}
               onSelect={(b) =>
                 update({
@@ -276,18 +277,23 @@ const Explorer = () => {
 
             {/* Floor plan */}
             <div className="lg:col-span-8">
-              <FloorPlanViewer
-                apartments={
-                  selection.floor != null && entranceId
-                    ? apartmentsIn(building.id, entranceId, selection.floor)
-                    : []
-                }
-                selectedId={selection.apartmentId}
-                onSelect={(apt) => {
-                  update({ apartmentId: apt.id });
-                  setDetailsApt(apt);
-                }}
-              />
+              {selection.floor != null && entranceId ? (
+                <InteractiveFloorPlan
+                  buildingId={building.id}
+                  entrance={entranceId}
+                  floor={selection.floor}
+                  apartments={apartmentsIn(building.id, entranceId, selection.floor)}
+                  selectedId={selection.apartmentId}
+                  onSelect={(apt) => {
+                    update({ apartmentId: apt.id });
+                    setDetailsApt(apt);
+                  }}
+                />
+              ) : (
+                <div className="rounded-3xl border border-border bg-card p-16 text-center text-muted-foreground h-full grid place-items-center">
+                  Select a floor to view its plan
+                </div>
+              )}
             </div>
           </div>
         </section>
