@@ -22,7 +22,7 @@ type LeadInfo = {
   message: string;
 };
 
-const ChatWidget = () => {
+const ChatWidget = ({ hideFloatingButton = false }: { hideFloatingButton?: boolean } = {}) => {
   const { t } = useTranslation();
   const { open, attachments } = useChatStore();
   const setOpen = (o: boolean) => chatStore.setOpen(o);
