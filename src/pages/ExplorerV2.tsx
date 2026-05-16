@@ -493,8 +493,23 @@ const ExplorerV2 = () => {
                 </div>
               </Link>
             </div>
-            <button className="h-9 w-9 grid place-items-center rounded-full border border-border hover:bg-muted transition">
-              <Heart className="h-4 w-4 text-muted-foreground" />
+            <button
+              onClick={() => setShowFavOnly((v) => !v)}
+              aria-pressed={showFavOnly}
+              className={cn(
+                'relative h-9 w-9 grid place-items-center rounded-full border transition',
+                showFavOnly
+                  ? 'bg-destructive/10 border-destructive text-destructive'
+                  : 'border-border hover:bg-muted text-muted-foreground',
+              )}
+              aria-label="Show favorites only"
+            >
+              <Heart className={cn('h-4 w-4', showFavOnly && 'fill-destructive')} />
+              {favCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-accent text-accent-foreground text-[9px] font-bold grid place-items-center">
+                  {favCount}
+                </span>
+              )}
             </button>
           </div>
 
