@@ -1,5 +1,5 @@
 import '../i18n';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -13,6 +13,8 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useExplorerUrlState } from '@/hooks/useExplorerUrlState';
 import ApartmentDetailsSheet from '@/components/explorer/ApartmentDetailsSheet';
 import BuildingMatrix from '@/components/explorer/BuildingMatrix';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -41,21 +43,67 @@ const fmtArea = (n: number) =>
 
 /* ------------------------------------------------------------------ */
 const PlanThumb = ({ apt }: { apt: ExplorerApartment }) => {
+  // Vary layout per room count: more rooms → more bedroom boxes
+  const rooms = Math.max(1, Math.min(apt.rooms, 4));
   const seed = parseInt(apt.number.slice(-2), 10) || 1;
-  const variant = seed % 3;
+  const v = seed % 4;
+  const bedrooms = Array.from({ length: rooms - 1 }, (_, i) => {
+    const w = 28 + ((seed + i * 7) % 12);
+    const h = 22 + ((seed + i * 5) % 10);
+    return { w, h };
+  });
   return (
     <svg viewBox="0 0 160 130" className="w-full h-full">
       <rect x="6" y="6" width="148" height="118" rx="4" fill="hsl(40 30% 96%)" stroke="hsl(214 20% 70%)" strokeWidth="1.5" />
-      <rect x="14" y="14" width="60" height="50" fill="none" stroke="hsl(214 25% 55%)" strokeWidth="1.2" />
-      <text x="44" y="42" textAnchor="middle" fontSize="8" fill="hsl(214 25% 40%)">{(12 + variant).toFixed(1)} m²</text>
-      <rect x="78" y="14" width="68" height="78" fill="none" stroke="hsl(214 25% 55%)" strokeWidth="1.2" />
-      <text x="112" y="56" textAnchor="middle" fontSize="8" fill="hsl(214 25% 40%)">{(18 + variant * 2).toFixed(1)} m²</text>
-      <rect x="14" y="68" width="28" height="24" fill="none" stroke="hsl(214 25% 55%)" strokeWidth="1.2" />
-      <text x="28" y="83" textAnchor="middle" fontSize="6" fill="hsl(214 25% 40%)">3.9</text>
-      <rect x="46" y="68" width="28" height="24" fill="none" stroke="hsl(214 25% 55%)" strokeWidth="1.2" />
-      <text x="60" y="83" textAnchor="middle" fontSize="6" fill="hsl(214 25% 40%)">5.3</text>
-      <rect x="14" y="96" width="132" height="22" fill="none" stroke="hsl(214 25% 55%)" strokeWidth="1.2" />
-      <text x="80" y="111" textAnchor="middle" fontSize="6" fill="hsl(214 25% 40%)">6.4 m²</text>
+      {/* Living/kitchen — size varies with total area */}
+      <rect
+        x="14"
+        y="14"
+        width={Math.min(132, 50 + apt.area * 0.45)}
+        height={Math.min(58, 36 + apt.area * 0.18)}
+        fill="none"
+        stroke="hsl(214 25% 55%)"
+        strokeWidth="1.2"
+      />
+      <text x="22" y="28" fontSize="7" fill="hsl(214 25% 40%)">
+        Living · {Math.round(apt.area * 0.3)} m²
+      </text>
+      {/* Bedrooms row */}
+      {bedrooms.map((b, i) => (
+        <g key={i}>
+          <rect
+            x={14 + i * 36 + (i > 1 ? 4 : 0)}
+            y={78}
+            width={b.w}
+            height={b.h}
+            fill="none"
+            stroke="hsl(214 25% 55%)"
+            strokeWidth="1.2"
+          />
+          <text
+            x={14 + i * 36 + b.w / 2 + (i > 1 ? 4 : 0)}
+            y={78 + b.h / 2 + 2}
+            textAnchor="middle"
+            fontSize="6"
+            fill="hsl(214 25% 40%)"
+          >
+            BR{i + 1}
+          </text>
+        </g>
+      ))}
+      {/* Balcony hint */}
+      {apt.rooms >= 2 && (
+        <rect
+          x={14 + v * 8}
+          y={108}
+          width={40}
+          height={12}
+          fill="none"
+          stroke="hsl(214 25% 65%)"
+          strokeWidth="1"
+          strokeDasharray="2 2"
+        />
+      )}
     </svg>
   );
 };
@@ -63,11 +111,14 @@ const PlanThumb = ({ apt }: { apt: ExplorerApartment }) => {
 const ApartmentCard = ({
   apt,
   onClick,
+  isFav,
+  onToggleFav,
 }: {
   apt: ExplorerApartment;
   onClick: () => void;
+  isFav: boolean;
+  onToggleFav: () => void;
 }) => {
-  const [fav, setFav] = useState(false);
   return (
     <motion.div
       whileHover={{ y: -2 }}
@@ -84,14 +135,14 @@ const ApartmentCard = ({
         <button
           onClick={(e) => {
             e.stopPropagation();
-            setFav((v) => !v);
+            onToggleFav();
           }}
           className="absolute top-2 right-2 h-7 w-7 grid place-items-center rounded-full bg-background/80 backdrop-blur border border-border hover:bg-background"
         >
           <Heart
             className={cn(
               'h-3.5 w-3.5 transition',
-              fav ? 'fill-destructive text-destructive' : 'text-muted-foreground',
+              isFav ? 'fill-destructive text-destructive' : 'text-muted-foreground',
             )}
           />
         </button>
@@ -104,9 +155,12 @@ const ApartmentCard = ({
           <span
             className={cn(
               'px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider',
-              apt.status === 'available' && 'bg-emerald-500/15 text-emerald-700',
-              apt.status === 'reserved' && 'bg-amber-500/15 text-amber-700',
-              apt.status === 'sold' && 'bg-rose-500/15 text-rose-700',
+              apt.status === 'available' &&
+                'bg-[hsl(var(--status-available))]/15 text-[hsl(var(--status-available))]',
+              apt.status === 'reserved' &&
+                'bg-[hsl(var(--status-reserved))]/20 text-[hsl(var(--status-reserved-fg))]',
+              apt.status === 'sold' &&
+                'bg-[hsl(var(--status-sold))]/40 text-[hsl(var(--status-sold-fg))]',
             )}
           >
             {apt.status}
@@ -249,6 +303,26 @@ const MarkerMap = ({
             >
               {i + 1}
             </text>
+            <g transform={`translate(0, ${active ? 50 : 44})`}>
+              <rect
+                x={-32}
+                y={-12}
+                width={64}
+                height={22}
+                rx={11}
+                fill="hsl(0 0% 10% / 0.85)"
+                stroke="hsl(0 0% 100% / 0.15)"
+              />
+              <text
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize={13}
+                fontWeight={700}
+                fill="hsl(0 0% 100%)"
+              >
+                {b.id}
+              </text>
+            </g>
           </g>
         );
       })}
@@ -347,13 +421,32 @@ const SideMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
 
 /* ------------------------------------------------------------------ */
 const ExplorerV2 = () => {
+  const { selection, update } = useExplorerUrlState();
+  const { isFavorite, toggle: toggleFav, count: favCount } = useFavorites();
+
   const [unitType, setUnitType] = useState<string>('all');
   const [areaBucket, setAreaBucket] = useState<string>('all');
   const [floorBucket, setFloorBucket] = useState<string>('all');
-  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [view, setView] = useState<View>('3d');
   const [detailsApt, setDetailsApt] = useState<ExplorerApartment | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showFavOnly, setShowFavOnly] = useState(false);
+  const [listLoading, setListLoading] = useState(false);
+
+  const selectedBuildingId = selection.buildingId;
+  const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
+
+  const matrixFilter = useMemo(
+    () => ({ unitType, areaBucket, floorBucket }),
+    [unitType, areaBucket, floorBucket],
+  );
+
+  // Skeleton hint when filters change
+  useEffect(() => {
+    setListLoading(true);
+    const t = setTimeout(() => setListLoading(false), 220);
+    return () => clearTimeout(t);
+  }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly]);
 
   const filtered = useMemo(() => {
     return EXPLORER_APARTMENTS.filter((a) => {
@@ -367,9 +460,10 @@ const ExplorerV2 = () => {
         if (a.floor < min || a.floor > max) return false;
       }
       if (selectedBuildingId && `${a.block}-${a.building}` !== selectedBuildingId) return false;
+      if (showFavOnly && !isFavorite(a.id)) return false;
       return a.status === 'available';
     });
-  }, [unitType, areaBucket, floorBucket, selectedBuildingId]);
+  }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly, isFavorite]);
 
   return (
     <div className="h-screen bg-warm-bg flex flex-col overflow-hidden">
@@ -399,8 +493,23 @@ const ExplorerV2 = () => {
                 </div>
               </Link>
             </div>
-            <button className="h-9 w-9 grid place-items-center rounded-full border border-border hover:bg-muted transition">
-              <Heart className="h-4 w-4 text-muted-foreground" />
+            <button
+              onClick={() => setShowFavOnly((v) => !v)}
+              aria-pressed={showFavOnly}
+              className={cn(
+                'relative h-9 w-9 grid place-items-center rounded-full border transition',
+                showFavOnly
+                  ? 'bg-destructive/10 border-destructive text-destructive'
+                  : 'border-border hover:bg-muted text-muted-foreground',
+              )}
+              aria-label="Show favorites only"
+            >
+              <Heart className={cn('h-4 w-4', showFavOnly && 'fill-destructive')} />
+              {favCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-accent text-accent-foreground text-[9px] font-bold grid place-items-center">
+                  {favCount}
+                </span>
+              )}
             </button>
           </div>
 
@@ -466,10 +575,33 @@ const ExplorerV2 = () => {
           <div className="flex-1 overflow-y-auto px-5 py-4">
             <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-3 font-semibold">
               {filtered.length} apartments
+              {showFavOnly && <span className="ml-2 text-destructive">· favorites</span>}
             </p>
-            {filtered.length === 0 ? (
-              <div className="text-center text-muted-foreground py-12 text-sm">
-                No apartments match your filters.
+            {listLoading ? (
+              <div className="grid grid-cols-2 gap-3">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-2xl border border-border bg-card overflow-hidden animate-pulse"
+                  >
+                    <div className="aspect-[4/3] bg-muted" />
+                    <div className="p-3 space-y-2">
+                      <div className="h-3 w-1/2 bg-muted rounded" />
+                      <div className="h-2 w-2/3 bg-muted rounded" />
+                      <div className="h-2 w-1/3 bg-muted rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="h-14 w-14 mx-auto rounded-full bg-muted grid place-items-center mb-3">
+                  <SlidersHorizontal className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <p className="font-heading text-base text-primary">No apartments match</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Try clearing a filter or picking a different building.
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
@@ -478,6 +610,8 @@ const ExplorerV2 = () => {
                     key={apt.id}
                     apt={apt}
                     onClick={() => setDetailsApt(apt)}
+                    isFav={isFavorite(apt.id)}
+                    onToggleFav={() => toggleFav(apt.id)}
                   />
                 ))}
               </div>
@@ -487,17 +621,19 @@ const ExplorerV2 = () => {
 
         {/* Right panel */}
         <main className="flex-1 relative min-h-[70vh] lg:min-h-0 lg:h-full overflow-hidden bg-primary">
-          {/* Pick-a-block label */}
-          <div className="absolute top-4 left-4 z-20">
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-sm font-semibold shadow-elevated">
+          {/* Top overlay row — stacks on mobile to avoid overlap */}
+          <div className="absolute top-4 left-4 right-4 z-20 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pointer-events-none">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground/85 backdrop-blur border border-white/10 text-background text-sm font-semibold shadow-elevated pointer-events-auto self-start">
               <MapPin className="h-4 w-4" />
-              {view === '3d' ? 'Pick a block' : 'Browse buildings'}
+              {view === '3d'
+                ? selectedBuildingId
+                  ? `Building ${selectedBuildingId} selected`
+                  : 'Pick a block'
+                : 'Browse buildings'}
             </div>
-          </div>
-
-          {/* View Switcher */}
-          <div className="absolute top-4 right-4 z-20">
-            <ViewSwitcher view={view} onChange={setView} />
+            <div className="pointer-events-auto self-start sm:self-auto">
+              <ViewSwitcher view={view} onChange={setView} />
+            </div>
           </div>
 
           {/* Content swap */}
@@ -514,7 +650,11 @@ const ExplorerV2 = () => {
                 <MarkerMap
                   buildings={BUILDINGS}
                   selectedId={selectedBuildingId}
-                  onSelect={(b) => setSelectedBuildingId(b.id)}
+                  onSelect={(b) => {
+                    setSelectedBuildingId(b.id);
+                    // Auto-switch to 2D so the user sees the building layout
+                    setView('2d');
+                  }}
                 />
               </motion.div>
             ) : (
@@ -524,7 +664,7 @@ const ExplorerV2 = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 12 }}
                 transition={{ duration: 0.35 }}
-                className="absolute inset-0 overflow-y-auto bg-warm-bg"
+                className="absolute inset-0 overflow-y-auto bg-warm-bg pt-24 sm:pt-20"
               >
                 <div className="p-6 lg:p-10">
                   <div className="mb-6 max-w-2xl">
@@ -535,11 +675,13 @@ const ExplorerV2 = () => {
                       {selectedBuildingId ? `Building ${selectedBuildingId}` : 'All buildings'}
                     </h2>
                     <p className="text-muted-foreground mt-2 font-body text-sm">
-                      Click any apartment to view details. Numbers indicate bedrooms.
+                      Click any apartment to view details. Use arrow keys to navigate the grid.
                     </p>
                   </div>
                   <BuildingMatrix
                     selectedBuildingId={selectedBuildingId}
+                    filter={matrixFilter}
+                    isFavorite={isFavorite}
                     onApartmentClick={(apt) => setDetailsApt(apt)}
                   />
                 </div>
