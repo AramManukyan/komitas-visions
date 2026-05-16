@@ -306,16 +306,18 @@ const ChatWidget = ({ hideFloatingButton = false }: { hideFloatingButton?: boole
       )}
 
       {/* Floating button */}
-      <button
-        onClick={() => setOpen(!open)}
-        aria-label={open ? t('chat.aria.close') : t('chat.aria.open')}
-        className={cn(
-          'group relative flex h-14 w-14 items-center justify-center rounded-full gradient-gold text-navy',
-          'shadow-glow-gold transition-transform hover:scale-105 active:scale-95'
-        )}
-      >
-        {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
-      </button>
+      {!hideFloatingButton && (
+        <button
+          onClick={() => setOpen(!open)}
+          aria-label={open ? t('chat.aria.close') : t('chat.aria.open')}
+          className={cn(
+            'group relative flex h-14 w-14 items-center justify-center rounded-full gradient-gold text-navy',
+            'shadow-glow-gold transition-transform hover:scale-105 active:scale-95'
+          )}
+        >
+          {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        </button>
+      )}
     </div>
   );
 };
