@@ -153,7 +153,7 @@ const BuildingMatrix = ({
         <div
           ref={gridRef}
           onKeyDown={handleKeyNav}
-          className="flex gap-3 items-start overflow-x-auto pb-4"
+          className="flex gap-8 md:gap-12 items-start overflow-x-auto pb-4"
         >
           {/* Floor numbers column */}
           <div className="flex flex-col gap-1 pt-16 shrink-0 sticky left-0 bg-warm-bg z-10">
