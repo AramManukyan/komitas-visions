@@ -334,13 +334,21 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                   {floorInfo.apts.map((a) => {
                     const isCurrent = a.id === apartment.id;
                     return (
-                      <div
+                      <button
                         key={a.id}
+                        type="button"
+                        onClick={() => {
+                          if (isCurrent) return;
+                          onSelectApartment?.(a);
+                        }}
+                        aria-pressed={isCurrent}
+                        aria-label={`Select apartment ${a.number}`}
                         className={cn(
-                          'px-3 py-2 rounded-xl border text-xs font-semibold flex items-center gap-2',
+                          'px-3 py-2 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all outline-none',
+                          'focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-background',
                           isCurrent
-                            ? 'bg-accent text-accent-foreground border-accent shadow-sm'
-                            : 'bg-card border-border text-primary',
+                            ? 'bg-accent text-accent-foreground border-accent shadow-sm cursor-default'
+                            : 'bg-card border-border text-primary hover:-translate-y-0.5 hover:border-accent hover:shadow-sm cursor-pointer',
                         )}
                       >
                         <span className="font-bold">№{a.number}</span>
@@ -348,7 +356,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                         <span>{a.rooms} BR</span>
                         <span className="opacity-70">·</span>
                         <span>{a.area} m²</span>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
