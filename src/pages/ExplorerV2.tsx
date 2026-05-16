@@ -436,6 +436,38 @@ const ExplorerV2 = () => {
   const [listLoading, setListLoading] = useState(false);
   const [mobilePane, setMobilePane] = useState<'map' | 'list'>('map');
   const [filtersOpen, setFiltersOpen] = useState(true);
+  const [asideWidth, setAsideWidth] = useState<number>(460);
+  const [isDesktop, setIsDesktop] = useState<boolean>(
+    typeof window !== 'undefined' ? window.matchMedia('(min-width: 1024px)').matches : true,
+  );
+  const [dragging, setDragging] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 1024px)');
+    const onChange = () => setIsDesktop(mql.matches);
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    if (!dragging) return;
+    const onMove = (e: MouseEvent) => {
+      const min = 320;
+      const max = Math.min(window.innerWidth - 360, 900);
+      setAsideWidth(Math.max(min, Math.min(max, e.clientX)));
+    };
+    const onUp = () => setDragging(false);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [dragging]);
 
   const selectedBuildingId = selection.buildingId;
   const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
