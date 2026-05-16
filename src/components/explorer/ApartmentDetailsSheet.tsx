@@ -17,6 +17,7 @@ import {
   Sun,
   X,
 } from 'lucide-react';
+import { chatStore } from '@/hooks/useChatAttachments';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,9 +47,10 @@ interface Props {
   apartment: ExplorerApartment | null;
   onClose: () => void;
   shareUrl?: string;
+  onSelectApartment?: (apt: ExplorerApartment) => void;
 }
 
-const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
+const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment }: Props) => {
   const { t } = useTranslation();
   const [favorite, setFavorite] = useState(false);
   const [downpayment, setDownpayment] = useState(20);
@@ -252,7 +254,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
               </div>
 
               {/* Actions */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                 <Button
                   asChild
                   className="rounded-xl gradient-gold text-accent-foreground hover:shadow-glow-gold"
@@ -261,6 +263,18 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
                     <Phone className="h-4 w-4" />
                     {t('explorer.actions.callback')}
                   </a>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-xl border-accent/40 text-primary hover:bg-accent/10"
+                  onClick={() => {
+                    chatStore.addApartment(apartment);
+                    onClose();
+                  }}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Send via chat
                 </Button>
                 <Button asChild variant="outline" className="rounded-xl">
                   <a
@@ -331,13 +345,21 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
                   {floorInfo.apts.map((a) => {
                     const isCurrent = a.id === apartment.id;
                     return (
-                      <div
+                      <button
                         key={a.id}
+                        type="button"
+                        onClick={() => {
+                          if (isCurrent) return;
+                          onSelectApartment?.(a);
+                        }}
+                        aria-pressed={isCurrent}
+                        aria-label={`Select apartment ${a.number}`}
                         className={cn(
-                          'px-3 py-2 rounded-xl border text-xs font-semibold flex items-center gap-2',
+                          'px-3 py-2 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all outline-none',
+                          'focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-background',
                           isCurrent
-                            ? 'bg-accent text-accent-foreground border-accent shadow-sm'
-                            : 'bg-card border-border text-primary',
+                            ? 'bg-accent text-accent-foreground border-accent shadow-sm cursor-default'
+                            : 'bg-card border-border text-primary hover:-translate-y-0.5 hover:border-accent hover:shadow-sm cursor-pointer',
                         )}
                       >
                         <span className="font-bold">№{a.number}</span>
@@ -345,7 +367,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl }: Props) => {
                         <span>{a.rooms} BR</span>
                         <span className="opacity-70">·</span>
                         <span>{a.area} m²</span>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>

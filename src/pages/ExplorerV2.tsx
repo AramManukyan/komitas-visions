@@ -22,6 +22,7 @@ import {
 import { useFavorites } from '@/hooks/useFavorites';
 import { useExplorerUrlState } from '@/hooks/useExplorerUrlState';
 import ApartmentDetailsSheet from '@/components/explorer/ApartmentDetailsSheet';
+import ChatWidget from '@/components/ChatWidget';
 import BuildingMatrix from '@/components/explorer/BuildingMatrix';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import {
@@ -942,8 +943,11 @@ const ExplorerV2 = () => {
       <ApartmentDetailsSheet
         apartment={detailsApt}
         onClose={() => setDetailsApt(null)}
+        onSelectApartment={(apt) => setDetailsApt(apt)}
         shareUrl={typeof window !== 'undefined' ? window.location.href : undefined}
       />
+
+      <ChatWidget />
     </div>
   );
 };

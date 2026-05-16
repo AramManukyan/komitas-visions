@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import { MessageCircle, X, Send } from 'lucide-react';
+import { MessageCircle, X, Send, Home } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { chatStore, useChatStore } from '@/hooks/useChatAttachments';
+import type { ExplorerApartment } from '@/data/explorer';
 
 type Message = {
   id: string;
   text: string;
   sender: 'user' | 'bot';
+  apartments?: ExplorerApartment[];
 };
 
 type LeadInfo = {
@@ -21,7 +24,8 @@ type LeadInfo = {
 
 const ChatWidget = () => {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const { open, attachments } = useChatStore();
+  const setOpen = (o: boolean) => chatStore.setOpen(o);
   const [lead, setLead] = useState<LeadInfo | null>(null);
   const [form, setForm] = useState<LeadInfo>({ name: '', phone: '', message: '' });
   const [errors, setErrors] = useState<Partial<LeadInfo>>({});
@@ -77,10 +81,19 @@ const ChatWidget = () => {
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();
-    if (!text) return;
-    setMessages((m) => [...m, { id: `${Date.now()}-u`, text, sender: 'user' }]);
+    if (!text && attachments.length === 0) return;
+    const apts = attachments;
+    const summary = apts.length
+      ? apts.map((a) => `№${a.number} (${a.rooms} BR · ${a.area} m² · $${a.price.toLocaleString()})`).join(', ')
+      : '';
+    const fullText = text || (apts.length ? `I'm interested in: ${summary}` : '');
+    setMessages((m) => [
+      ...m,
+      { id: `${Date.now()}-u`, text: fullText, sender: 'user', apartments: apts },
+    ]);
     setInput('');
-    simulateBotReply(text);
+    chatStore.clearAttachments();
+    simulateBotReply(fullText);
   };
 
   return (
@@ -122,6 +135,32 @@ const ChatWidget = () => {
               <p className="text-sm text-foreground/80">
                 {t('chat.preFormHint')}
               </p>
+              {attachments.length > 0 && (
+                <div className="rounded-xl border border-accent/40 bg-accent/10 p-3 space-y-2">
+                  <p className="text-[11px] uppercase tracking-wider font-bold text-accent-foreground">
+                    {attachments.length} apartment{attachments.length > 1 ? 's' : ''} attached
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {attachments.map((a) => (
+                      <span
+                        key={a.id}
+                        className="inline-flex items-center gap-1 rounded-full bg-background border border-border px-2 py-0.5 text-[11px] font-medium"
+                      >
+                        <Home className="h-3 w-3 opacity-70" />
+                        №{a.number}
+                        <button
+                          type="button"
+                          onClick={() => chatStore.removeApartment(a.id)}
+                          className="text-muted-foreground hover:text-foreground"
+                          aria-label="Remove"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="cw-name">{t('contact.name')}</Label>
                 <Input
@@ -167,13 +206,38 @@ const ChatWidget = () => {
                   >
                     <div
                       className={cn(
-                        'max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-soft',
+                        'max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-soft space-y-2',
                         m.sender === 'user'
                           ? 'bg-navy text-primary-foreground rounded-br-sm'
                           : 'bg-card text-card-foreground border border-border rounded-bl-sm'
                       )}
                     >
-                      {m.text}
+                      {m.text && <div className="whitespace-pre-wrap">{m.text}</div>}
+                      {m.apartments && m.apartments.length > 0 && (
+                        <div className="space-y-1.5 pt-1">
+                          {m.apartments.map((a) => (
+                            <div
+                              key={a.id}
+                              className={cn(
+                                'flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs',
+                                m.sender === 'user'
+                                  ? 'bg-white/10 border border-white/15'
+                                  : 'bg-muted/60 border border-border'
+                              )}
+                            >
+                              <Home className="h-3.5 w-3.5 shrink-0 opacity-70" />
+                              <div className="flex-1 min-w-0">
+                                <div className="font-semibold truncate">
+                                  Apt №{a.number} · {a.rooms} BR
+                                </div>
+                                <div className="opacity-70 truncate">
+                                  {a.area} m² · floor {a.floor} · ${a.price.toLocaleString()}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -191,19 +255,46 @@ const ChatWidget = () => {
                 )}
               </div>
 
+              {/* Attachment chips */}
+              {attachments.length > 0 && (
+                <div className="border-t border-border bg-muted/40 px-3 py-2 flex flex-wrap gap-1.5">
+                  {attachments.map((a) => (
+                    <span
+                      key={a.id}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-background border border-border pl-2 pr-1 py-0.5 text-[11px] font-medium text-foreground"
+                    >
+                      <Home className="h-3 w-3 text-accent-foreground/70" />
+                      №{a.number} · {a.rooms}BR · {a.area}m²
+                      <button
+                        type="button"
+                        onClick={() => chatStore.removeApartment(a.id)}
+                        className="h-4 w-4 rounded-full grid place-items-center text-muted-foreground hover:bg-muted hover:text-foreground"
+                        aria-label="Remove attachment"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
               {/* Input */}
               <form onSubmit={handleSend} className="flex items-center gap-2 border-t border-border bg-background p-3">
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder={t('chat.placeholders.input')}
+                  placeholder={
+                    attachments.length > 0
+                      ? `Add a note for ${attachments.length} apartment${attachments.length > 1 ? 's' : ''}...`
+                      : t('chat.placeholders.input')
+                  }
                   className="flex-1"
                   autoComplete="off"
                 />
                 <Button
                   type="submit"
                   size="icon"
-                  disabled={!input.trim() || isTyping}
+                  disabled={(!input.trim() && attachments.length === 0) || isTyping}
                   aria-label={t('chat.aria.send')}
                 >
                   <Send className="h-4 w-4" />
@@ -216,7 +307,7 @@ const ChatWidget = () => {
 
       {/* Floating button */}
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen(!open)}
         aria-label={open ? t('chat.aria.close') : t('chat.aria.open')}
         className={cn(
           'group relative flex h-14 w-14 items-center justify-center rounded-full gradient-gold text-navy',
