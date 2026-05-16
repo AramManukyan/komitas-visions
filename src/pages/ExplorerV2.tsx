@@ -242,7 +242,7 @@ const MarkerMap = ({
   return (
     <svg
       viewBox={geometry?.viewBox ?? '0 0 1600 900'}
-      preserveAspectRatio="xMidYMid meet"
+      preserveAspectRatio="xMidYMid slice"
       className="absolute inset-0 w-full h-full"
     >
       <image
@@ -436,6 +436,38 @@ const ExplorerV2 = () => {
   const [listLoading, setListLoading] = useState(false);
   const [mobilePane, setMobilePane] = useState<'map' | 'list'>('map');
   const [filtersOpen, setFiltersOpen] = useState(true);
+  const [asideWidth, setAsideWidth] = useState<number>(460);
+  const [isDesktop, setIsDesktop] = useState<boolean>(
+    typeof window !== 'undefined' ? window.matchMedia('(min-width: 1024px)').matches : true,
+  );
+  const [dragging, setDragging] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 1024px)');
+    const onChange = () => setIsDesktop(mql.matches);
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    if (!dragging) return;
+    const onMove = (e: MouseEvent) => {
+      const min = 320;
+      const max = Math.min(window.innerWidth - 360, 900);
+      setAsideWidth(Math.max(min, Math.min(max, e.clientX)));
+    };
+    const onUp = () => setDragging(false);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [dragging]);
 
   const selectedBuildingId = selection.buildingId;
   const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
@@ -523,11 +555,14 @@ const ExplorerV2 = () => {
       </div>
 
       <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
-        <aside className={cn(
-          'w-full lg:w-[420px] xl:w-[500px] bg-background border-r border-border flex-col min-h-0 lg:h-full max-h-full',
-          'lg:flex',
-          mobilePane === 'list' ? 'flex flex-1' : 'hidden',
-        )}>
+        <aside
+          style={isDesktop ? { width: asideWidth, flex: '0 0 auto' } : undefined}
+          className={cn(
+            'w-full lg:w-[420px] xl:w-[500px] bg-background border-r border-border flex-col min-h-0 lg:h-full max-h-full',
+            'lg:flex',
+            mobilePane === 'list' ? 'flex flex-1' : 'hidden',
+          )}
+        >
           {/* Logo strip with menu trigger */}
           <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -712,6 +747,24 @@ const ExplorerV2 = () => {
             )}
           </div>
         </aside>
+
+        {/* Splitter (desktop only) */}
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
+          onDoubleClick={() => setAsideWidth(460)}
+          className={cn(
+            'hidden lg:flex group relative w-1.5 shrink-0 cursor-col-resize items-center justify-center bg-border hover:bg-accent transition-colors',
+            dragging && 'bg-accent',
+          )}
+          aria-label="Resize panels"
+        >
+          <div className="absolute top-1/2 -translate-y-1/2 h-10 w-1 rounded-full bg-foreground/20 group-hover:bg-accent-foreground/60 transition" />
+        </div>
 
         {/* Right panel */}
         <main className={cn(
