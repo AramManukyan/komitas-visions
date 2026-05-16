@@ -17,7 +17,7 @@ export interface BuildingInfo {
   floors: number;
   status: BuildingStatus;
   progress: number; // 0-100
-  /** SVG polygon points relative to viewBox 0 0 800 500 */
+  /** SVG polygon points relative to viewBox 0 0 1600 900 (matches masterplan image). */
   polygon: string;
   entrances: EntranceInfo[];
 }
