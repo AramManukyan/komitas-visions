@@ -18,11 +18,13 @@ import {
   Plus,
   Minus,
   RotateCcw,
+  MessageCircle,
 } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useExplorerUrlState } from '@/hooks/useExplorerUrlState';
 import ApartmentDetailsSheet from '@/components/explorer/ApartmentDetailsSheet';
 import ChatWidget from '@/components/ChatWidget';
+import { chatStore } from '@/hooks/useChatAttachments';
 import BuildingMatrix from '@/components/explorer/BuildingMatrix';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import {
@@ -417,6 +419,15 @@ const MarkerMap = ({
           className="h-9 w-9 grid place-items-center rounded-lg hover:bg-muted text-primary"
         >
           <RotateCcw className="h-3.5 w-3.5" />
+        </button>
+        <div className="h-px bg-border mx-1" />
+        <button
+          type="button"
+          aria-label="Open chat"
+          onClick={() => chatStore.setOpen(true)}
+          className="h-9 w-9 grid place-items-center rounded-lg hover:bg-muted text-primary"
+        >
+          <MessageCircle className="h-4 w-4" />
         </button>
       </div>
     </div>
@@ -947,7 +958,7 @@ const ExplorerV2 = () => {
         shareUrl={typeof window !== 'undefined' ? window.location.href : undefined}
       />
 
-      <ChatWidget />
+      <ChatWidget hideFloatingButton />
     </div>
   );
 };
