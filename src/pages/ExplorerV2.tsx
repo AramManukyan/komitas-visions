@@ -284,7 +284,7 @@ const ExplorerV2 = () => {
   };
 
   return (
-    <div className="min-h-screen bg-warm-bg flex flex-col">
+    <div className="h-screen bg-warm-bg flex flex-col overflow-hidden">
       <Header />
 
       <div className="flex-1 flex flex-col lg:flex-row min-h-[calc(100vh-80px)]">
