@@ -575,10 +575,33 @@ const ExplorerV2 = () => {
           <div className="flex-1 overflow-y-auto px-5 py-4">
             <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-3 font-semibold">
               {filtered.length} apartments
+              {showFavOnly && <span className="ml-2 text-destructive">· favorites</span>}
             </p>
-            {filtered.length === 0 ? (
-              <div className="text-center text-muted-foreground py-12 text-sm">
-                No apartments match your filters.
+            {listLoading ? (
+              <div className="grid grid-cols-2 gap-3">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-2xl border border-border bg-card overflow-hidden animate-pulse"
+                  >
+                    <div className="aspect-[4/3] bg-muted" />
+                    <div className="p-3 space-y-2">
+                      <div className="h-3 w-1/2 bg-muted rounded" />
+                      <div className="h-2 w-2/3 bg-muted rounded" />
+                      <div className="h-2 w-1/3 bg-muted rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="h-14 w-14 mx-auto rounded-full bg-muted grid place-items-center mb-3">
+                  <SlidersHorizontal className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <p className="font-heading text-base text-primary">No apartments match</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Try clearing a filter or picking a different building.
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
@@ -587,6 +610,8 @@ const ExplorerV2 = () => {
                     key={apt.id}
                     apt={apt}
                     onClick={() => setDetailsApt(apt)}
+                    isFav={isFavorite(apt.id)}
+                    onToggleFav={() => toggleFav(apt.id)}
                   />
                 ))}
               </div>
