@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Inbox, Layers, X } from 'lucide-react';
+import { Heart, Inbox, Layers, X, ParkingSquare } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   Tooltip,
