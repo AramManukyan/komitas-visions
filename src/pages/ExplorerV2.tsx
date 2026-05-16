@@ -210,11 +210,17 @@ const MarkerMap = ({
     };
   };
 
+  const clamp = (s: number, x: number, y: number) => ({
+    scale: s,
+    x: Math.min(0, Math.max(VBW * (1 - s), x)),
+    y: Math.min(0, Math.max(VBH * (1 - s), y)),
+  });
+
   const zoomAt = (clientX: number, clientY: number, nextScale: number) => {
     const s = Math.min(MAX, Math.max(MIN, nextScale));
     const p = toSvg(clientX, clientY);
     const k = s / t.scale;
-    setT({ scale: s, x: p.x - (p.x - t.x) * k, y: p.y - (p.y - t.y) * k });
+    setT(clamp(s, p.x - (p.x - t.x) * k, p.y - (p.y - t.y) * k));
   };
 
   const onWheel = (e: RWheelEvent<HTMLDivElement>) => {
