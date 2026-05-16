@@ -30,7 +30,7 @@ import {
   type BuildingInfo,
 } from '@/data/explorer';
 import { getMasterplanGeometry } from '@/data/geometry';
-import { cn, scrollToSection } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import masterplanImg from '@/assets/explorer-masterplan.jpg';
 import logo from '@/assets/logo.png';
 
