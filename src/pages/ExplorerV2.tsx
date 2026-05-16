@@ -14,7 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import ApartmentDetailsSheet from '@/components/explorer/ApartmentDetailsSheet';
-import BuildingsGrid from '@/components/explorer/BuildingsGrid';
+import BuildingMatrix from '@/components/explorer/BuildingMatrix';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import {
   Select,
