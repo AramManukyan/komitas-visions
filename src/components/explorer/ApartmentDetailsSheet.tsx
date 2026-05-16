@@ -250,7 +250,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
               </div>
 
               {/* Actions */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                 <Button
                   asChild
                   className="rounded-xl gradient-gold text-accent-foreground hover:shadow-glow-gold"
@@ -259,6 +259,18 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                     <Phone className="h-4 w-4" />
                     {t('explorer.actions.callback')}
                   </a>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-xl border-accent/40 text-primary hover:bg-accent/10"
+                  onClick={() => {
+                    chatStore.addApartment(apartment);
+                    onClose();
+                  }}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Send via chat
                 </Button>
                 <Button asChild variant="outline" className="rounded-xl">
                   <a
