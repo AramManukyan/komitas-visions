@@ -30,7 +30,7 @@ const BankPartners = () => {
           {t('banks.subtitle')}
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
           {banks.map((bank, i) => (
             <motion.div
               key={bank.name}
@@ -38,14 +38,17 @@ const BankPartners = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="group bg-background rounded-2xl p-6 h-28 flex items-center justify-center hover:shadow-card-hover transition-all duration-500 border border-transparent hover:border-accent/20"
+              className="group bg-background rounded-2xl p-5 h-20 flex items-center gap-4 hover:shadow-card-hover transition-all duration-500 border border-transparent hover:border-accent/20"
             >
               <img
                 src={bank.logo}
                 alt={`${bank.name} logo`}
                 loading="lazy"
-                className="max-h-12 max-w-[80%] w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+                className="w-12 h-12 object-contain shrink-0 group-hover:scale-105 transition-transform duration-300"
               />
+              <span className="font-body text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                {bank.name}
+              </span>
             </motion.div>
           ))}
         </div>
