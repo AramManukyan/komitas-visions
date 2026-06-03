@@ -1,8 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Building2 } from 'lucide-react';
+import ardshinLogo from '@/assets/banks/ardshinbank.png';
+import acbaLogo from '@/assets/banks/acba.png';
+import ameriaLogo from '@/assets/banks/ameria.png';
+import idbankLogo from '@/assets/banks/idbank.png';
+import evocaLogo from '@/assets/banks/evoca.png';
 
-const banks = ['Ardshinbank', 'ACBA Bank', 'Ameriabank', 'IDBank', 'Evocabank'];
+const banks = [
+  { name: 'Ardshinbank', logo: ardshinLogo },
+  { name: 'ACBA Bank', logo: acbaLogo },
+  { name: 'Ameriabank', logo: ameriaLogo },
+  { name: 'IDBank', logo: idbankLogo },
+  { name: 'Evocabank', logo: evocaLogo },
+];
 
 const BankPartners = () => {
   const { t } = useTranslation();
@@ -23,17 +33,19 @@ const BankPartners = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
           {banks.map((bank, i) => (
             <motion.div
-              key={bank}
+              key={bank.name}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="group bg-background rounded-2xl p-6 flex flex-col items-center gap-3 hover:shadow-card-hover transition-all duration-500 border border-transparent hover:border-accent/20"
+              className="group bg-background rounded-2xl p-6 h-28 flex items-center justify-center hover:shadow-card-hover transition-all duration-500 border border-transparent hover:border-accent/20"
             >
-              <div className="w-12 h-12 rounded-xl bg-warm-bg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Building2 size={24} className="text-primary" strokeWidth={1.5} />
-              </div>
-              <p className="font-body text-foreground text-sm font-bold tracking-wide">{bank}</p>
+              <img
+                src={bank.logo}
+                alt={`${bank.name} logo`}
+                loading="lazy"
+                className="max-h-12 max-w-[80%] w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+              />
             </motion.div>
           ))}
         </div>
