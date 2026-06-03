@@ -10,6 +10,7 @@ import Gallery from '@/sections/Gallery';
 import Amenities from '@/sections/Amenities';
 import Location from '@/sections/Location';
 import BankPartners from '@/sections/BankPartners';
+import Documents from '@/sections/Documents';
 import ContactForm from '@/sections/ContactForm';
 
 const Index = () => {
@@ -24,6 +25,7 @@ const Index = () => {
       <PromotionsSection location="section" variant="grid" />
       <Location />
       <BankPartners />
+      <Documents />
       <ContactForm />
       <Footer />
       <ChatWidget />
