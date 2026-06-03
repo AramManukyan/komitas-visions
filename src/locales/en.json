@@ -111,6 +111,18 @@
     "subtitle": "Flexible mortgage programs from leading Armenian banks",
     "note": "Mortgage programs available — up to 30 years"
   },
+  "documents": {
+    "sectionTitle": "Project Documents",
+    "subtitle": "Download official documentation for New Komitas — brochures, plans, specifications and legal materials.",
+    "items": {
+      "brochure": { "title": "Project Brochure" },
+      "floorPlans": { "title": "Floor Plans Booklet" },
+      "priceList": { "title": "Current Price List" },
+      "specs": { "title": "Technical Specifications" },
+      "license": { "title": "Construction License" },
+      "contract": { "title": "Sample Purchase Agreement" }
+    }
+  },
   "contact": {
     "sectionTitle": "Contact Us",
     "name": "Full Name",
