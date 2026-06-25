@@ -827,19 +827,19 @@ const ExplorerV2 = () => {
           )}
         >
           {/* Logo strip with menu trigger */}
-          <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
+          <div className="px-3 sm:px-5 py-2.5 sm:py-4 border-b border-border flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 sm:gap-3">
               <button
                 onClick={() => setMenuOpen(true)}
-                className="hidden lg:grid h-10 w-10 place-items-center rounded-xl border border-border hover:bg-muted transition"
+                className="hidden lg:grid h-9 sm:h-10 w-9 sm:w-10 place-items-center rounded-xl border border-border hover:bg-muted transition"
                 aria-label={t('explorer.menu.open')}
               >
                 <Menu className="h-4 w-4 text-primary" />
               </button>
-              <Link to="/" className="flex items-center gap-2.5">
-                <img src={logo} alt="New Komitas" className="h-9 w-auto" />
+              <Link to="/" className="flex items-center gap-2 sm:gap-2.5">
+                <img src={logo} alt="New Komitas" className="h-8 sm:h-9 w-auto" />
                 <div className="leading-tight">
-                  <p className="font-heading text-base font-bold tracking-tight text-primary">
+                  <p className="font-heading text-sm sm:text-base font-bold tracking-tight text-primary">
                     KOMITAS<span className="text-accent">™</span>
                   </p>
                   <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-body">
@@ -852,14 +852,14 @@ const ExplorerV2 = () => {
               onClick={() => setShowFavOnly((v) => !v)}
               aria-pressed={showFavOnly}
               className={cn(
-                'relative h-9 w-9 grid place-items-center rounded-full border transition',
+                'relative h-8 sm:h-9 w-8 sm:w-9 grid place-items-center rounded-full border transition',
                 showFavOnly
                   ? 'bg-destructive/10 border-destructive text-destructive'
                   : 'border-border hover:bg-muted text-muted-foreground',
               )}
               aria-label={t('explorer.showFavoritesOnly')}
             >
-              <Heart className={cn('h-4 w-4', showFavOnly && 'fill-destructive')} />
+              <Heart className={cn('h-3.5 w-3.5 sm:h-4 sm:w-4', showFavOnly && 'fill-destructive')} />
               {favCount > 0 && (
                 <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-accent text-accent-foreground text-[9px] font-bold grid place-items-center">
                   {favCount}
