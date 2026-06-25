@@ -1141,34 +1141,34 @@ const ExplorerV2 = () => {
 
           {/* Active filter chips */}
           {activeChips.length > 0 && (
-            <div className="px-5 pt-4 pb-1 border-b border-border">
-              <div className="flex items-center justify-between gap-3 mb-2">
-                <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <div className="px-3 sm:px-5 pt-3 sm:pt-4 pb-1 border-b border-border">
+              <div className="flex items-center justify-between gap-3 mb-1.5 sm:mb-2">
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                   {t('explorer.activeFilters')}
                 </span>
                 <button
                   onClick={resetFilters}
-                  className="text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
+                  className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
                 >
                   {t('explorer.clearAll')}
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2 pb-2">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 pb-2">
                 {activeChips.map((chip) => (
                   <span
                     key={chip.id}
-                    className="inline-flex items-center gap-1.5 pl-2.5 pr-1 py-1 rounded-full bg-secondary border border-border text-xs text-secondary-foreground"
+                    className="inline-flex items-center gap-1 pl-2 pr-1 py-0.5 sm:pl-2.5 sm:pr-1 sm:py-1 rounded-full bg-secondary border border-border text-[11px] sm:text-xs text-secondary-foreground"
                   >
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
                       {chip.label}
                     </span>
                     <span className="font-medium">{chip.value}</span>
                     <button
                       onClick={chip.onRemove}
                       aria-label={`${t('explorer.clear')} ${chip.label}`}
-                      className="h-5 w-5 grid place-items-center rounded-full hover:bg-destructive/10 hover:text-destructive transition"
+                      className="h-4 w-4 sm:h-5 sm:w-5 grid place-items-center rounded-full hover:bg-destructive/10 hover:text-destructive transition"
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                     </button>
                   </span>
                 ))}
@@ -1176,8 +1176,8 @@ const ExplorerV2 = () => {
             </div>
           )}
 
-          <div className="flex-1 overflow-y-auto px-5 py-4">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-3 font-semibold">
+          <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-3 sm:py-4">
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-2 sm:mb-3 font-semibold">
               {filtered.length} apartments
               {showFavOnly && <span className="ml-2 text-destructive">· {t('explorer.favorites')}</span>}
             </p>
