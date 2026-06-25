@@ -1021,6 +1021,32 @@ const ExplorerV2 = () => {
                             />
                           </div>
 
+                          {/* Price per m² */}
+                          <div className="space-y-2">
+                            <label className="text-xs font-bold text-foreground">{t('explorer.labels.pricePerUnit')} (֏)</label>
+                            <div className="grid grid-cols-2 gap-3">
+                              <Input
+                                type="number"
+                                value={ppsRange[0]}
+                                onChange={(e) => setPpsRange([Number(e.target.value) || 0, ppsRange[1]])}
+                                className="rounded-xl h-11"
+                              />
+                              <Input
+                                type="number"
+                                value={ppsRange[1]}
+                                onChange={(e) => setPpsRange([ppsRange[0], Number(e.target.value) || PPS_BOUNDS[1]])}
+                                className="rounded-xl h-11"
+                              />
+                            </div>
+                            <Slider
+                              min={PPS_BOUNDS[0]}
+                              max={PPS_BOUNDS[1]}
+                              step={5000}
+                              value={ppsRange}
+                              onValueChange={(v) => setPpsRange([v[0], v[1]] as [number, number])}
+                            />
+                          </div>
+
                           {/* Floor */}
                           <div className="space-y-1.5">
                             <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
@@ -1079,24 +1105,6 @@ const ExplorerV2 = () => {
                             />
                           </div>
 
-                          {/* Expected completion */}
-                          <div className="space-y-1.5">
-                            <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-                              {t('explorer.labels.completion')}
-                            </label>
-                            <Select value={completion} onValueChange={setCompletion}>
-                              <SelectTrigger className="rounded-xl h-11 w-full">
-                                <SelectValue placeholder={t('explorer.labels.completion')} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="all">Any date</SelectItem>
-                                <SelectItem value="ready">Ready to move in</SelectItem>
-                                <SelectItem value="construction">Under construction</SelectItem>
-                                <SelectItem value="planning">Planned</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-
                           {/* Price */}
                           <div className="space-y-2">
                             <label className="text-xs font-bold text-foreground">{t('explorer.labels.price')} (֏)</label>
@@ -1120,32 +1128,6 @@ const ExplorerV2 = () => {
                               step={100000}
                               value={priceRange}
                               onValueChange={(v) => setPriceRange([v[0], v[1]] as [number, number])}
-                            />
-                          </div>
-
-                          {/* Price per unit */}
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-foreground">{t('explorer.labels.pricePerUnit')} (֏)</label>
-                            <div className="grid grid-cols-2 gap-3">
-                              <Input
-                                type="number"
-                                value={ppsRange[0]}
-                                onChange={(e) => setPpsRange([Number(e.target.value) || 0, ppsRange[1]])}
-                                className="rounded-xl h-11"
-                              />
-                              <Input
-                                type="number"
-                                value={ppsRange[1]}
-                                onChange={(e) => setPpsRange([ppsRange[0], Number(e.target.value) || PPS_BOUNDS[1]])}
-                                className="rounded-xl h-11"
-                              />
-                            </div>
-                            <Slider
-                              min={PPS_BOUNDS[0]}
-                              max={PPS_BOUNDS[1]}
-                              step={5000}
-                              value={ppsRange}
-                              onValueChange={(v) => setPpsRange([v[0], v[1]] as [number, number])}
                             />
                           </div>
                         </div>
