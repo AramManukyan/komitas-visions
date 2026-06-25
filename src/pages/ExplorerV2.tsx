@@ -533,9 +533,29 @@ const ExplorerV2 = () => {
   const { selection, update } = useExplorerUrlState();
   const { isFavorite, toggle: toggleFav, count: favCount } = useFavorites();
 
+  // Price / area bounds derived from data
+  const PRICE_BOUNDS = useMemo(() => {
+    const prices = EXPLORER_APARTMENTS.map((a) => a.price);
+    return [Math.min(...prices), Math.max(...prices)] as [number, number];
+  }, []);
+  const PPS_BOUNDS = useMemo(() => {
+    const pps = EXPLORER_APARTMENTS.map((a) => Math.round(a.price / a.area));
+    return [Math.min(...pps), Math.max(...pps)] as [number, number];
+  }, []);
+  const AREA_BOUNDS = useMemo(() => {
+    const a = EXPLORER_APARTMENTS.map((x) => x.area);
+    return [0, Math.max(...a)] as [number, number];
+  }, []);
+  const FLOOR_BOUNDS: [number, number] = [1, 16];
+
   const [unitType, setUnitType] = useState<string>('all');
-  const [areaBucket, setAreaBucket] = useState<string>('all');
-  const [floorBucket, setFloorBucket] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [completion, setCompletion] = useState<string>('all');
+  const [aptNumberQuery, setAptNumberQuery] = useState<string>('');
+  const [floorRange, setFloorRange] = useState<[number, number]>(FLOOR_BOUNDS);
+  const [priceRange, setPriceRange] = useState<[number, number]>(PRICE_BOUNDS);
+  const [ppsRange, setPpsRange] = useState<[number, number]>(PPS_BOUNDS);
+  const [areaRange, setAreaRange] = useState<[number, number]>(AREA_BOUNDS);
   const [view, setView] = useState<View>('3d');
   const [detailsApt, setDetailsApt] = useState<ExplorerApartment | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
