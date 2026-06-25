@@ -599,24 +599,43 @@ const ExplorerV2 = () => {
   const selectedBuildingId = selection.buildingId;
   const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
 
+  const isFloorRangeActive = floorRange[0] !== FLOOR_BOUNDS[0] || floorRange[1] !== FLOOR_BOUNDS[1];
+  const isPriceRangeActive = priceRange[0] !== PRICE_BOUNDS[0] || priceRange[1] !== PRICE_BOUNDS[1];
+  const isPpsRangeActive = ppsRange[0] !== PPS_BOUNDS[0] || ppsRange[1] !== PPS_BOUNDS[1];
+  const isAreaRangeActive = areaRange[0] !== AREA_BOUNDS[0] || areaRange[1] !== AREA_BOUNDS[1];
+
   const activeFilterCount =
     (unitType !== 'all' ? 1 : 0) +
-    (areaBucket !== 'all' ? 1 : 0) +
-    (floorBucket !== 'all' ? 1 : 0) +
+    (statusFilter !== 'all' ? 1 : 0) +
+    (completion !== 'all' ? 1 : 0) +
+    (aptNumberQuery.trim() ? 1 : 0) +
+    (isFloorRangeActive ? 1 : 0) +
+    (isPriceRangeActive ? 1 : 0) +
+    (isPpsRangeActive ? 1 : 0) +
+    (isAreaRangeActive ? 1 : 0) +
     (selectedBuildingId ? 1 : 0) +
     (showFavOnly ? 1 : 0);
 
   const resetFilters = () => {
     setUnitType('all');
-    setAreaBucket('all');
-    setFloorBucket('all');
+    setStatusFilter('all');
+    setCompletion('all');
+    setAptNumberQuery('');
+    setFloorRange(FLOOR_BOUNDS);
+    setPriceRange(PRICE_BOUNDS);
+    setPpsRange(PPS_BOUNDS);
+    setAreaRange(AREA_BOUNDS);
     setSelectedBuildingId(null);
     setShowFavOnly(false);
   };
 
   const matrixFilter = useMemo(
-    () => ({ unitType, areaBucket, floorBucket }),
-    [unitType, areaBucket, floorBucket],
+    () => ({
+      unitType,
+      areaBucket: isAreaRangeActive ? `${areaRange[0]}-${areaRange[1]}` : 'all',
+      floorBucket: isFloorRangeActive ? `${floorRange[0]}-${floorRange[1]}` : 'all',
+    }),
+    [unitType, areaRange, floorRange, isAreaRangeActive, isFloorRangeActive],
   );
 
   // Skeleton hint when filters change
@@ -624,24 +643,34 @@ const ExplorerV2 = () => {
     setListLoading(true);
     const t = setTimeout(() => setListLoading(false), 220);
     return () => clearTimeout(t);
-  }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly]);
+  }, [unitType, statusFilter, completion, aptNumberQuery, floorRange, priceRange, ppsRange, areaRange, selectedBuildingId, showFavOnly]);
+
+  // Map building.status → completion bucket
+  const buildingCompletion = useMemo(() => {
+    const map = new Map<string, string>();
+    BUILDINGS.forEach((b) => map.set(b.id, b.status));
+    return map;
+  }, []);
 
   const filtered = useMemo(() => {
+    const q = aptNumberQuery.trim().toLowerCase();
     return EXPLORER_APARTMENTS.filter((a) => {
+      if (statusFilter !== 'all' && a.status !== statusFilter) return false;
+      if (statusFilter === 'all' && a.status !== 'available') return false;
       if (unitType !== 'all' && String(a.rooms) !== unitType) return false;
-      if (areaBucket !== 'all') {
-        const [min, max] = areaBucket.split('-').map(Number);
-        if (a.area < min || a.area > max) return false;
-      }
-      if (floorBucket !== 'all') {
-        const [min, max] = floorBucket.split('-').map(Number);
-        if (a.floor < min || a.floor > max) return false;
-      }
-      if (selectedBuildingId && `${a.block}-${a.building}` !== selectedBuildingId) return false;
+      if (q && !a.number.toLowerCase().includes(q)) return false;
+      const bId = `${a.block}-${a.building}`;
+      if (selectedBuildingId && bId !== selectedBuildingId) return false;
+      if (completion !== 'all' && buildingCompletion.get(bId) !== completion) return false;
+      if (a.floor < floorRange[0] || a.floor > floorRange[1]) return false;
+      if (a.price < priceRange[0] || a.price > priceRange[1]) return false;
+      const pps = Math.round(a.price / a.area);
+      if (pps < ppsRange[0] || pps > ppsRange[1]) return false;
+      if (a.area < areaRange[0] || a.area > areaRange[1]) return false;
       if (showFavOnly && !isFavorite(a.id)) return false;
-      return a.status === 'available';
+      return true;
     });
-  }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly, isFavorite]);
+  }, [unitType, statusFilter, completion, aptNumberQuery, floorRange, priceRange, ppsRange, areaRange, selectedBuildingId, showFavOnly, isFavorite, buildingCompletion]);
 
   return (
     <div className="h-[100dvh] bg-warm-bg flex flex-col overflow-hidden">
