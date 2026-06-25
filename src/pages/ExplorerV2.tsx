@@ -902,7 +902,7 @@ const ExplorerV2 = () => {
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
                 className="overflow-hidden border-b border-border"
               >
-                <div className="px-5 py-4 space-y-4">
+                <div className="px-5 py-4 space-y-4 max-h-[60vh] lg:max-h-[55vh] overflow-y-auto overscroll-contain">
                   {/* Status */}
                   <div className="space-y-1.5">
                     <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Statuses</label>
