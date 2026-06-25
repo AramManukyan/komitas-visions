@@ -7,6 +7,8 @@ import Index from "./pages/Index.tsx";
 import Apartments from "./pages/Apartments.tsx";
 import ExplorerV2 from "./pages/ExplorerV2.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import UIDocs from "./pages/UIDocs.tsx";
+
 import PromoTopBanner from "@/components/PromoTopBanner";
 import PromoPopup from "@/components/PromoPopup";
 import { usePromotions } from "@/hooks/usePromotions";
@@ -37,7 +39,9 @@ const App = () => (
           <Route path="/apartments" element={<Apartments />} />
           <Route path="/explorer" element={<ExplorerV2 />} />
           <Route path="/explorer/v2" element={<ExplorerV2 />} />
+          <Route path="/ui-docs" element={<UIDocs />} />
           <Route path="*" element={<NotFound />} />
+
         </Routes>
       </HashRouter>
     </TooltipProvider>

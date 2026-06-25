@@ -34,6 +34,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
 import {
   BUILDINGS,
   EXPLORER_APARTMENTS,
@@ -531,9 +533,29 @@ const ExplorerV2 = () => {
   const { selection, update } = useExplorerUrlState();
   const { isFavorite, toggle: toggleFav, count: favCount } = useFavorites();
 
+  // Price / area bounds derived from data
+  const PRICE_BOUNDS = useMemo(() => {
+    const prices = EXPLORER_APARTMENTS.map((a) => a.price);
+    return [Math.min(...prices), Math.max(...prices)] as [number, number];
+  }, []);
+  const PPS_BOUNDS = useMemo(() => {
+    const pps = EXPLORER_APARTMENTS.map((a) => Math.round(a.price / a.area));
+    return [Math.min(...pps), Math.max(...pps)] as [number, number];
+  }, []);
+  const AREA_BOUNDS = useMemo(() => {
+    const a = EXPLORER_APARTMENTS.map((x) => x.area);
+    return [0, Math.max(...a)] as [number, number];
+  }, []);
+  const FLOOR_BOUNDS: [number, number] = [1, 16];
+
   const [unitType, setUnitType] = useState<string>('all');
-  const [areaBucket, setAreaBucket] = useState<string>('all');
-  const [floorBucket, setFloorBucket] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [completion, setCompletion] = useState<string>('all');
+  const [aptNumberQuery, setAptNumberQuery] = useState<string>('');
+  const [floorRange, setFloorRange] = useState<[number, number]>(FLOOR_BOUNDS);
+  const [priceRange, setPriceRange] = useState<[number, number]>(PRICE_BOUNDS);
+  const [ppsRange, setPpsRange] = useState<[number, number]>(PPS_BOUNDS);
+  const [areaRange, setAreaRange] = useState<[number, number]>(AREA_BOUNDS);
   const [view, setView] = useState<View>('3d');
   const [detailsApt, setDetailsApt] = useState<ExplorerApartment | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -541,6 +563,7 @@ const ExplorerV2 = () => {
   const [listLoading, setListLoading] = useState(false);
   const [mobilePane, setMobilePane] = useState<'map' | 'list'>('map');
   const [filtersOpen, setFiltersOpen] = useState(true);
+  const [moreFiltersOpen, setMoreFiltersOpen] = useState(false);
   const [asideWidth, setAsideWidth] = useState<number>(460);
   const [isDesktop, setIsDesktop] = useState<boolean>(
     typeof window !== 'undefined' ? window.matchMedia('(min-width: 1024px)').matches : true,
@@ -577,24 +600,149 @@ const ExplorerV2 = () => {
   const selectedBuildingId = selection.buildingId;
   const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
 
+  const isFloorRangeActive = floorRange[0] !== FLOOR_BOUNDS[0] || floorRange[1] !== FLOOR_BOUNDS[1];
+  const isPriceRangeActive = priceRange[0] !== PRICE_BOUNDS[0] || priceRange[1] !== PRICE_BOUNDS[1];
+  const isPpsRangeActive = ppsRange[0] !== PPS_BOUNDS[0] || ppsRange[1] !== PPS_BOUNDS[1];
+  const isAreaRangeActive = areaRange[0] !== AREA_BOUNDS[0] || areaRange[1] !== AREA_BOUNDS[1];
+
   const activeFilterCount =
     (unitType !== 'all' ? 1 : 0) +
-    (areaBucket !== 'all' ? 1 : 0) +
-    (floorBucket !== 'all' ? 1 : 0) +
+    (statusFilter !== 'all' ? 1 : 0) +
+    (completion !== 'all' ? 1 : 0) +
+    (aptNumberQuery.trim() ? 1 : 0) +
+    (isFloorRangeActive ? 1 : 0) +
+    (isPriceRangeActive ? 1 : 0) +
+    (isPpsRangeActive ? 1 : 0) +
+    (isAreaRangeActive ? 1 : 0) +
     (selectedBuildingId ? 1 : 0) +
     (showFavOnly ? 1 : 0);
 
   const resetFilters = () => {
     setUnitType('all');
-    setAreaBucket('all');
-    setFloorBucket('all');
+    setStatusFilter('all');
+    setCompletion('all');
+    setAptNumberQuery('');
+    setFloorRange(FLOOR_BOUNDS);
+    setPriceRange(PRICE_BOUNDS);
+    setPpsRange(PPS_BOUNDS);
+    setAreaRange(AREA_BOUNDS);
     setSelectedBuildingId(null);
     setShowFavOnly(false);
   };
 
+  const formatPrice = (n: number) => `֏${n.toLocaleString('en-US')}`;
+  const formatRange = (min: number, max: number, suffix = '') =>
+    `${min.toLocaleString('en-US')}${suffix} — ${max.toLocaleString('en-US')}${suffix}`;
+
+  const activeChips = useMemo(() => {
+    const chips: { id: string; label: string; value: string; onRemove: () => void }[] = [];
+    if (statusFilter !== 'all') {
+      chips.push({
+        id: 'status',
+        label: t('explorer.labels.status'),
+        value: statusFilter,
+        onRemove: () => setStatusFilter('all'),
+      });
+    }
+    if (selectedBuildingId) {
+      const b = BUILDINGS.find((bb) => bb.id === selectedBuildingId);
+      chips.push({
+        id: 'building',
+        label: t('explorer.labels.building'),
+        value: b?.name ?? selectedBuildingId,
+        onRemove: () => setSelectedBuildingId(null),
+      });
+    }
+    if (aptNumberQuery.trim()) {
+      chips.push({
+        id: 'apt',
+        label: t('explorer.labels.apartment'),
+        value: aptNumberQuery.trim(),
+        onRemove: () => setAptNumberQuery(''),
+      });
+    }
+    if (unitType !== 'all') {
+      chips.push({
+        id: 'rooms',
+        label: t('explorer.labels.rooms'),
+        value: `${unitType} BR`,
+        onRemove: () => setUnitType('all'),
+      });
+    }
+    if (completion !== 'all') {
+      chips.push({
+        id: 'completion',
+        label: t('explorer.labels.completion'),
+        value: completion,
+        onRemove: () => setCompletion('all'),
+      });
+    }
+    if (isFloorRangeActive) {
+      chips.push({
+        id: 'floors',
+        label: t('explorer.labels.floors'),
+        value: `${floorRange[0]}–${floorRange[1]}`,
+        onRemove: () => setFloorRange(FLOOR_BOUNDS),
+      });
+    }
+    if (isPriceRangeActive) {
+      chips.push({
+        id: 'price',
+        label: t('explorer.labels.price'),
+        value: formatRange(priceRange[0], priceRange[1], '֏'),
+        onRemove: () => setPriceRange(PRICE_BOUNDS),
+      });
+    }
+    if (isPpsRangeActive) {
+      chips.push({
+        id: 'pps',
+        label: t('explorer.labels.pricePerUnit'),
+        value: formatRange(ppsRange[0], ppsRange[1], '֏'),
+        onRemove: () => setPpsRange(PPS_BOUNDS),
+      });
+    }
+    if (isAreaRangeActive) {
+      chips.push({
+        id: 'area',
+        label: t('explorer.labels.area'),
+        value: formatRange(areaRange[0], areaRange[1], ' m²'),
+        onRemove: () => setAreaRange(AREA_BOUNDS),
+      });
+    }
+    if (showFavOnly) {
+      chips.push({
+        id: 'fav',
+        label: t('explorer.labels.favorites'),
+        value: t('explorer.showFavoritesOnly'),
+        onRemove: () => setShowFavOnly(false),
+      });
+    }
+    return chips;
+  }, [
+    statusFilter,
+    selectedBuildingId,
+    aptNumberQuery,
+    unitType,
+    completion,
+    isFloorRangeActive,
+    floorRange,
+    isPriceRangeActive,
+    priceRange,
+    isPpsRangeActive,
+    ppsRange,
+    isAreaRangeActive,
+    areaRange,
+    showFavOnly,
+    t,
+  ]);
+
   const matrixFilter = useMemo(
-    () => ({ unitType, areaBucket, floorBucket }),
-    [unitType, areaBucket, floorBucket],
+    () => ({
+      unitType,
+      areaBucket: isAreaRangeActive ? `${areaRange[0]}-${areaRange[1]}` : 'all',
+      floorBucket: isFloorRangeActive ? `${floorRange[0]}-${floorRange[1]}` : 'all',
+    }),
+    [unitType, areaRange, floorRange, isAreaRangeActive, isFloorRangeActive],
   );
 
   // Skeleton hint when filters change
@@ -602,24 +750,34 @@ const ExplorerV2 = () => {
     setListLoading(true);
     const t = setTimeout(() => setListLoading(false), 220);
     return () => clearTimeout(t);
-  }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly]);
+  }, [unitType, statusFilter, completion, aptNumberQuery, floorRange, priceRange, ppsRange, areaRange, selectedBuildingId, showFavOnly]);
+
+  // Map building.status → completion bucket
+  const buildingCompletion = useMemo(() => {
+    const map = new Map<string, string>();
+    BUILDINGS.forEach((b) => map.set(b.id, b.status));
+    return map;
+  }, []);
 
   const filtered = useMemo(() => {
+    const q = aptNumberQuery.trim().toLowerCase();
     return EXPLORER_APARTMENTS.filter((a) => {
+      if (statusFilter !== 'all' && a.status !== statusFilter) return false;
+      if (statusFilter === 'all' && a.status !== 'available') return false;
       if (unitType !== 'all' && String(a.rooms) !== unitType) return false;
-      if (areaBucket !== 'all') {
-        const [min, max] = areaBucket.split('-').map(Number);
-        if (a.area < min || a.area > max) return false;
-      }
-      if (floorBucket !== 'all') {
-        const [min, max] = floorBucket.split('-').map(Number);
-        if (a.floor < min || a.floor > max) return false;
-      }
-      if (selectedBuildingId && `${a.block}-${a.building}` !== selectedBuildingId) return false;
+      if (q && !a.number.toLowerCase().includes(q)) return false;
+      const bId = `${a.block}-${a.building}`;
+      if (selectedBuildingId && bId !== selectedBuildingId) return false;
+      if (completion !== 'all' && buildingCompletion.get(bId) !== completion) return false;
+      if (a.floor < floorRange[0] || a.floor > floorRange[1]) return false;
+      if (a.price < priceRange[0] || a.price > priceRange[1]) return false;
+      const pps = Math.round(a.price / a.area);
+      if (pps < ppsRange[0] || pps > ppsRange[1]) return false;
+      if (a.area < areaRange[0] || a.area > areaRange[1]) return false;
       if (showFavOnly && !isFavorite(a.id)) return false;
-      return a.status === 'available';
+      return true;
     });
-  }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly, isFavorite]);
+  }, [unitType, statusFilter, completion, aptNumberQuery, floorRange, priceRange, ppsRange, areaRange, selectedBuildingId, showFavOnly, isFavorite, buildingCompletion]);
 
   return (
     <div className="h-[100dvh] bg-warm-bg flex flex-col overflow-hidden">
@@ -669,19 +827,19 @@ const ExplorerV2 = () => {
           )}
         >
           {/* Logo strip with menu trigger */}
-          <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
+          <div className="px-3 sm:px-5 py-2.5 sm:py-4 border-b border-border flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 sm:gap-3">
               <button
                 onClick={() => setMenuOpen(true)}
-                className="hidden lg:grid h-10 w-10 place-items-center rounded-xl border border-border hover:bg-muted transition"
+                className="hidden lg:grid h-9 sm:h-10 w-9 sm:w-10 place-items-center rounded-xl border border-border hover:bg-muted transition"
                 aria-label={t('explorer.menu.open')}
               >
                 <Menu className="h-4 w-4 text-primary" />
               </button>
-              <Link to="/" className="flex items-center gap-2.5">
-                <img src={logo} alt="New Komitas" className="h-9 w-auto" />
+              <Link to="/" className="flex items-center gap-2 sm:gap-2.5">
+                <img src={logo} alt="New Komitas" className="h-8 sm:h-9 w-auto" />
                 <div className="leading-tight">
-                  <p className="font-heading text-base font-bold tracking-tight text-primary">
+                  <p className="font-heading text-sm sm:text-base font-bold tracking-tight text-primary">
                     KOMITAS<span className="text-accent">™</span>
                   </p>
                   <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-body">
@@ -694,14 +852,14 @@ const ExplorerV2 = () => {
               onClick={() => setShowFavOnly((v) => !v)}
               aria-pressed={showFavOnly}
               className={cn(
-                'relative h-9 w-9 grid place-items-center rounded-full border transition',
+                'relative h-8 sm:h-9 w-8 sm:w-9 grid place-items-center rounded-full border transition',
                 showFavOnly
                   ? 'bg-destructive/10 border-destructive text-destructive'
                   : 'border-border hover:bg-muted text-muted-foreground',
               )}
               aria-label={t('explorer.showFavoritesOnly')}
             >
-              <Heart className={cn('h-4 w-4', showFavOnly && 'fill-destructive')} />
+              <Heart className={cn('h-3.5 w-3.5 sm:h-4 sm:w-4', showFavOnly && 'fill-destructive')} />
               {favCount > 0 && (
                 <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-accent text-accent-foreground text-[9px] font-bold grid place-items-center">
                   {favCount}
@@ -711,7 +869,7 @@ const ExplorerV2 = () => {
           </div>
 
           {/* Filters toggle */}
-          <div className="px-5 pt-4 pb-2 border-b border-border flex items-center justify-between gap-3">
+          <div className="px-3 py-2 sm:px-5 sm:py-3 border-b border-border flex items-center justify-between gap-3">
             <button
               onClick={() => setFiltersOpen((v) => !v)}
               aria-expanded={filtersOpen}
@@ -728,7 +886,7 @@ const ExplorerV2 = () => {
             {activeFilterCount > 0 && (
               <button
                 onClick={resetFilters}
-                className="text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
+                className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
               >
                 {t('apartments.filters.reset')}
               </button>
@@ -745,70 +903,281 @@ const ExplorerV2 = () => {
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
                 className="overflow-hidden border-b border-border"
               >
-                <div className="px-5 py-4 space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                      <Select value={unitType} onValueChange={setUnitType}>
-                        <SelectTrigger className="rounded-xl h-11">
-                          <SelectValue placeholder={t('explorer.filters.unitType')} />
+                <div className="px-3 py-3 sm:px-5 sm:py-4">
+                  {/* Primary filters grid */}
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                    {/* Building */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                        {t('explorer.labels.building')}
+                      </label>
+                      <Select
+                        value={selectedBuildingId ?? 'all'}
+                        onValueChange={(v) => setSelectedBuildingId(v === 'all' ? null : v)}
+                      >
+                        <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full bg-background hover:border-primary/50 text-xs sm:text-sm">
+                          <SelectValue placeholder={t('explorer.labels.building')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">{t('explorer.filters.unitType')}</SelectItem>
+                          <SelectItem value="all">All buildings</SelectItem>
+                          {BUILDINGS.map((b) => (
+                            <SelectItem key={b.id} value={b.id}>
+                              {b.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Status */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                        {t('explorer.labels.status')}
+                      </label>
+                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full bg-background hover:border-primary/50 text-xs sm:text-sm">
+                          <SelectValue placeholder={t('explorer.labels.status')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All statuses</SelectItem>
+                          <SelectItem value="available">Available</SelectItem>
+                          <SelectItem value="reserved">Reserved</SelectItem>
+                          <SelectItem value="sold">Sold</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Rooms */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                        {t('explorer.labels.rooms')}
+                      </label>
+                      <Select value={unitType} onValueChange={setUnitType}>
+                        <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full bg-background hover:border-primary/50 text-xs sm:text-sm">
+                          <SelectValue placeholder={t('explorer.labels.rooms')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Any</SelectItem>
                           <SelectItem value="1">{t('explorer.filters.unitTypeOptions.one')}</SelectItem>
                           <SelectItem value="2">{t('explorer.filters.unitTypeOptions.two')}</SelectItem>
                           <SelectItem value="3">{t('explorer.filters.unitTypeOptions.three')}</SelectItem>
                           <SelectItem value="4">{t('explorer.filters.unitTypeOptions.four')}</SelectItem>
                         </SelectContent>
-                    </Select>
-                    <Select value={areaBucket} onValueChange={setAreaBucket}>
-                      <SelectTrigger className="rounded-xl h-11">
-                        <SelectValue placeholder={t('explorer.filters.totalArea')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">{t('explorer.filters.totalArea')}</SelectItem>
-                        <SelectItem value="0-50">{t('explorer.filters.area.upTo50')}</SelectItem>
-                        <SelectItem value="50-80">50 – 80</SelectItem>
-                        <SelectItem value="80-120">80 – 120</SelectItem>
-                        <SelectItem value="120-500">{t('explorer.filters.area.over120')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={floorBucket} onValueChange={setFloorBucket}>
-                      <SelectTrigger className="rounded-xl h-11">
-                        <SelectValue placeholder={t('apartments.filters.floor')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">{t('apartments.filters.floor')}</SelectItem>
-                        <SelectItem value="1-4">1 – 4</SelectItem>
-                        <SelectItem value="5-9">5 – 9</SelectItem>
-                        <SelectItem value="10-16">10 – 16</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <button className="h-11 rounded-xl border border-border bg-muted/40 hover:bg-muted transition flex items-center justify-center gap-2 text-sm font-semibold text-foreground">
-                      <SlidersHorizontal className="h-4 w-4" />
-                      {t('explorer.filters.more', { count: 0 })}
+                      </Select>
+                    </div>
+
+                    {/* More filters */}
+                    <button
+                      onClick={() => setMoreFiltersOpen((v) => !v)}
+                      aria-expanded={moreFiltersOpen}
+                      className="flex items-center justify-center gap-2 h-10 sm:h-11 self-end rounded-xl border border-border bg-muted/50 text-foreground text-xs sm:text-sm font-medium hover:bg-muted hover:border-primary/50 transition"
+                    >
+                      <SlidersHorizontal className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
+                      {moreFiltersOpen ? t('explorer.filters.hide') : t('explorer.filters.moreFilters')}
                     </button>
                   </div>
 
-                  {selectedBuildingId && (
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground">
-                        {t('explorer.filteredBy')}{' '}
-                        <span className="font-semibold text-primary">{selectedBuildingId}</span>
-                      </span>
-                      <button
-                        onClick={() => setSelectedBuildingId(null)}
-                        className="text-accent-foreground/80 hover:text-accent-foreground underline"
+                  {/* Additional filters */}
+                  <AnimatePresence initial={false}>
+                    {moreFiltersOpen && (
+                      <motion.div
+                        key="more-filters"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                        className="overflow-hidden"
                       >
-                        {t('explorer.clear')}
-                      </button>
-                    </div>
-                  )}
+                        <div className="mt-3 pt-3 border-t border-border space-y-3 sm:mt-4 sm:pt-4 sm:space-y-4 max-h-[55vh] sm:max-h-[45vh] overflow-y-auto overscroll-contain">
+                          {/* Total area */}
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <label className="text-[11px] sm:text-xs font-bold text-foreground">
+                              {t('explorer.filters.totalArea')}
+                            </label>
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                              <Input
+                                type="number"
+                                value={areaRange[0]}
+                                onChange={(e) =>
+                                  setAreaRange([Number(e.target.value) || AREA_BOUNDS[0], areaRange[1]])
+                                }
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
+                              />
+                              <Input
+                                type="number"
+                                value={areaRange[1]}
+                                onChange={(e) =>
+                                  setAreaRange([areaRange[0], Number(e.target.value) || AREA_BOUNDS[1]])
+                                }
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
+                              />
+                            </div>
+                            <Slider
+                              min={AREA_BOUNDS[0]}
+                              max={AREA_BOUNDS[1]}
+                              step={1}
+                              value={areaRange}
+                              onValueChange={(v) => setAreaRange([v[0], v[1]] as [number, number])}
+                            />
+                          </div>
+
+                          {/* Price per m² */}
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <label className="text-[11px] sm:text-xs font-bold text-foreground">{t('explorer.labels.pricePerUnit')} (֏)</label>
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                              <Input
+                                type="number"
+                                value={ppsRange[0]}
+                                onChange={(e) => setPpsRange([Number(e.target.value) || 0, ppsRange[1]])}
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
+                              />
+                              <Input
+                                type="number"
+                                value={ppsRange[1]}
+                                onChange={(e) => setPpsRange([ppsRange[0], Number(e.target.value) || PPS_BOUNDS[1]])}
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
+                              />
+                            </div>
+                            <Slider
+                              min={PPS_BOUNDS[0]}
+                              max={PPS_BOUNDS[1]}
+                              step={5000}
+                              value={ppsRange}
+                              onValueChange={(v) => setPpsRange([v[0], v[1]] as [number, number])}
+                            />
+                          </div>
+
+                          {/* Floor */}
+                          <div className="space-y-1">
+                            <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                              {t('explorer.labels.floors')}
+                            </label>
+                            <Select
+                              value={
+                                floorRange[0] === FLOOR_BOUNDS[0] && floorRange[1] === FLOOR_BOUNDS[1]
+                                  ? 'all'
+                                  : floorRange[0] === 1 && floorRange[1] === 5
+                                    ? 'low'
+                                    : floorRange[0] === 6 && floorRange[1] === 10
+                                      ? 'mid'
+                                      : floorRange[0] === 11 && floorRange[1] === FLOOR_BOUNDS[1]
+                                        ? 'high'
+                                        : 'all'
+                              }
+                              onValueChange={(v) => {
+                                switch (v) {
+                                  case 'low':
+                                    setFloorRange([1, 5]);
+                                    break;
+                                  case 'mid':
+                                    setFloorRange([6, 10]);
+                                    break;
+                                  case 'high':
+                                    setFloorRange([11, FLOOR_BOUNDS[1]]);
+                                    break;
+                                  default:
+                                    setFloorRange(FLOOR_BOUNDS);
+                                }
+                              }}
+                            >
+                              <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full text-xs sm:text-sm">
+                                <SelectValue placeholder={t('explorer.labels.floors')} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">Any</SelectItem>
+                                <SelectItem value="low">1 — 5</SelectItem>
+                                <SelectItem value="mid">6 — 10</SelectItem>
+                                <SelectItem value="high">11 — {FLOOR_BOUNDS[1]}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {/* Apartment number */}
+                          <div className="space-y-1">
+                            <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                              {t('explorer.labels.apartment')}
+                            </label>
+                            <Input
+                              value={aptNumberQuery}
+                              onChange={(e) => setAptNumberQuery(e.target.value)}
+                              placeholder={t('explorer.labels.apartment')}
+                              className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
+                            />
+                          </div>
+
+                          {/* Price */}
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <label className="text-[11px] sm:text-xs font-bold text-foreground">{t('explorer.labels.price')} (֏)</label>
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                              <Input
+                                type="number"
+                                value={priceRange[0]}
+                                onChange={(e) => setPriceRange([Number(e.target.value) || 0, priceRange[1]])}
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
+                              />
+                              <Input
+                                type="number"
+                                value={priceRange[1]}
+                                onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value) || PRICE_BOUNDS[1]])}
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
+                              />
+                            </div>
+                            <Slider
+                              min={PRICE_BOUNDS[0]}
+                              max={PRICE_BOUNDS[1]}
+                              step={100000}
+                              value={priceRange}
+                              onValueChange={(v) => setPriceRange([v[0], v[1]] as [number, number])}
+                            />
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <div className="flex-1 overflow-y-auto px-5 py-4">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-3 font-semibold">
+          {/* Active filter chips */}
+          {activeChips.length > 0 && (
+            <div className="px-3 sm:px-5 pt-3 sm:pt-4 pb-1 border-b border-border">
+              <div className="flex items-center justify-between gap-3 mb-1.5 sm:mb-2">
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  {t('explorer.activeFilters')}
+                </span>
+                <button
+                  onClick={resetFilters}
+                  className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
+                >
+                  {t('explorer.clearAll')}
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 pb-2">
+                {activeChips.map((chip) => (
+                  <span
+                    key={chip.id}
+                    className="inline-flex items-center gap-1 pl-2 pr-1 py-0.5 sm:pl-2.5 sm:pr-1 sm:py-1 rounded-full bg-secondary border border-border text-[11px] sm:text-xs text-secondary-foreground"
+                  >
+                    <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                      {chip.label}
+                    </span>
+                    <span className="font-medium">{chip.value}</span>
+                    <button
+                      onClick={chip.onRemove}
+                      aria-label={`${t('explorer.clear')} ${chip.label}`}
+                      className="h-4 w-4 sm:h-5 sm:w-5 grid place-items-center rounded-full hover:bg-destructive/10 hover:text-destructive transition"
+                    >
+                      <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-3 sm:py-4">
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-2 sm:mb-3 font-semibold">
               {filtered.length} apartments
               {showFavOnly && <span className="ml-2 text-destructive">· {t('explorer.favorites')}</span>}
             </p>

@@ -230,10 +230,13 @@
         "three": "3 BR",
         "four": "4 BR"
       },
-      "more": "More filters ({{count}})"
+      "more": "More filters ({{count}})",
+      "moreFilters": "More"
     },
     "filteredBy": "Filtered by",
     "clear": "Clear",
+    "clearAll": "Clear all",
+    "activeFilters": "Active filters",
     "favorites": "favorites",
     "showFavoritesOnly": "Show favorites only",
     "matchingUnits": "matching units",
@@ -244,7 +247,16 @@
       "subtitleList": "Try clearing a filter or picking a different building."
     },
     "labels": {
-      "status": "Status"
+      "status": "Status",
+      "building": "Building",
+      "apartment": "Apartment",
+      "rooms": "Rooms",
+      "completion": "Completion",
+      "floors": "Floors",
+      "price": "Price",
+      "pricePerUnit": "Price per m²",
+      "area": "Area",
+      "favorites": "Favorites"
     },
     "shareMessage": "Hi! I'm interested in apartment №{{number}} ({{rooms}} rm, {{area}} m²).",
     "apartmentNumber": "Apartment №{{number}}",
