@@ -629,6 +629,112 @@ const ExplorerV2 = () => {
     setShowFavOnly(false);
   };
 
+  const formatPrice = (n: number) => `֏${n.toLocaleString('en-US')}`;
+  const formatRange = (min: number, max: number, suffix = '') =>
+    `${min.toLocaleString('en-US')}${suffix} — ${max.toLocaleString('en-US')}${suffix}`;
+
+  const activeChips = useMemo(() => {
+    const chips: { id: string; label: string; value: string; onRemove: () => void }[] = [];
+    if (statusFilter !== 'all') {
+      chips.push({
+        id: 'status',
+        label: t('explorer.labels.status'),
+        value: statusFilter,
+        onRemove: () => setStatusFilter('all'),
+      });
+    }
+    if (selectedBuildingId) {
+      const b = BUILDINGS.find((bb) => bb.id === selectedBuildingId);
+      chips.push({
+        id: 'building',
+        label: t('explorer.labels.building'),
+        value: b?.name ?? selectedBuildingId,
+        onRemove: () => setSelectedBuildingId(null),
+      });
+    }
+    if (aptNumberQuery.trim()) {
+      chips.push({
+        id: 'apt',
+        label: t('explorer.labels.apartment'),
+        value: aptNumberQuery.trim(),
+        onRemove: () => setAptNumberQuery(''),
+      });
+    }
+    if (unitType !== 'all') {
+      chips.push({
+        id: 'rooms',
+        label: t('explorer.labels.rooms'),
+        value: `${unitType} BR`,
+        onRemove: () => setUnitType('all'),
+      });
+    }
+    if (completion !== 'all') {
+      chips.push({
+        id: 'completion',
+        label: t('explorer.labels.completion'),
+        value: completion,
+        onRemove: () => setCompletion('all'),
+      });
+    }
+    if (isFloorRangeActive) {
+      chips.push({
+        id: 'floors',
+        label: t('explorer.labels.floors'),
+        value: `${floorRange[0]}–${floorRange[1]}`,
+        onRemove: () => setFloorRange(FLOOR_BOUNDS),
+      });
+    }
+    if (isPriceRangeActive) {
+      chips.push({
+        id: 'price',
+        label: t('explorer.labels.price'),
+        value: formatRange(priceRange[0], priceRange[1], '֏'),
+        onRemove: () => setPriceRange(PRICE_BOUNDS),
+      });
+    }
+    if (isPpsRangeActive) {
+      chips.push({
+        id: 'pps',
+        label: t('explorer.labels.pricePerUnit'),
+        value: formatRange(ppsRange[0], ppsRange[1], '֏'),
+        onRemove: () => setPpsRange(PPS_BOUNDS),
+      });
+    }
+    if (isAreaRangeActive) {
+      chips.push({
+        id: 'area',
+        label: t('explorer.labels.area'),
+        value: formatRange(areaRange[0], areaRange[1], ' m²'),
+        onRemove: () => setAreaRange(AREA_BOUNDS),
+      });
+    }
+    if (showFavOnly) {
+      chips.push({
+        id: 'fav',
+        label: t('explorer.labels.favorites'),
+        value: t('explorer.showFavoritesOnly'),
+        onRemove: () => setShowFavOnly(false),
+      });
+    }
+    return chips;
+  }, [
+    statusFilter,
+    selectedBuildingId,
+    aptNumberQuery,
+    unitType,
+    completion,
+    isFloorRangeActive,
+    floorRange,
+    isPriceRangeActive,
+    priceRange,
+    isPpsRangeActive,
+    ppsRange,
+    isAreaRangeActive,
+    areaRange,
+    showFavOnly,
+    t,
+  ]);
+
   const matrixFilter = useMemo(
     () => ({
       unitType,
@@ -994,6 +1100,43 @@ const ExplorerV2 = () => {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Active filter chips */}
+          {activeChips.length > 0 && (
+            <div className="px-5 pt-4 pb-1 border-b border-border">
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  {t('explorer.activeFilters')}
+                </span>
+                <button
+                  onClick={resetFilters}
+                  className="text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
+                >
+                  {t('explorer.clearAll')}
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2 pb-2">
+                {activeChips.map((chip) => (
+                  <span
+                    key={chip.id}
+                    className="inline-flex items-center gap-1.5 pl-2.5 pr-1 py-1 rounded-full bg-secondary border border-border text-xs text-secondary-foreground"
+                  >
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                      {chip.label}
+                    </span>
+                    <span className="font-medium">{chip.value}</span>
+                    <button
+                      onClick={chip.onRemove}
+                      aria-label={`${t('explorer.clear')} ${chip.label}`}
+                      className="h-5 w-5 grid place-items-center rounded-full hover:bg-destructive/10 hover:text-destructive transition"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex-1 overflow-y-auto px-5 py-4">
             <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-3 font-semibold">

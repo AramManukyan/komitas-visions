@@ -234,6 +234,8 @@
     },
     "filteredBy": "Ֆիլտրված է ըստ",
     "clear": "Մաքրել",
+    "clearAll": "Մաքրել բոլորը",
+    "activeFilters": "Ակտիվ ֆիլտրեր",
     "favorites": "ընտրյալներ",
     "showFavoritesOnly": "Ցույց տալ միայն ընտրյալները",
     "matchingUnits": "համապատասխան տարբերակ",
@@ -244,7 +246,16 @@
       "subtitleList": "Փորձեք մաքրել ֆիլտրերը կամ ընտրել այլ շենք։"
     },
     "labels": {
-      "status": "Կարգավիճակ"
+      "status": "Կարգավիճակ",
+      "building": "Շենք",
+      "apartment": "Բնակարան",
+      "rooms": "Սենյակներ",
+      "completion": "Ավարտ",
+      "floors": "Հարկեր",
+      "price": "Գին",
+      "pricePerUnit": "Գին 1 մ²-ի համար",
+      "area": "Մակերես",
+      "favorites": "Ընտրյալներ"
     },
     "shareMessage": "Բարև։ Ինձ հետաքրքրում է №{{number}} բնակարանը ({{rooms}} սենյակ, {{area}} մ²)։",
     "apartmentNumber": "Բնակարան №{{number}}",
