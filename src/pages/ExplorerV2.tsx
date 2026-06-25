@@ -564,6 +564,7 @@ const ExplorerV2 = () => {
   const [mobilePane, setMobilePane] = useState<'map' | 'list'>('map');
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [moreFiltersOpen, setMoreFiltersOpen] = useState(false);
+  const [moreFiltersOpen, setMoreFiltersOpen] = useState(false);
   const [asideWidth, setAsideWidth] = useState<number>(460);
   const [isDesktop, setIsDesktop] = useState<boolean>(
     typeof window !== 'undefined' ? window.matchMedia('(min-width: 1024px)').matches : true,
