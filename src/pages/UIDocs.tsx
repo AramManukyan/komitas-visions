@@ -37,6 +37,12 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useToast } from "@/components/ui/use-toast";
 import { toast as sonnerToast } from "sonner";
 
+// Project-specific custom components
+import ThemeGenerator from "@/components/ThemeGenerator";
+import { NavLink } from "@/components/NavLink";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { PromotionBadge } from "@/components/PromotionBadge";
+
 // ---------- Section helper ----------
 type ExampleProps = { title: string; description?: string; children: React.ReactNode };
 const Example = ({ title, description, children }: ExampleProps) => (
@@ -62,6 +68,7 @@ const Section = ({ id, title, description, children }: SectionProps) => (
 
 // ---------- Page ----------
 const groups: { id: string; label: string }[] = [
+  { id: "theme", label: "Theme Generator" },
   { id: "actions", label: "Actions" },
   { id: "forms", label: "Forms" },
   { id: "data-display", label: "Data Display" },
@@ -69,6 +76,7 @@ const groups: { id: string; label: string }[] = [
   { id: "feedback", label: "Feedback" },
   { id: "overlays", label: "Overlays" },
   { id: "layout", label: "Layout" },
+  { id: "custom", label: "Project Components" },
 ];
 
 export default function UIDocs() {
@@ -114,8 +122,20 @@ export default function UIDocs() {
           </aside>
 
           <main className="space-y-12 min-w-0">
+            {/* ============ THEME GENERATOR ============ */}
+            <section id="theme" className="scroll-mt-24 space-y-5">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">Theme Generator</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Tweak every design token live. Values update across the entire app and persist locally until you reset.
+                </p>
+              </div>
+              <ThemeGenerator />
+            </section>
+
             {/* ============ ACTIONS ============ */}
             <Section id="actions" title="Actions" description="Buttons, toggles and triggers.">
+
               <Example title="Button variants" description="default · secondary · destructive · outline · ghost · link">
                 <Button>Default</Button>
                 <Button variant="secondary">Secondary</Button>
