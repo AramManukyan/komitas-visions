@@ -34,6 +34,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
 import {
   BUILDINGS,
   EXPLORER_APARTMENTS,
@@ -531,9 +533,29 @@ const ExplorerV2 = () => {
   const { selection, update } = useExplorerUrlState();
   const { isFavorite, toggle: toggleFav, count: favCount } = useFavorites();
 
+  // Price / area bounds derived from data
+  const PRICE_BOUNDS = useMemo(() => {
+    const prices = EXPLORER_APARTMENTS.map((a) => a.price);
+    return [Math.min(...prices), Math.max(...prices)] as [number, number];
+  }, []);
+  const PPS_BOUNDS = useMemo(() => {
+    const pps = EXPLORER_APARTMENTS.map((a) => Math.round(a.price / a.area));
+    return [Math.min(...pps), Math.max(...pps)] as [number, number];
+  }, []);
+  const AREA_BOUNDS = useMemo(() => {
+    const a = EXPLORER_APARTMENTS.map((x) => x.area);
+    return [0, Math.max(...a)] as [number, number];
+  }, []);
+  const FLOOR_BOUNDS: [number, number] = [1, 16];
+
   const [unitType, setUnitType] = useState<string>('all');
-  const [areaBucket, setAreaBucket] = useState<string>('all');
-  const [floorBucket, setFloorBucket] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [completion, setCompletion] = useState<string>('all');
+  const [aptNumberQuery, setAptNumberQuery] = useState<string>('');
+  const [floorRange, setFloorRange] = useState<[number, number]>(FLOOR_BOUNDS);
+  const [priceRange, setPriceRange] = useState<[number, number]>(PRICE_BOUNDS);
+  const [ppsRange, setPpsRange] = useState<[number, number]>(PPS_BOUNDS);
+  const [areaRange, setAreaRange] = useState<[number, number]>(AREA_BOUNDS);
   const [view, setView] = useState<View>('3d');
   const [detailsApt, setDetailsApt] = useState<ExplorerApartment | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -577,24 +599,43 @@ const ExplorerV2 = () => {
   const selectedBuildingId = selection.buildingId;
   const setSelectedBuildingId = (id: string | null) => update({ buildingId: id });
 
+  const isFloorRangeActive = floorRange[0] !== FLOOR_BOUNDS[0] || floorRange[1] !== FLOOR_BOUNDS[1];
+  const isPriceRangeActive = priceRange[0] !== PRICE_BOUNDS[0] || priceRange[1] !== PRICE_BOUNDS[1];
+  const isPpsRangeActive = ppsRange[0] !== PPS_BOUNDS[0] || ppsRange[1] !== PPS_BOUNDS[1];
+  const isAreaRangeActive = areaRange[0] !== AREA_BOUNDS[0] || areaRange[1] !== AREA_BOUNDS[1];
+
   const activeFilterCount =
     (unitType !== 'all' ? 1 : 0) +
-    (areaBucket !== 'all' ? 1 : 0) +
-    (floorBucket !== 'all' ? 1 : 0) +
+    (statusFilter !== 'all' ? 1 : 0) +
+    (completion !== 'all' ? 1 : 0) +
+    (aptNumberQuery.trim() ? 1 : 0) +
+    (isFloorRangeActive ? 1 : 0) +
+    (isPriceRangeActive ? 1 : 0) +
+    (isPpsRangeActive ? 1 : 0) +
+    (isAreaRangeActive ? 1 : 0) +
     (selectedBuildingId ? 1 : 0) +
     (showFavOnly ? 1 : 0);
 
   const resetFilters = () => {
     setUnitType('all');
-    setAreaBucket('all');
-    setFloorBucket('all');
+    setStatusFilter('all');
+    setCompletion('all');
+    setAptNumberQuery('');
+    setFloorRange(FLOOR_BOUNDS);
+    setPriceRange(PRICE_BOUNDS);
+    setPpsRange(PPS_BOUNDS);
+    setAreaRange(AREA_BOUNDS);
     setSelectedBuildingId(null);
     setShowFavOnly(false);
   };
 
   const matrixFilter = useMemo(
-    () => ({ unitType, areaBucket, floorBucket }),
-    [unitType, areaBucket, floorBucket],
+    () => ({
+      unitType,
+      areaBucket: isAreaRangeActive ? `${areaRange[0]}-${areaRange[1]}` : 'all',
+      floorBucket: isFloorRangeActive ? `${floorRange[0]}-${floorRange[1]}` : 'all',
+    }),
+    [unitType, areaRange, floorRange, isAreaRangeActive, isFloorRangeActive],
   );
 
   // Skeleton hint when filters change
@@ -602,24 +643,34 @@ const ExplorerV2 = () => {
     setListLoading(true);
     const t = setTimeout(() => setListLoading(false), 220);
     return () => clearTimeout(t);
-  }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly]);
+  }, [unitType, statusFilter, completion, aptNumberQuery, floorRange, priceRange, ppsRange, areaRange, selectedBuildingId, showFavOnly]);
+
+  // Map building.status → completion bucket
+  const buildingCompletion = useMemo(() => {
+    const map = new Map<string, string>();
+    BUILDINGS.forEach((b) => map.set(b.id, b.status));
+    return map;
+  }, []);
 
   const filtered = useMemo(() => {
+    const q = aptNumberQuery.trim().toLowerCase();
     return EXPLORER_APARTMENTS.filter((a) => {
+      if (statusFilter !== 'all' && a.status !== statusFilter) return false;
+      if (statusFilter === 'all' && a.status !== 'available') return false;
       if (unitType !== 'all' && String(a.rooms) !== unitType) return false;
-      if (areaBucket !== 'all') {
-        const [min, max] = areaBucket.split('-').map(Number);
-        if (a.area < min || a.area > max) return false;
-      }
-      if (floorBucket !== 'all') {
-        const [min, max] = floorBucket.split('-').map(Number);
-        if (a.floor < min || a.floor > max) return false;
-      }
-      if (selectedBuildingId && `${a.block}-${a.building}` !== selectedBuildingId) return false;
+      if (q && !a.number.toLowerCase().includes(q)) return false;
+      const bId = `${a.block}-${a.building}`;
+      if (selectedBuildingId && bId !== selectedBuildingId) return false;
+      if (completion !== 'all' && buildingCompletion.get(bId) !== completion) return false;
+      if (a.floor < floorRange[0] || a.floor > floorRange[1]) return false;
+      if (a.price < priceRange[0] || a.price > priceRange[1]) return false;
+      const pps = Math.round(a.price / a.area);
+      if (pps < ppsRange[0] || pps > ppsRange[1]) return false;
+      if (a.area < areaRange[0] || a.area > areaRange[1]) return false;
       if (showFavOnly && !isFavorite(a.id)) return false;
-      return a.status === 'available';
+      return true;
     });
-  }, [unitType, areaBucket, floorBucket, selectedBuildingId, showFavOnly, isFavorite]);
+  }, [unitType, statusFilter, completion, aptNumberQuery, floorRange, priceRange, ppsRange, areaRange, selectedBuildingId, showFavOnly, isFavorite, buildingCompletion]);
 
   return (
     <div className="h-[100dvh] bg-warm-bg flex flex-col overflow-hidden">
@@ -745,51 +796,188 @@ const ExplorerV2 = () => {
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
                 className="overflow-hidden border-b border-border"
               >
-                <div className="px-5 py-4 space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                      <Select value={unitType} onValueChange={setUnitType}>
-                        <SelectTrigger className="rounded-xl h-11">
-                          <SelectValue placeholder={t('explorer.filters.unitType')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">{t('explorer.filters.unitType')}</SelectItem>
-                          <SelectItem value="1">{t('explorer.filters.unitTypeOptions.one')}</SelectItem>
-                          <SelectItem value="2">{t('explorer.filters.unitTypeOptions.two')}</SelectItem>
-                          <SelectItem value="3">{t('explorer.filters.unitTypeOptions.three')}</SelectItem>
-                          <SelectItem value="4">{t('explorer.filters.unitTypeOptions.four')}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Select value={areaBucket} onValueChange={setAreaBucket}>
-                      <SelectTrigger className="rounded-xl h-11">
-                        <SelectValue placeholder={t('explorer.filters.totalArea')} />
-                      </SelectTrigger>
+                <div className="px-5 py-4 space-y-4">
+                  {/* Status */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Statuses</label>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger className="rounded-xl h-11"><SelectValue placeholder="Select status" /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">{t('explorer.filters.totalArea')}</SelectItem>
-                        <SelectItem value="0-50">{t('explorer.filters.area.upTo50')}</SelectItem>
-                        <SelectItem value="50-80">50 – 80</SelectItem>
-                        <SelectItem value="80-120">80 – 120</SelectItem>
-                        <SelectItem value="120-500">{t('explorer.filters.area.over120')}</SelectItem>
+                        <SelectItem value="all">All statuses</SelectItem>
+                        <SelectItem value="available">Available</SelectItem>
+                        <SelectItem value="reserved">Reserved</SelectItem>
+                        <SelectItem value="sold">Sold</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Select value={floorBucket} onValueChange={setFloorBucket}>
-                      <SelectTrigger className="rounded-xl h-11">
-                        <SelectValue placeholder={t('apartments.filters.floor')} />
-                      </SelectTrigger>
+                  </div>
+
+                  {/* Building */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Buildings</label>
+                    <Select
+                      value={selectedBuildingId ?? 'all'}
+                      onValueChange={(v) => setSelectedBuildingId(v === 'all' ? null : v)}
+                    >
+                      <SelectTrigger className="rounded-xl h-11"><SelectValue placeholder="Select building" /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">{t('apartments.filters.floor')}</SelectItem>
-                        <SelectItem value="1-4">1 – 4</SelectItem>
-                        <SelectItem value="5-9">5 – 9</SelectItem>
-                        <SelectItem value="10-16">10 – 16</SelectItem>
+                        <SelectItem value="all">All buildings</SelectItem>
+                        {BUILDINGS.map((b) => (
+                          <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
-                    <button className="h-11 rounded-xl border border-border bg-muted/40 hover:bg-muted transition flex items-center justify-center gap-2 text-sm font-semibold text-foreground">
-                      <SlidersHorizontal className="h-4 w-4" />
-                      {t('explorer.filters.more', { count: 0 })}
-                    </button>
+                  </div>
+
+                  {/* Apartment number */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Apartment</label>
+                    <Input
+                      value={aptNumberQuery}
+                      onChange={(e) => setAptNumberQuery(e.target.value)}
+                      placeholder="Apartment number"
+                      className="rounded-xl h-11"
+                    />
+                  </div>
+
+                  {/* Rooms */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Rooms</label>
+                    <Select value={unitType} onValueChange={setUnitType}>
+                      <SelectTrigger className="rounded-xl h-11"><SelectValue placeholder="Select rooms count" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Any</SelectItem>
+                        <SelectItem value="1">1 room</SelectItem>
+                        <SelectItem value="2">2 rooms</SelectItem>
+                        <SelectItem value="3">3 rooms</SelectItem>
+                        <SelectItem value="4">4 rooms</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Expected completion */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Expected completion</label>
+                    <Select value={completion} onValueChange={setCompletion}>
+                      <SelectTrigger className="rounded-xl h-11"><SelectValue placeholder="Select construction end date" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Any date</SelectItem>
+                        <SelectItem value="ready">Ready to move in</SelectItem>
+                        <SelectItem value="construction">Under construction</SelectItem>
+                        <SelectItem value="planning">Planned</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Floors range */}
+                  <div className="space-y-2">
+                    <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Floors</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        type="number"
+                        value={floorRange[0]}
+                        min={FLOOR_BOUNDS[0]}
+                        max={floorRange[1]}
+                        onChange={(e) => setFloorRange([Number(e.target.value) || FLOOR_BOUNDS[0], floorRange[1]])}
+                        className="rounded-xl h-11"
+                      />
+                      <Input
+                        type="number"
+                        value={floorRange[1]}
+                        min={floorRange[0]}
+                        max={FLOOR_BOUNDS[1]}
+                        onChange={(e) => setFloorRange([floorRange[0], Number(e.target.value) || FLOOR_BOUNDS[1]])}
+                        className="rounded-xl h-11"
+                      />
+                    </div>
+                    <Slider
+                      min={FLOOR_BOUNDS[0]}
+                      max={FLOOR_BOUNDS[1]}
+                      step={1}
+                      value={floorRange}
+                      onValueChange={(v) => setFloorRange([v[0], v[1]] as [number, number])}
+                    />
+                  </div>
+
+                  {/* Price */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-foreground">Price (֏)</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        type="number"
+                        value={priceRange[0]}
+                        onChange={(e) => setPriceRange([Number(e.target.value) || 0, priceRange[1]])}
+                        className="rounded-xl h-11"
+                      />
+                      <Input
+                        type="number"
+                        value={priceRange[1]}
+                        onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value) || PRICE_BOUNDS[1]])}
+                        className="rounded-xl h-11"
+                      />
+                    </div>
+                    <Slider
+                      min={PRICE_BOUNDS[0]}
+                      max={PRICE_BOUNDS[1]}
+                      step={100000}
+                      value={priceRange}
+                      onValueChange={(v) => setPriceRange([v[0], v[1]] as [number, number])}
+                    />
+                  </div>
+
+                  {/* Price per unit */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-foreground">Price per unit (֏)</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        type="number"
+                        value={ppsRange[0]}
+                        onChange={(e) => setPpsRange([Number(e.target.value) || 0, ppsRange[1]])}
+                        className="rounded-xl h-11"
+                      />
+                      <Input
+                        type="number"
+                        value={ppsRange[1]}
+                        onChange={(e) => setPpsRange([ppsRange[0], Number(e.target.value) || PPS_BOUNDS[1]])}
+                        className="rounded-xl h-11"
+                      />
+                    </div>
+                    <Slider
+                      min={PPS_BOUNDS[0]}
+                      max={PPS_BOUNDS[1]}
+                      step={5000}
+                      value={ppsRange}
+                      onValueChange={(v) => setPpsRange([v[0], v[1]] as [number, number])}
+                    />
+                  </div>
+
+                  {/* Area */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-foreground">Area (sqm)</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        type="number"
+                        value={areaRange[0]}
+                        onChange={(e) => setAreaRange([Number(e.target.value) || 0, areaRange[1]])}
+                        className="rounded-xl h-11"
+                      />
+                      <Input
+                        type="number"
+                        value={areaRange[1]}
+                        onChange={(e) => setAreaRange([areaRange[0], Number(e.target.value) || AREA_BOUNDS[1]])}
+                        className="rounded-xl h-11"
+                      />
+                    </div>
+                    <Slider
+                      min={AREA_BOUNDS[0]}
+                      max={AREA_BOUNDS[1]}
+                      step={1}
+                      value={areaRange}
+                      onValueChange={(v) => setAreaRange([v[0], v[1]] as [number, number])}
+                    />
                   </div>
 
                   {selectedBuildingId && (
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between text-xs px-1">
                       <span className="text-muted-foreground">
                         {t('explorer.filteredBy')}{' '}
                         <span className="font-semibold text-primary">{selectedBuildingId}</span>
