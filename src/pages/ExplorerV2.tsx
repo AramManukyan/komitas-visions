@@ -975,10 +975,9 @@ const ExplorerV2 = () => {
                       onValueChange={(v) => setAreaRange([v[0], v[1]] as [number, number])}
                     />
                   </div>
-                </div>
 
                   {selectedBuildingId && (
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between text-xs px-1">
                       <span className="text-muted-foreground">
                         {t('explorer.filteredBy')}{' '}
                         <span className="font-semibold text-primary">{selectedBuildingId}</span>
