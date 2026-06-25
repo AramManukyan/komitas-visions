@@ -827,19 +827,19 @@ const ExplorerV2 = () => {
           )}
         >
           {/* Logo strip with menu trigger */}
-          <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
+          <div className="px-3 sm:px-5 py-2.5 sm:py-4 border-b border-border flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 sm:gap-3">
               <button
                 onClick={() => setMenuOpen(true)}
-                className="hidden lg:grid h-10 w-10 place-items-center rounded-xl border border-border hover:bg-muted transition"
+                className="hidden lg:grid h-9 sm:h-10 w-9 sm:w-10 place-items-center rounded-xl border border-border hover:bg-muted transition"
                 aria-label={t('explorer.menu.open')}
               >
                 <Menu className="h-4 w-4 text-primary" />
               </button>
-              <Link to="/" className="flex items-center gap-2.5">
-                <img src={logo} alt="New Komitas" className="h-9 w-auto" />
+              <Link to="/" className="flex items-center gap-2 sm:gap-2.5">
+                <img src={logo} alt="New Komitas" className="h-8 sm:h-9 w-auto" />
                 <div className="leading-tight">
-                  <p className="font-heading text-base font-bold tracking-tight text-primary">
+                  <p className="font-heading text-sm sm:text-base font-bold tracking-tight text-primary">
                     KOMITAS<span className="text-accent">™</span>
                   </p>
                   <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-body">
@@ -852,14 +852,14 @@ const ExplorerV2 = () => {
               onClick={() => setShowFavOnly((v) => !v)}
               aria-pressed={showFavOnly}
               className={cn(
-                'relative h-9 w-9 grid place-items-center rounded-full border transition',
+                'relative h-8 sm:h-9 w-8 sm:w-9 grid place-items-center rounded-full border transition',
                 showFavOnly
                   ? 'bg-destructive/10 border-destructive text-destructive'
                   : 'border-border hover:bg-muted text-muted-foreground',
               )}
               aria-label={t('explorer.showFavoritesOnly')}
             >
-              <Heart className={cn('h-4 w-4', showFavOnly && 'fill-destructive')} />
+              <Heart className={cn('h-3.5 w-3.5 sm:h-4 sm:w-4', showFavOnly && 'fill-destructive')} />
               {favCount > 0 && (
                 <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-accent text-accent-foreground text-[9px] font-bold grid place-items-center">
                   {favCount}
@@ -869,7 +869,7 @@ const ExplorerV2 = () => {
           </div>
 
           {/* Filters toggle */}
-          <div className="px-5 py-3 border-b border-border flex items-center justify-between gap-3">
+          <div className="px-3 py-2 sm:px-5 sm:py-3 border-b border-border flex items-center justify-between gap-3">
             <button
               onClick={() => setFiltersOpen((v) => !v)}
               aria-expanded={filtersOpen}
@@ -886,7 +886,7 @@ const ExplorerV2 = () => {
             {activeFilterCount > 0 && (
               <button
                 onClick={resetFilters}
-                className="text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
+                className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
               >
                 {t('apartments.filters.reset')}
               </button>
@@ -903,19 +903,19 @@ const ExplorerV2 = () => {
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
                 className="overflow-hidden border-b border-border"
               >
-                <div className="px-5 py-4">
+                <div className="px-3 py-3 sm:px-5 sm:py-4">
                   {/* Primary filters grid */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
                     {/* Building */}
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <div className="space-y-1">
+                      <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                         {t('explorer.labels.building')}
                       </label>
                       <Select
                         value={selectedBuildingId ?? 'all'}
                         onValueChange={(v) => setSelectedBuildingId(v === 'all' ? null : v)}
                       >
-                        <SelectTrigger className="rounded-xl h-11 w-full bg-background hover:border-primary/50">
+                        <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full bg-background hover:border-primary/50 text-xs sm:text-sm">
                           <SelectValue placeholder={t('explorer.labels.building')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -930,12 +930,12 @@ const ExplorerV2 = () => {
                     </div>
 
                     {/* Status */}
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <div className="space-y-1">
+                      <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                         {t('explorer.labels.status')}
                       </label>
                       <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="rounded-xl h-11 w-full bg-background hover:border-primary/50">
+                        <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full bg-background hover:border-primary/50 text-xs sm:text-sm">
                           <SelectValue placeholder={t('explorer.labels.status')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -948,12 +948,12 @@ const ExplorerV2 = () => {
                     </div>
 
                     {/* Rooms */}
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <div className="space-y-1">
+                      <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                         {t('explorer.labels.rooms')}
                       </label>
                       <Select value={unitType} onValueChange={setUnitType}>
-                        <SelectTrigger className="rounded-xl h-11 w-full bg-background hover:border-primary/50">
+                        <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full bg-background hover:border-primary/50 text-xs sm:text-sm">
                           <SelectValue placeholder={t('explorer.labels.rooms')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -970,9 +970,9 @@ const ExplorerV2 = () => {
                     <button
                       onClick={() => setMoreFiltersOpen((v) => !v)}
                       aria-expanded={moreFiltersOpen}
-                      className="flex items-center justify-center gap-2 h-11 self-end rounded-xl border border-border bg-muted/50 text-foreground text-sm font-medium hover:bg-muted hover:border-primary/50 transition"
+                      className="flex items-center justify-center gap-2 h-10 sm:h-11 self-end rounded-xl border border-border bg-muted/50 text-foreground text-xs sm:text-sm font-medium hover:bg-muted hover:border-primary/50 transition"
                     >
-                      <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
+                      <SlidersHorizontal className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                       {moreFiltersOpen ? t('explorer.filters.hide') : t('explorer.filters.moreFilters')}
                     </button>
                   </div>
@@ -988,20 +988,20 @@ const ExplorerV2 = () => {
                         transition={{ duration: 0.25, ease: 'easeInOut' }}
                         className="overflow-hidden"
                       >
-                        <div className="mt-4 pt-4 border-t border-border space-y-4 max-h-[45vh] overflow-y-auto overscroll-contain">
+                        <div className="mt-3 pt-3 border-t border-border space-y-3 sm:mt-4 sm:pt-4 sm:space-y-4 max-h-[55vh] sm:max-h-[45vh] overflow-y-auto overscroll-contain">
                           {/* Total area */}
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-foreground">
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <label className="text-[11px] sm:text-xs font-bold text-foreground">
                               {t('explorer.filters.totalArea')}
                             </label>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
                               <Input
                                 type="number"
                                 value={areaRange[0]}
                                 onChange={(e) =>
                                   setAreaRange([Number(e.target.value) || AREA_BOUNDS[0], areaRange[1]])
                                 }
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                               <Input
                                 type="number"
@@ -1009,7 +1009,7 @@ const ExplorerV2 = () => {
                                 onChange={(e) =>
                                   setAreaRange([areaRange[0], Number(e.target.value) || AREA_BOUNDS[1]])
                                 }
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                             </div>
                             <Slider
@@ -1022,20 +1022,20 @@ const ExplorerV2 = () => {
                           </div>
 
                           {/* Price per m² */}
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-foreground">{t('explorer.labels.pricePerUnit')} (֏)</label>
-                            <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <label className="text-[11px] sm:text-xs font-bold text-foreground">{t('explorer.labels.pricePerUnit')} (֏)</label>
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
                               <Input
                                 type="number"
                                 value={ppsRange[0]}
                                 onChange={(e) => setPpsRange([Number(e.target.value) || 0, ppsRange[1]])}
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                               <Input
                                 type="number"
                                 value={ppsRange[1]}
                                 onChange={(e) => setPpsRange([ppsRange[0], Number(e.target.value) || PPS_BOUNDS[1]])}
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                             </div>
                             <Slider
@@ -1048,8 +1048,8 @@ const ExplorerV2 = () => {
                           </div>
 
                           {/* Floor */}
-                          <div className="space-y-1.5">
-                            <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                          <div className="space-y-1">
+                            <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                               {t('explorer.labels.floors')}
                             </label>
                             <Select
@@ -1080,7 +1080,7 @@ const ExplorerV2 = () => {
                                 }
                               }}
                             >
-                              <SelectTrigger className="rounded-xl h-11 w-full">
+                              <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full text-xs sm:text-sm">
                                 <SelectValue placeholder={t('explorer.labels.floors')} />
                               </SelectTrigger>
                               <SelectContent>
@@ -1093,33 +1093,33 @@ const ExplorerV2 = () => {
                           </div>
 
                           {/* Apartment number */}
-                          <div className="space-y-1.5">
-                            <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                          <div className="space-y-1">
+                            <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                               {t('explorer.labels.apartment')}
                             </label>
                             <Input
                               value={aptNumberQuery}
                               onChange={(e) => setAptNumberQuery(e.target.value)}
                               placeholder={t('explorer.labels.apartment')}
-                              className="rounded-xl h-11"
+                              className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                             />
                           </div>
 
                           {/* Price */}
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-foreground">{t('explorer.labels.price')} (֏)</label>
-                            <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <label className="text-[11px] sm:text-xs font-bold text-foreground">{t('explorer.labels.price')} (֏)</label>
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
                               <Input
                                 type="number"
                                 value={priceRange[0]}
                                 onChange={(e) => setPriceRange([Number(e.target.value) || 0, priceRange[1]])}
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                               <Input
                                 type="number"
                                 value={priceRange[1]}
                                 onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value) || PRICE_BOUNDS[1]])}
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                             </div>
                             <Slider
@@ -1141,34 +1141,34 @@ const ExplorerV2 = () => {
 
           {/* Active filter chips */}
           {activeChips.length > 0 && (
-            <div className="px-5 pt-4 pb-1 border-b border-border">
-              <div className="flex items-center justify-between gap-3 mb-2">
-                <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <div className="px-3 sm:px-5 pt-3 sm:pt-4 pb-1 border-b border-border">
+              <div className="flex items-center justify-between gap-3 mb-1.5 sm:mb-2">
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                   {t('explorer.activeFilters')}
                 </span>
                 <button
                   onClick={resetFilters}
-                  className="text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
+                  className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
                 >
                   {t('explorer.clearAll')}
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2 pb-2">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 pb-2">
                 {activeChips.map((chip) => (
                   <span
                     key={chip.id}
-                    className="inline-flex items-center gap-1.5 pl-2.5 pr-1 py-1 rounded-full bg-secondary border border-border text-xs text-secondary-foreground"
+                    className="inline-flex items-center gap-1 pl-2 pr-1 py-0.5 sm:pl-2.5 sm:pr-1 sm:py-1 rounded-full bg-secondary border border-border text-[11px] sm:text-xs text-secondary-foreground"
                   >
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
                       {chip.label}
                     </span>
                     <span className="font-medium">{chip.value}</span>
                     <button
                       onClick={chip.onRemove}
                       aria-label={`${t('explorer.clear')} ${chip.label}`}
-                      className="h-5 w-5 grid place-items-center rounded-full hover:bg-destructive/10 hover:text-destructive transition"
+                      className="h-4 w-4 sm:h-5 sm:w-5 grid place-items-center rounded-full hover:bg-destructive/10 hover:text-destructive transition"
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                     </button>
                   </span>
                 ))}
@@ -1176,8 +1176,8 @@ const ExplorerV2 = () => {
             </div>
           )}
 
-          <div className="flex-1 overflow-y-auto px-5 py-4">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-3 font-semibold">
+          <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-3 sm:py-4">
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-2 sm:mb-3 font-semibold">
               {filtered.length} apartments
               {showFavOnly && <span className="ml-2 text-destructive">· {t('explorer.favorites')}</span>}
             </p>
