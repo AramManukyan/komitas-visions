@@ -39,7 +39,9 @@ const App = () => (
           <Route path="/apartments" element={<Apartments />} />
           <Route path="/explorer" element={<ExplorerV2 />} />
           <Route path="/explorer/v2" element={<ExplorerV2 />} />
+          <Route path="/ui-docs" element={<UIDocs />} />
           <Route path="*" element={<NotFound />} />
+
         </Routes>
       </HashRouter>
     </TooltipProvider>
