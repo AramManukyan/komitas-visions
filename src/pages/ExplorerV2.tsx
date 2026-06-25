@@ -869,7 +869,7 @@ const ExplorerV2 = () => {
           </div>
 
           {/* Filters toggle */}
-          <div className="px-5 py-3 border-b border-border flex items-center justify-between gap-3">
+          <div className="px-3 py-2 sm:px-5 sm:py-3 border-b border-border flex items-center justify-between gap-3">
             <button
               onClick={() => setFiltersOpen((v) => !v)}
               aria-expanded={filtersOpen}
@@ -886,7 +886,7 @@ const ExplorerV2 = () => {
             {activeFilterCount > 0 && (
               <button
                 onClick={resetFilters}
-                className="text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
+                className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground hover:text-destructive transition font-semibold"
               >
                 {t('apartments.filters.reset')}
               </button>
