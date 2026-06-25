@@ -988,20 +988,20 @@ const ExplorerV2 = () => {
                         transition={{ duration: 0.25, ease: 'easeInOut' }}
                         className="overflow-hidden"
                       >
-                        <div className="mt-4 pt-4 border-t border-border space-y-4 max-h-[45vh] overflow-y-auto overscroll-contain">
+                        <div className="mt-3 pt-3 border-t border-border space-y-3 sm:mt-4 sm:pt-4 sm:space-y-4 max-h-[55vh] sm:max-h-[45vh] overflow-y-auto overscroll-contain">
                           {/* Total area */}
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-foreground">
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <label className="text-[11px] sm:text-xs font-bold text-foreground">
                               {t('explorer.filters.totalArea')}
                             </label>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
                               <Input
                                 type="number"
                                 value={areaRange[0]}
                                 onChange={(e) =>
                                   setAreaRange([Number(e.target.value) || AREA_BOUNDS[0], areaRange[1]])
                                 }
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                               <Input
                                 type="number"
@@ -1009,7 +1009,7 @@ const ExplorerV2 = () => {
                                 onChange={(e) =>
                                   setAreaRange([areaRange[0], Number(e.target.value) || AREA_BOUNDS[1]])
                                 }
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                             </div>
                             <Slider
@@ -1022,20 +1022,20 @@ const ExplorerV2 = () => {
                           </div>
 
                           {/* Price per m² */}
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-foreground">{t('explorer.labels.pricePerUnit')} (֏)</label>
-                            <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <label className="text-[11px] sm:text-xs font-bold text-foreground">{t('explorer.labels.pricePerUnit')} (֏)</label>
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
                               <Input
                                 type="number"
                                 value={ppsRange[0]}
                                 onChange={(e) => setPpsRange([Number(e.target.value) || 0, ppsRange[1]])}
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                               <Input
                                 type="number"
                                 value={ppsRange[1]}
                                 onChange={(e) => setPpsRange([ppsRange[0], Number(e.target.value) || PPS_BOUNDS[1]])}
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                             </div>
                             <Slider
@@ -1048,8 +1048,8 @@ const ExplorerV2 = () => {
                           </div>
 
                           {/* Floor */}
-                          <div className="space-y-1.5">
-                            <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                          <div className="space-y-1">
+                            <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                               {t('explorer.labels.floors')}
                             </label>
                             <Select
@@ -1080,7 +1080,7 @@ const ExplorerV2 = () => {
                                 }
                               }}
                             >
-                              <SelectTrigger className="rounded-xl h-11 w-full">
+                              <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full text-xs sm:text-sm">
                                 <SelectValue placeholder={t('explorer.labels.floors')} />
                               </SelectTrigger>
                               <SelectContent>
@@ -1093,33 +1093,33 @@ const ExplorerV2 = () => {
                           </div>
 
                           {/* Apartment number */}
-                          <div className="space-y-1.5">
-                            <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                          <div className="space-y-1">
+                            <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                               {t('explorer.labels.apartment')}
                             </label>
                             <Input
                               value={aptNumberQuery}
                               onChange={(e) => setAptNumberQuery(e.target.value)}
                               placeholder={t('explorer.labels.apartment')}
-                              className="rounded-xl h-11"
+                              className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                             />
                           </div>
 
                           {/* Price */}
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-foreground">{t('explorer.labels.price')} (֏)</label>
-                            <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <label className="text-[11px] sm:text-xs font-bold text-foreground">{t('explorer.labels.price')} (֏)</label>
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
                               <Input
                                 type="number"
                                 value={priceRange[0]}
                                 onChange={(e) => setPriceRange([Number(e.target.value) || 0, priceRange[1]])}
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                               <Input
                                 type="number"
                                 value={priceRange[1]}
                                 onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value) || PRICE_BOUNDS[1]])}
-                                className="rounded-xl h-11"
+                                className="rounded-xl h-10 sm:h-11 text-xs sm:text-sm"
                               />
                             </div>
                             <Slider
