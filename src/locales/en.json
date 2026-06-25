@@ -230,7 +230,8 @@
         "three": "3 BR",
         "four": "4 BR"
       },
-      "more": "More filters ({{count}})"
+      "more": "More filters ({{count}})",
+      "moreFilters": "More"
     },
     "filteredBy": "Filtered by",
     "clear": "Clear",
