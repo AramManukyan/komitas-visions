@@ -903,19 +903,19 @@ const ExplorerV2 = () => {
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
                 className="overflow-hidden border-b border-border"
               >
-                <div className="px-5 py-4">
+                <div className="px-3 py-3 sm:px-5 sm:py-4">
                   {/* Primary filters grid */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
                     {/* Building */}
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <div className="space-y-1">
+                      <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                         {t('explorer.labels.building')}
                       </label>
                       <Select
                         value={selectedBuildingId ?? 'all'}
                         onValueChange={(v) => setSelectedBuildingId(v === 'all' ? null : v)}
                       >
-                        <SelectTrigger className="rounded-xl h-11 w-full bg-background hover:border-primary/50">
+                        <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full bg-background hover:border-primary/50 text-xs sm:text-sm">
                           <SelectValue placeholder={t('explorer.labels.building')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -930,12 +930,12 @@ const ExplorerV2 = () => {
                     </div>
 
                     {/* Status */}
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <div className="space-y-1">
+                      <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                         {t('explorer.labels.status')}
                       </label>
                       <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="rounded-xl h-11 w-full bg-background hover:border-primary/50">
+                        <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full bg-background hover:border-primary/50 text-xs sm:text-sm">
                           <SelectValue placeholder={t('explorer.labels.status')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -948,12 +948,12 @@ const ExplorerV2 = () => {
                     </div>
 
                     {/* Rooms */}
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <div className="space-y-1">
+                      <label className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                         {t('explorer.labels.rooms')}
                       </label>
                       <Select value={unitType} onValueChange={setUnitType}>
-                        <SelectTrigger className="rounded-xl h-11 w-full bg-background hover:border-primary/50">
+                        <SelectTrigger className="rounded-xl h-10 sm:h-11 w-full bg-background hover:border-primary/50 text-xs sm:text-sm">
                           <SelectValue placeholder={t('explorer.labels.rooms')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -970,9 +970,9 @@ const ExplorerV2 = () => {
                     <button
                       onClick={() => setMoreFiltersOpen((v) => !v)}
                       aria-expanded={moreFiltersOpen}
-                      className="flex items-center justify-center gap-2 h-11 self-end rounded-xl border border-border bg-muted/50 text-foreground text-sm font-medium hover:bg-muted hover:border-primary/50 transition"
+                      className="flex items-center justify-center gap-2 h-10 sm:h-11 self-end rounded-xl border border-border bg-muted/50 text-foreground text-xs sm:text-sm font-medium hover:bg-muted hover:border-primary/50 transition"
                     >
-                      <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
+                      <SlidersHorizontal className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                       {moreFiltersOpen ? t('explorer.filters.hide') : t('explorer.filters.moreFilters')}
                     </button>
                   </div>
