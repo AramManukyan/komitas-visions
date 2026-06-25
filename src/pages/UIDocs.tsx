@@ -102,13 +102,13 @@ export default function UIDocs() {
           <aside className="hidden lg:block">
             <nav className="sticky top-24 space-y-1">
               {groups.map((g) => (
-                <a
+                <Link
                   key={g.id}
-                  href={`#${g.id}`}
+                  to={`/ui-docs#${g.id}`}
                   className="block px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition"
                 >
                   {g.label}
-                </a>
+                </Link>
               ))}
             </nav>
           </aside>
