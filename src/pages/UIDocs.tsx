@@ -37,6 +37,12 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useToast } from "@/components/ui/use-toast";
 import { toast as sonnerToast } from "sonner";
 
+// Project-specific custom components
+import ThemeGenerator from "@/components/ThemeGenerator";
+import { NavLink } from "@/components/NavLink";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { PromotionBadge } from "@/components/PromotionBadge";
+
 // ---------- Section helper ----------
 type ExampleProps = { title: string; description?: string; children: React.ReactNode };
 const Example = ({ title, description, children }: ExampleProps) => (
@@ -62,6 +68,7 @@ const Section = ({ id, title, description, children }: SectionProps) => (
 
 // ---------- Page ----------
 const groups: { id: string; label: string }[] = [
+  { id: "theme", label: "Theme Generator" },
   { id: "actions", label: "Actions" },
   { id: "forms", label: "Forms" },
   { id: "data-display", label: "Data Display" },
@@ -69,6 +76,7 @@ const groups: { id: string; label: string }[] = [
   { id: "feedback", label: "Feedback" },
   { id: "overlays", label: "Overlays" },
   { id: "layout", label: "Layout" },
+  { id: "custom", label: "Project Components" },
 ];
 
 export default function UIDocs() {
@@ -114,8 +122,20 @@ export default function UIDocs() {
           </aside>
 
           <main className="space-y-12 min-w-0">
+            {/* ============ THEME GENERATOR ============ */}
+            <section id="theme" className="scroll-mt-24 space-y-5">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">Theme Generator</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Tweak every design token live. Values update across the entire app and persist locally until you reset.
+                </p>
+              </div>
+              <ThemeGenerator />
+            </section>
+
             {/* ============ ACTIONS ============ */}
             <Section id="actions" title="Actions" description="Buttons, toggles and triggers.">
+
               <Example title="Button variants" description="default · secondary · destructive · outline · ghost · link">
                 <Button>Default</Button>
                 <Button variant="secondary">Secondary</Button>
@@ -474,6 +494,118 @@ export default function UIDocs() {
                 </ScrollArea>
               </Example>
             </Section>
+
+            {/* ============ PROJECT-SPECIFIC COMPONENTS ============ */}
+            <Section
+              id="custom"
+              title="Project Components"
+              description="Custom components built specifically for this project."
+            >
+              <Example title="NavLink" description="Router-aware link with active/pending class hooks.">
+                <NavLink
+                  to="/ui-docs"
+                  className="px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground"
+                  activeClassName="bg-primary text-primary-foreground"
+                >
+                  UI Docs (active)
+                </NavLink>
+                <NavLink
+                  to="/non-existent"
+                  className="px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground"
+                  activeClassName="bg-primary text-primary-foreground"
+                >
+                  Inactive link
+                </NavLink>
+              </Example>
+
+              <Example title="LanguageSwitcher" description="HY / RU / EN locale toggle (uses i18next).">
+                <div className="rounded-lg bg-navy p-3">
+                  <LanguageSwitcher />
+                </div>
+              </Example>
+
+              <Example title="PromotionBadge — types" description="discount · hot · new · mortgage · installment · limited · custom">
+                <PromotionBadge type="discount" label="-15%" />
+                <PromotionBadge type="hot" label="Hot" />
+                <PromotionBadge type="new" label="New" />
+                <PromotionBadge type="mortgage" label="Mortgage" />
+                <PromotionBadge type="installment" label="0% installment" />
+                <PromotionBadge type="limited" label="Limited" />
+                <PromotionBadge type="custom" label="Special" />
+              </Example>
+
+              <Example title="PromotionBadge — sizes" description="sm · md · lg">
+                <PromotionBadge type="discount" size="sm" label="Small" />
+                <PromotionBadge type="discount" size="md" label="Medium" />
+                <PromotionBadge type="discount" size="lg" label="Large" />
+              </Example>
+
+              <Example
+                title="Apartment status badges"
+                description="Color-coded statuses used across the Explorer and listings."
+              >
+                <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-[hsl(var(--status-available))] text-[hsl(var(--status-available-fg))]">
+                  Available
+                </span>
+                <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-[hsl(var(--status-reserved))] text-[hsl(var(--status-reserved-fg))]">
+                  Reserved
+                </span>
+                <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-[hsl(var(--status-sold))] text-[hsl(var(--status-sold-fg))]">
+                  Sold
+                </span>
+              </Example>
+
+              <Example title="Glass surfaces" description=".glass and .glass-dark utility classes.">
+                <div className="relative w-full h-32 rounded-xl overflow-hidden bg-gradient-to-br from-navy to-navy-light">
+                  <div className="absolute inset-4 glass rounded-lg flex items-center justify-center text-sm text-primary-foreground">
+                    .glass
+                  </div>
+                </div>
+                <div className="relative w-full h-32 rounded-xl overflow-hidden bg-gold-light">
+                  <div className="absolute inset-4 glass-dark rounded-lg flex items-center justify-center text-sm text-gold-light">
+                    .glass-dark
+                  </div>
+                </div>
+              </Example>
+
+              <Example title="Brand gradients" description=".gradient-gold · .gradient-navy · .text-gradient-gold">
+                <div className="w-full grid grid-cols-2 gap-3">
+                  <div className="h-20 rounded-lg gradient-gold flex items-center justify-center text-sm font-semibold text-navy">
+                    gradient-gold
+                  </div>
+                  <div className="h-20 rounded-lg gradient-navy flex items-center justify-center text-sm font-semibold text-gold">
+                    gradient-navy
+                  </div>
+                </div>
+                <div className="w-full text-3xl font-bold text-gradient-gold bg-navy px-4 py-3 rounded-lg text-center">
+                  text-gradient-gold
+                </div>
+              </Example>
+
+              <Example
+                title="Section divider"
+                description=".section-divider — decorative gold accent used above section titles."
+              >
+                <div className="w-full section-divider pt-4 text-center">
+                  <h3 className="text-xl">Section heading</h3>
+                </div>
+              </Example>
+
+              <Example
+                title="Other project components"
+                description="Composite components — preview in their natural pages."
+              >
+                <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-5">
+                  <li><code className="font-mono">Header</code>, <code className="font-mono">Footer</code> — global layout (see any page)</li>
+                  <li><code className="font-mono">ChatWidget</code> — floating chat (Explorer V2)</li>
+                  <li><code className="font-mono">PromoTopBanner</code>, <code className="font-mono">PromoPopup</code>, <code className="font-mono">PromotionsSection</code> — promotions surfaces</li>
+                  <li><code className="font-mono">explorer/InteractiveSvg</code>, <code className="font-mono">explorer/BuildingMatrix</code>, <code className="font-mono">explorer/ApartmentDetailsSheet</code> — Explorer V2 building blocks</li>
+                  <li><code className="font-mono">sections/*</code> — Hero, About, Amenities, BankPartners, Documents, Gallery, Location, Video, ContactForm</li>
+                </ul>
+              </Example>
+            </Section>
+
+
 
             <footer className="text-xs text-muted-foreground pt-8 border-t border-border">
               Internal documentation · extend by adding new <code className="px-1 rounded bg-secondary">Example</code> blocks inside a <code className="px-1 rounded bg-secondary">Section</code>.
