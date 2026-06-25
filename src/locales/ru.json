@@ -234,6 +234,8 @@
     },
     "filteredBy": "Фильтр",
     "clear": "Очистить",
+    "clearAll": "Очистить всё",
+    "activeFilters": "Активные фильтры",
     "favorites": "избранное",
     "showFavoritesOnly": "Показывать только избранное",
     "matchingUnits": "подходящих вариантов",
@@ -244,7 +246,16 @@
       "subtitleList": "Попробуйте очистить фильтры или выбрать другой корпус."
     },
     "labels": {
-      "status": "Статус"
+      "status": "Статус",
+      "building": "Корпус",
+      "apartment": "Квартира",
+      "rooms": "Комнаты",
+      "completion": "Срок сдачи",
+      "floors": "Этажи",
+      "price": "Цена",
+      "pricePerUnit": "Цена за м²",
+      "area": "Площадь",
+      "favorites": "Избранное"
     },
     "shareMessage": "Здравствуйте! Меня интересует квартира №{{number}} ({{rooms}} комн., {{area}} м²).",
     "apartmentNumber": "Квартира №{{number}}",
