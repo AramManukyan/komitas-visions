@@ -126,7 +126,10 @@ export const OrientationCompass = ({
         <p className="text-muted-foreground text-[10px] uppercase tracking-wider font-semibold mb-0.5">
           {label ?? 'Orientation'}
         </p>
-        <p className={cn('font-heading font-bold text-primary leading-tight', compact ? 'text-sm' : 'text-base md:text-lg')}>
+        <p className={cn(
+          'font-heading font-bold text-primary leading-tight break-words',
+          compact ? 'text-sm' : 'text-base md:text-lg',
+        )}>
           {value ?? orientation}
         </p>
       </div>
