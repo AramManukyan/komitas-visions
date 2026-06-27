@@ -186,7 +186,18 @@
     "apartment": "Apartment",
     "details": {
       "balcony": "Balcony",
-      "perSqm": "Per m²"
+      "perSqm": "Per m²",
+      "orientation": "Orientation"
+    },
+    "orientation": {
+      "N": "North",
+      "NE": "North-East",
+      "E": "East",
+      "SE": "South-East",
+      "S": "South",
+      "SW": "South-West",
+      "W": "West",
+      "NW": "North-West"
     },
     "tooltip": {
       "title": "№ {{number}} · {{rooms}} BR",
