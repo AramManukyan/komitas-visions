@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import {
   Calculator,
+  Compass,
   DoorOpen,
   Download,
   Heart,
@@ -27,6 +28,7 @@ import { EXPLORER_APARTMENTS, type ExplorerApartment } from '@/data/explorer';
 import { cn } from '@/lib/utils';
 import apartmentPlan from '@/assets/apartment-plan.jpg';
 import masterplanImg from '@/assets/explorer-masterplan.jpg';
+import { OrientationCompass } from './OrientationCompass';
 
 const STATUS_CLASSES: Record<string, string> = {
   available: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30',
