@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils';
-import { Compass } from 'lucide-react';
 
 export type Orientation = 'N' | 'NE' | 'E' | 'SE' | 'S' | 'SW' | 'W' | 'NW';
 
@@ -21,6 +20,8 @@ interface OrientationCompassProps {
   className?: string;
   compact?: boolean;
 }
+
+const TICKS = Array.from({ length: 12 }, (_, i) => i * 30);
 
 export const OrientationCompass = ({
   orientation,
@@ -49,87 +50,109 @@ export const OrientationCompass = ({
         aria-label={`Compass pointing ${value ?? orientation}`}
         role="img"
       >
-        {/* Outer ring */}
-        <div className="absolute inset-0 rounded-full border border-border bg-background shadow-sm" />
+        <svg className="h-full w-full" viewBox="0 0 100 100">
+          {/* Warm compass face with brass bezel */}
+          <circle
+            cx="50"
+            cy="50"
+            r="48"
+            className="fill-amber-50/50 stroke-amber-300"
+            strokeWidth="2"
+          />
+          <circle
+            cx="50"
+            cy="50"
+            r="44"
+            className="fill-none stroke-muted-foreground/20"
+            strokeWidth="1"
+          />
 
-        {/* Cardinal labels */}
-        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100">
+          {/* Degree tick marks */}
+          {TICKS.map((deg) => {
+            const isCardinal = deg % 90 === 0;
+            const isSemiCardinal = deg % 45 === 0 && !isCardinal;
+            const length = isCardinal ? 10 : isSemiCardinal ? 6 : 4;
+            const strokeWidth = isCardinal ? 2.5 : 1;
+            const rad = (deg * Math.PI) / 180;
+            const r1 = 41;
+            const r2 = r1 - length;
+            const x1 = 50 + r1 * Math.cos(rad);
+            const y1 = 50 + r1 * Math.sin(rad);
+            const x2 = 50 + r2 * Math.cos(rad);
+            const y2 = 50 + r2 * Math.sin(rad);
+            return (
+              <line
+                key={deg}
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                className={isCardinal ? 'stroke-red-500' : 'stroke-muted-foreground/40'}
+                strokeWidth={strokeWidth}
+                strokeLinecap="round"
+              />
+            );
+          })}
+
+          {/* Cardinal labels — N highlighted red, S blue, E/W muted */}
           <text
             x="50"
-            y="13"
+            y="23"
             textAnchor="middle"
-            className="fill-[hsl(var(--primary))] text-[16px] font-bold"
+            className="fill-red-500 text-[15px] font-bold"
           >
             N
           </text>
           <text
-            x="88"
+            x="82"
             y="55"
             textAnchor="middle"
-            className="fill-muted-foreground text-[12px] font-semibold"
+            className="fill-muted-foreground text-[11px] font-semibold"
           >
             E
           </text>
           <text
             x="50"
-            y="93"
+            y="90"
             textAnchor="middle"
-            className="fill-muted-foreground text-[12px] font-semibold"
+            className="fill-blue-500 text-[11px] font-semibold"
           >
             S
           </text>
           <text
-            x="12"
+            x="18"
             y="55"
             textAnchor="middle"
-            className="fill-muted-foreground text-[12px] font-semibold"
+            className="fill-muted-foreground text-[11px] font-semibold"
           >
             W
           </text>
+
+          {/* Rotating compass needle: red north, blue south */}
+          <g transform={`rotate(${angle}, 50, 50)`}>
+            <path d="M50 5 L55 50 L45 50 Z" className="fill-red-500" />
+            <path d="M50 75 L55 50 L45 50 Z" className="fill-blue-500" />
+            <circle
+              cx="50"
+              cy="50"
+              r="4"
+              className="fill-background stroke-amber-400"
+              strokeWidth="2"
+            />
+          </g>
         </svg>
-
-        {/* Inner hub */}
-        <div className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary z-10" />
-
-        {/* Rotating needle (origin at bottom center of the needle element) */}
-        <div
-          className="absolute left-1/2 top-1/2 w-[2px] -translate-x-1/2 origin-bottom transition-transform duration-500 ease-out"
-          style={{
-            height: '45%',
-            transform: `translate(-50%, -100%) rotate(${angle}deg)`,
-          }}
-        >
-          <div className="h-full w-full rounded-full bg-gradient-to-t from-accent-foreground/80 to-accent" />
-        </div>
-
-        {/* Counter-weight tail */}
-        <div
-          className="absolute left-1/2 top-1/2 w-[2px] origin-top transition-transform duration-500 ease-out"
-          style={{
-            height: '25%',
-            transform: `translate(-50%, 0%) rotate(${angle + 180}deg)`,
-          }}
-        >
-          <div className="h-full w-full rounded-full bg-muted-foreground/40" />
-        </div>
-
-        {/* Decorative background icon */}
-        <Compass
-          className={cn(
-            'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/15',
-            compact ? 'h-4 w-4' : 'h-4 w-4 md:h-5 md:w-5',
-          )}
-        />
       </div>
 
       <div className="min-w-0">
         <p className="text-muted-foreground text-[10px] uppercase tracking-wider font-semibold mb-0.5">
           {label ?? 'Orientation'}
         </p>
-        <p className={cn(
-          'font-heading font-bold text-primary leading-tight break-words',
-          compact ? 'text-sm' : 'text-base md:text-lg',
-        )}>
+        <p
+          className={cn(
+            'font-heading font-bold text-primary leading-tight break-words',
+            compact ? 'text-sm' : 'text-base md:text-lg',
+          )}
+        >
           {value ?? orientation}
         </p>
       </div>
@@ -138,5 +161,3 @@ export const OrientationCompass = ({
 };
 
 export default OrientationCompass;
-
-
