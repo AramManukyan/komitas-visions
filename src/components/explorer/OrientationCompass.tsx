@@ -14,20 +14,14 @@ const ORIENTATION_ANGLES: Record<Orientation, number> = {
   NW: 315,
 };
 
-const DIRECTION_COORDS: Record<string, { x: number; y: number }> = {
-  N: { x: 50, y: 14 },
-  E: { x: 86, y: 50 },
-  S: { x: 50, y: 86 },
-  W: { x: 14, y: 50 },
-};
-
 interface OrientationCompassProps {
   orientation?: Orientation | null;
   label?: string;
+  value?: string;
   className?: string;
 }
 
-export const OrientationCompass = ({ orientation, label, className }: OrientationCompassProps) => {
+export const OrientationCompass = ({ orientation, label, value, className }: OrientationCompassProps) => {
   if (!orientation) return null;
 
   const angle = ORIENTATION_ANGLES[orientation];
@@ -41,7 +35,7 @@ export const OrientationCompass = ({ orientation, label, className }: Orientatio
     >
       <div
         className="relative h-14 w-14 md:h-16 md:w-16 shrink-0"
-        aria-label={`Compass pointing ${orientation}`}
+        aria-label={`Compass pointing ${value ?? orientation}`}
         role="img"
       >
         {/* Outer ring */}
@@ -117,7 +111,7 @@ export const OrientationCompass = ({ orientation, label, className }: Orientatio
           {label ?? 'Orientation'}
         </p>
         <p className="font-heading text-xl md:text-2xl font-bold text-primary leading-tight">
-          {orientation}
+          {value ?? orientation}
         </p>
       </div>
     </div>
@@ -125,4 +119,5 @@ export const OrientationCompass = ({ orientation, label, className }: Orientatio
 };
 
 export default OrientationCompass;
+
 
