@@ -19,6 +19,7 @@ interface OrientationCompassProps {
   label?: string;
   value?: string;
   className?: string;
+  compact?: boolean;
 }
 
 export const OrientationCompass = ({ orientation, label, value, className }: OrientationCompassProps) => {
