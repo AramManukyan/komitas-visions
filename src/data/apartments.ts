@@ -46,6 +46,8 @@ export const APARTMENTS: Apartment[] = (() => {
             const area = Math.round(35 + rooms * 18 + r * 12);
             const price = Math.round((area * (820_000 + r * 220_000)) / 1000) * 1000;
             const status = STATUSES[Math.floor(seed(counter + 7) * STATUSES.length)];
+            const orientations: Orientation[] = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+            const orientation = orientations[Math.floor(seed(counter + 11) * orientations.length)];
             list.push({
               id: `${block}-${bld}-${ent}-${floor}-${i + 1}`,
               number: `${block}${bld}${ent}${String(floor).padStart(2, '0')}${i + 1}`,
@@ -57,6 +59,7 @@ export const APARTMENTS: Apartment[] = (() => {
               area,
               price,
               status,
+              orientation,
             });
           }
         }
