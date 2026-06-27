@@ -195,6 +195,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                   orientation={apartment.orientation}
                   label={t('explorer.details.orientation')}
                   value={t(`explorer.orientation.${apartment.orientation}`)}
+                  compact
                 />
               </div>
 
