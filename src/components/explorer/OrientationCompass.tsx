@@ -19,9 +19,16 @@ interface OrientationCompassProps {
   label?: string;
   value?: string;
   className?: string;
+  compact?: boolean;
 }
 
-export const OrientationCompass = ({ orientation, label, value, className }: OrientationCompassProps) => {
+export const OrientationCompass = ({
+  orientation,
+  label,
+  value,
+  className,
+  compact = false,
+}: OrientationCompassProps) => {
   if (!orientation) return null;
 
   const angle = ORIENTATION_ANGLES[orientation];
@@ -29,12 +36,16 @@ export const OrientationCompass = ({ orientation, label, value, className }: Ori
   return (
     <div
       className={cn(
-        'rounded-xl border border-border bg-card p-3 md:p-4 flex items-center gap-3 md:gap-4 self-start',
+        'rounded-xl border border-border bg-card flex items-center gap-3 self-start',
+        compact ? 'p-2 gap-2' : 'p-3 md:p-3.5 gap-3',
         className,
       )}
     >
       <div
-        className="relative h-14 w-14 md:h-16 md:w-16 shrink-0"
+        className={cn(
+          'relative shrink-0',
+          compact ? 'h-9 w-9' : 'h-11 w-11 md:h-12 md:w-12',
+        )}
         aria-label={`Compass pointing ${value ?? orientation}`}
         role="img"
       >
@@ -45,44 +56,44 @@ export const OrientationCompass = ({ orientation, label, value, className }: Ori
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100">
           <text
             x="50"
-            y="12"
+            y="13"
             textAnchor="middle"
-            className="fill-[hsl(var(--primary))] text-[18px] font-bold"
+            className="fill-[hsl(var(--primary))] text-[16px] font-bold"
           >
             N
           </text>
           <text
             x="88"
-            y="54"
+            y="55"
             textAnchor="middle"
-            className="fill-muted-foreground text-[14px] font-semibold"
+            className="fill-muted-foreground text-[12px] font-semibold"
           >
             E
           </text>
           <text
             x="50"
-            y="92"
+            y="93"
             textAnchor="middle"
-            className="fill-muted-foreground text-[14px] font-semibold"
+            className="fill-muted-foreground text-[12px] font-semibold"
           >
             S
           </text>
           <text
             x="12"
-            y="54"
+            y="55"
             textAnchor="middle"
-            className="fill-muted-foreground text-[14px] font-semibold"
+            className="fill-muted-foreground text-[12px] font-semibold"
           >
             W
           </text>
         </svg>
 
         {/* Inner hub */}
-        <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary z-10" />
+        <div className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary z-10" />
 
         {/* Rotating needle (origin at bottom center of the needle element) */}
         <div
-          className="absolute left-1/2 top-1/2 w-[2px] md:w-[3px] -translate-x-1/2 origin-bottom transition-transform duration-500 ease-out"
+          className="absolute left-1/2 top-1/2 w-[2px] -translate-x-1/2 origin-bottom transition-transform duration-500 ease-out"
           style={{
             height: '45%',
             transform: `translate(-50%, -100%) rotate(${angle}deg)`,
@@ -103,14 +114,22 @@ export const OrientationCompass = ({ orientation, label, value, className }: Ori
         </div>
 
         {/* Decorative background icon */}
-        <Compass className="absolute left-1/2 top-1/2 h-5 w-5 md:h-6 md:w-6 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/15" />
+        <Compass
+          className={cn(
+            'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/15',
+            compact ? 'h-4 w-4' : 'h-4 w-4 md:h-5 md:w-5',
+          )}
+        />
       </div>
 
       <div className="min-w-0">
         <p className="text-muted-foreground text-[10px] uppercase tracking-wider font-semibold mb-0.5">
           {label ?? 'Orientation'}
         </p>
-        <p className="font-heading text-xl md:text-2xl font-bold text-primary leading-tight">
+        <p className={cn(
+          'font-heading font-bold text-primary leading-tight break-words',
+          compact ? 'text-sm' : 'text-base md:text-lg',
+        )}>
           {value ?? orientation}
         </p>
       </div>

@@ -163,6 +163,13 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                   alt={`Plan of apartment ${apartment.number}`}
                   className="absolute inset-0 w-full h-full object-contain p-4"
                 />
+                <div className="absolute top-3 right-3 z-10">
+                  <OrientationCompass
+                    orientation={apartment.orientation}
+                    value={t(`explorer.orientation.${apartment.orientation}`)}
+                    compact
+                  />
+                </div>
               </motion.div>
 
               {/* Stats grid */}
@@ -188,6 +195,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                   orientation={apartment.orientation}
                   label={t('explorer.details.orientation')}
                   value={t(`explorer.orientation.${apartment.orientation}`)}
+                  compact
                 />
               </div>
 
