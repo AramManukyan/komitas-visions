@@ -167,7 +167,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
               </motion.div>
 
               {/* Stats grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 <Stat icon={<Home className="h-4 w-4" />} label={t('apartments.card.rooms')} value={apartment.rooms} />
                 <Stat
                   icon={<Maximize2 className="h-4 w-4" />}
@@ -184,6 +184,11 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                   icon={<Sun className="h-4 w-4" />}
                   label={t('explorer.details.balcony')}
                   value={apartment.balcony ? t('common.yes') : t('common.no')}
+                />
+                <OrientationCompass
+                  orientation={apartment.orientation}
+                  label={t('explorer.details.orientation')}
+                  value={t(`explorer.orientation.${apartment.orientation}`)}
                 />
               </div>
 
