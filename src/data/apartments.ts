@@ -1,4 +1,5 @@
 export type ApartmentStatus = 'available' | 'reserved' | 'sold';
+export type Orientation = 'N' | 'NE' | 'E' | 'SE' | 'S' | 'SW' | 'W' | 'NW';
 
 export interface Apartment {
   id: string;
@@ -11,6 +12,7 @@ export interface Apartment {
   area: number;        // m²
   price: number;       // AMD
   status: ApartmentStatus;
+  orientation: Orientation;
 }
 
 const BLOCKS = ['A', 'B', 'C'] as const;
