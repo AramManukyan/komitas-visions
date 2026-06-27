@@ -29,7 +29,7 @@ export const OrientationCompass = ({ orientation, label, value, className }: Ori
   return (
     <div
       className={cn(
-        'rounded-xl border border-border bg-card p-3 md:p-4 flex items-center gap-3 md:gap-4',
+        'rounded-xl border border-border bg-card p-3 md:p-4 flex items-center gap-3 md:gap-4 self-start',
         className,
       )}
     >
