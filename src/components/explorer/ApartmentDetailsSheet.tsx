@@ -6,7 +6,6 @@ import { chatStore } from '@/hooks/useChatAttachments';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EXPLORER_APARTMENTS, type ExplorerApartment } from '@/data/explorer';
 import { cn } from '@/lib/utils';
@@ -38,18 +37,7 @@ interface Props {
 
 const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment }: Props) => {
   const { t } = useTranslation();
-  const [favorite, setFavorite] = useState(false);
-  const [downpayment, setDownpayment] = useState(20);
-  const [years, setYears] = useState(15);
   const [tab, setTab] = useState<'info' | 'plan'>('info');
-
-  const monthly = useMemo(() => {
-    if (!apartment) return 0;
-    const loan = apartment.price * (1 - downpayment / 100);
-    const rate = 0.105 / 12;
-    const n = years * 12;
-    return Math.round((loan * rate) / (1 - Math.pow(1 + rate, -n)));
-  }, [apartment, downpayment, years]);
 
   const floorInfo = useMemo(() => {
     if (!apartment) return { apts: [], totalArea: 0, available: 0 };
