@@ -1,27 +1,11 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import {
-  Calculator,
-  DoorOpen,
-  Download,
-  Heart,
-  Home,
-  Info,
-  Layers,
-  Map,
-  Maximize2,
-  MessageCircle,
-  Phone,
-  Send,
-  Sun,
-  X,
-} from 'lucide-react';
+import { DoorOpen, Heart, Home, Info, Layers, Map, Maximize2, MessageCircle, Sun, X } from 'lucide-react';
 import { chatStore } from '@/hooks/useChatAttachments';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EXPLORER_APARTMENTS, type ExplorerApartment } from '@/data/explorer';
 import { cn } from '@/lib/utils';
@@ -54,17 +38,7 @@ interface Props {
 const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment }: Props) => {
   const { t } = useTranslation();
   const [favorite, setFavorite] = useState(false);
-  const [downpayment, setDownpayment] = useState(20);
-  const [years, setYears] = useState(15);
   const [tab, setTab] = useState<'info' | 'plan'>('info');
-
-  const monthly = useMemo(() => {
-    if (!apartment) return 0;
-    const loan = apartment.price * (1 - downpayment / 100);
-    const rate = 0.105 / 12;
-    const n = years * 12;
-    return Math.round((loan * rate) / (1 - Math.pow(1 + rate, -n)));
-  }, [apartment, downpayment, years]);
 
   const floorInfo = useMemo(() => {
     if (!apartment) return { apts: [], totalArea: 0, available: 0 };
@@ -81,14 +55,6 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
 
   if (!apartment) return null;
 
-  const message = encodeURIComponent(
-    t('explorer.shareMessage', {
-      number: apartment.number,
-      rooms: apartment.rooms,
-      area: apartment.area,
-    }),
-  );
-  const link = shareUrl ?? window.location.href;
 
   return (
     <Dialog open={!!apartment} onOpenChange={(o) => !o && onClose()}>
@@ -225,59 +191,9 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                 </div>
               </div>
 
-              {/* Mortgage calc */}
-              <div className="rounded-2xl border border-border p-5 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Calculator className="h-4 w-4 text-accent-foreground/70" />
-                  <p className="font-heading text-lg text-primary">{t('explorer.mortgage.title')}</p>
-                </div>
-                <div className="grid md:grid-cols-2 gap-5">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-muted-foreground">{t('explorer.mortgage.downPayment')}</span>
-                      <span className="font-semibold text-primary">{downpayment}%</span>
-                    </div>
-                    <Slider
-                      min={10}
-                      max={50}
-                      step={5}
-                      value={[downpayment]}
-                      onValueChange={(v) => setDownpayment(v[0])}
-                    />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-muted-foreground">{t('explorer.mortgage.term')}</span>
-                      <span className="font-semibold text-primary">
-                        {years} {t('explorer.mortgage.years')}
-                      </span>
-                    </div>
-                    <Slider
-                      min={5}
-                      max={30}
-                      step={1}
-                      value={[years]}
-                      onValueChange={(v) => setYears(v[0])}
-                    />
-                  </div>
-                </div>
-                <div className="flex items-baseline justify-between pt-2 border-t border-border">
-                  <span className="text-sm text-muted-foreground">{t('explorer.mortgage.estimatedMonthly')}</span>
-                  <span className="font-heading text-2xl font-bold text-primary">{fmt(monthly)} AMD</span>
-                </div>
-              </div>
 
               {/* Actions */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                <Button
-                  asChild
-                  className="rounded-xl gradient-gold text-accent-foreground hover:shadow-glow-gold"
-                >
-                  <a href="#contact">
-                    <Phone className="h-4 w-4" />
-                    {t('explorer.actions.callback')}
-                  </a>
-                </Button>
+              <div className="flex">
                 <Button
                   type="button"
                   variant="outline"
@@ -289,30 +205,6 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                 >
                   <MessageCircle className="h-4 w-4" />
                   Send via chat
-                </Button>
-                <Button asChild variant="outline" className="rounded-xl">
-                  <a
-                    href={`https://wa.me/?text=${message}%20${encodeURIComponent(link)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    WhatsApp
-                  </a>
-                </Button>
-                <Button asChild variant="outline" className="rounded-xl">
-                  <a
-                    href={`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${message}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Send className="h-4 w-4" />
-                    Telegram
-                  </a>
-                </Button>
-                <Button variant="outline" className="rounded-xl" onClick={() => window.print()}>
-                  <Download className="h-4 w-4" />
-                  PDF
                 </Button>
               </div>
             </div>
