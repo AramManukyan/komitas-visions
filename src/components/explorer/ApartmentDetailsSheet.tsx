@@ -37,6 +37,7 @@ interface Props {
 
 const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment }: Props) => {
   const { t } = useTranslation();
+  const [favorite, setFavorite] = useState(false);
   const [tab, setTab] = useState<'info' | 'plan'>('info');
 
   const floorInfo = useMemo(() => {
@@ -54,14 +55,6 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
 
   if (!apartment) return null;
 
-  const message = encodeURIComponent(
-    t('explorer.shareMessage', {
-      number: apartment.number,
-      rooms: apartment.rooms,
-      area: apartment.area,
-    }),
-  );
-  const link = shareUrl ?? window.location.href;
 
   return (
     <Dialog open={!!apartment} onOpenChange={(o) => !o && onClose()}>
