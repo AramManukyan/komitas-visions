@@ -191,47 +191,6 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                 </div>
               </div>
 
-              {/* Mortgage calc */}
-              <div className="rounded-2xl border border-border p-5 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Calculator className="h-4 w-4 text-accent-foreground/70" />
-                  <p className="font-heading text-lg text-primary">{t('explorer.mortgage.title')}</p>
-                </div>
-                <div className="grid md:grid-cols-2 gap-5">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-muted-foreground">{t('explorer.mortgage.downPayment')}</span>
-                      <span className="font-semibold text-primary">{downpayment}%</span>
-                    </div>
-                    <Slider
-                      min={10}
-                      max={50}
-                      step={5}
-                      value={[downpayment]}
-                      onValueChange={(v) => setDownpayment(v[0])}
-                    />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-muted-foreground">{t('explorer.mortgage.term')}</span>
-                      <span className="font-semibold text-primary">
-                        {years} {t('explorer.mortgage.years')}
-                      </span>
-                    </div>
-                    <Slider
-                      min={5}
-                      max={30}
-                      step={1}
-                      value={[years]}
-                      onValueChange={(v) => setYears(v[0])}
-                    />
-                  </div>
-                </div>
-                <div className="flex items-baseline justify-between pt-2 border-t border-border">
-                  <span className="text-sm text-muted-foreground">{t('explorer.mortgage.estimatedMonthly')}</span>
-                  <span className="font-heading text-2xl font-bold text-primary">{fmt(monthly)} AMD</span>
-                </div>
-              </div>
 
               {/* Actions */}
               <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
