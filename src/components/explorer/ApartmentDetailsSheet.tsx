@@ -1,22 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import {
-  Calculator,
-  DoorOpen,
-  Download,
-  Heart,
-  Home,
-  Info,
-  Layers,
-  Map,
-  Maximize2,
-  MessageCircle,
-  Phone,
-  Send,
-  Sun,
-  X,
-} from 'lucide-react';
+import { DoorOpen, Heart, Home, Info, Layers, Map, Maximize2, MessageCircle, Sun, X } from 'lucide-react';
 import { chatStore } from '@/hooks/useChatAttachments';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
