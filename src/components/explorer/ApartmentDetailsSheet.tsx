@@ -193,16 +193,7 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
 
 
               {/* Actions */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                <Button
-                  asChild
-                  className="rounded-xl gradient-gold text-accent-foreground hover:shadow-glow-gold"
-                >
-                  <a href="#contact">
-                    <Phone className="h-4 w-4" />
-                    {t('explorer.actions.callback')}
-                  </a>
-                </Button>
+              <div className="flex">
                 <Button
                   type="button"
                   variant="outline"
@@ -214,30 +205,6 @@ const ApartmentDetailsSheet = ({ apartment, onClose, shareUrl, onSelectApartment
                 >
                   <MessageCircle className="h-4 w-4" />
                   Send via chat
-                </Button>
-                <Button asChild variant="outline" className="rounded-xl">
-                  <a
-                    href={`https://wa.me/?text=${message}%20${encodeURIComponent(link)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    WhatsApp
-                  </a>
-                </Button>
-                <Button asChild variant="outline" className="rounded-xl">
-                  <a
-                    href={`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${message}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Send className="h-4 w-4" />
-                    Telegram
-                  </a>
-                </Button>
-                <Button variant="outline" className="rounded-xl" onClick={() => window.print()}>
-                  <Download className="h-4 w-4" />
-                  PDF
                 </Button>
               </div>
             </div>
