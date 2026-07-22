@@ -158,7 +158,7 @@ const BuildingMatrix = ({ selectedBuildingId, filter, onApartmentClick, isFavori
         <div
           ref={gridRef}
           onKeyDown={handleKeyNav}
-          className="flex gap-8 md:gap-12 items-start overflow-x-auto pb-4"
+          className="flex flex-col gap-10 md:gap-12 items-start overflow-y-auto max-h-[75vh] pb-4"
         >
           {/* Floor numbers column */}
           <div className="flex flex-col gap-1 pt-[120px] shrink-0 sticky left-0 bg-warm-bg z-10">
