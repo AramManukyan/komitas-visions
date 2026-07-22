@@ -817,11 +817,10 @@ const ExplorerV2 = () => {
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         <aside
-          style={isDesktop ? { width: asideWidth, flex: '0 0 auto' } : undefined}
           className={cn(
-            'w-full lg:w-[420px] xl:w-[500px] bg-background border-r border-border flex-col min-h-0 lg:h-full max-h-full',
+            'w-full bg-background border-b border-border flex-col min-h-0 max-h-[70vh] lg:max-h-[60vh] overflow-hidden',
             'lg:flex',
             mobilePane === 'list' ? 'flex flex-1' : 'hidden',
           )}
