@@ -160,33 +160,34 @@ const BuildingMatrix = ({ selectedBuildingId, filter, onApartmentClick, isFavori
           onKeyDown={handleKeyNav}
           className="flex flex-col gap-10 md:gap-12 items-start overflow-y-auto max-h-[75vh] pb-4"
         >
-          {/* Floor numbers column */}
-          <div className="flex flex-col gap-1 pt-[120px] shrink-0 sticky left-0 bg-warm-bg z-10">
-            {floorRows.map((f) => (
-              <div
-                key={f}
-                className="h-6 sm:h-7 w-6 sm:w-8 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-muted-foreground bg-muted/60 border border-border/60 rounded"
-              >
-                {f}
-              </div>
-            ))}
-            {[-1, -2].map((p) => (
-              <div
-                key={p}
-                className="h-7 sm:h-8 w-6 sm:w-8 mt-1 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-primary/70 bg-primary/5 border border-primary/20 rounded"
-              >
-                {p}
-              </div>
-            ))}
-          </div>
-
           {visibleBuildings.map((building) => {
             const ae = getActiveEntrance(building.id);
             const visibleEntrances =
               ae === 'all' ? building.entrances : building.entrances.filter((e) => e.id === ae);
 
             return (
-              <div key={building.id} className="shrink-0">
+              <div key={building.id} className="shrink-0 flex gap-3 items-start">
+                {/* Floor numbers column (per building) */}
+                <div className="flex flex-col gap-1 pt-[120px] shrink-0">
+                  {floorRows.map((f) => (
+                    <div
+                      key={f}
+                      className="h-6 sm:h-7 w-6 sm:w-8 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-muted-foreground bg-muted/60 border border-border/60 rounded"
+                    >
+                      {f}
+                    </div>
+                  ))}
+                  {[-1, -2].map((p) => (
+                    <div
+                      key={p}
+                      className="h-7 sm:h-8 w-6 sm:w-8 mt-1 grid place-items-center text-[10px] sm:text-[11px] font-semibold text-primary/70 bg-primary/5 border border-primary/20 rounded"
+                    >
+                      {p}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="shrink-0">
                 {/* Header with progress */}
                 <div className="mb-2 text-center">
                   <div className="text-sm font-bold text-foreground">
