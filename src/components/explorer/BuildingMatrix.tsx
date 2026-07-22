@@ -345,8 +345,10 @@ const BuildingMatrix = ({ selectedBuildingId, filter, onApartmentClick, isFavori
                     </div>
                   ))}
                 </div>
+                </div>
               </div>
             );
+
           })}
         </div>
       )}
