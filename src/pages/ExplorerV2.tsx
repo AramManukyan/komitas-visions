@@ -817,11 +817,10 @@ const ExplorerV2 = () => {
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         <aside
-          style={isDesktop ? { width: asideWidth, flex: '0 0 auto' } : undefined}
           className={cn(
-            'w-full lg:w-[420px] xl:w-[500px] bg-background border-r border-border flex-col min-h-0 lg:h-full max-h-full',
+            'w-full bg-background border-b border-border flex-col min-h-0 max-h-[70vh] lg:max-h-[60vh] overflow-hidden',
             'lg:flex',
             mobilePane === 'list' ? 'flex flex-1' : 'hidden',
           )}
@@ -1223,27 +1222,9 @@ const ExplorerV2 = () => {
           </div>
         </aside>
 
-        {/* Splitter (desktop only) */}
-        <div
-          role="separator"
-          aria-orientation="vertical"
-          onMouseDown={(e) => {
-            e.preventDefault();
-            setDragging(true);
-          }}
-          onDoubleClick={() => setAsideWidth(460)}
-          className={cn(
-            'hidden lg:flex group relative w-1.5 shrink-0 cursor-col-resize items-center justify-center bg-border hover:bg-accent transition-colors',
-            dragging && 'bg-accent',
-          )}
-          aria-label={t('explorer.resizePanels')}
-        >
-          <div className="absolute top-1/2 -translate-y-1/2 h-10 w-1 rounded-full bg-foreground/20 group-hover:bg-accent-foreground/60 transition" />
-        </div>
-
         {/* Right panel */}
         <main className={cn(
-          'flex-1 relative min-h-0 lg:h-full overflow-hidden bg-primary',
+          'flex-1 relative min-h-0 overflow-hidden bg-primary',
           'lg:block',
           mobilePane === 'map' ? 'flex flex-1' : 'hidden',
         )}>
